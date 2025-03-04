@@ -5,4 +5,5 @@ import com.krushit.entity.UserBuilder;
 
 public interface IUserService {
     boolean registerUser(User user);
+    User userLogin(String email, String password);
 }

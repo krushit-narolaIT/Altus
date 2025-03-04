@@ -1,5 +1,6 @@
 package com.krushit.dao;
 
+import com.krushit.entity.Role;
 import com.krushit.entity.User;
 import com.krushit.utils.DBConnection;
 
@@ -9,20 +10,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserDAOImpl implements IUserDAO {
-
     private final String INSERT_USER_DATA = "INSERT INTO users (role_id , first_name, last_name, phone_no, email_id, password, display_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
+    private final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
+    private final String GET_ROLE = "SELECT role FROM roles WHERE role_id = ?";
+    private Connection connection = DBConnection.getConnection();
 
     @Override
     public boolean registerUser(User user) {
-        try (Connection connection = DBConnection.getConnection()) {
+        try {
             connection.setAutoCommit(false);
-
+            int role_id = 1;
             int userId = -1;
 
             //PreparedStatement object that has the capability to retrieve auto-generated keys
             try (PreparedStatement insertStmt = connection.prepareStatement(INSERT_USER_DATA, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                insertStmt.setInt(1, user.getRoleId());
+                insertStmt.setInt(1, role_id);
                 insertStmt.setString(2, user.getFirstName());
                 insertStmt.setString(3, user.getLastName());
                 insertStmt.setString(4, user.getPhoneNo());
@@ -61,9 +64,69 @@ public class UserDAOImpl implements IUserDAO {
             connection.rollback();
         } catch (SQLException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
         return false;
     }
+
+    @Override
+    public User userLogin(String email_id, String password) {
+        User user = null;
+
+        try (PreparedStatement statement = connection.prepareStatement(USER_LOGIN);) {
+            statement.setString(1, email_id);
+            statement.setString(2, password);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                user = new User();
+                user.setUserId(resultSet.getInt("user_id"));
+
+                int roleId = resultSet.getInt("role_id");
+                String roleName = getRole(roleId);
+
+                // Create Role object and assign it to User
+                Role role = new Role(roleId, roleName);
+                user.setRole(role);
+
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setPhoneNo(resultSet.getString("phone_no"));
+                user.setEmailId(resultSet.getString("email_id"));
+                user.setPassword(resultSet.getString("password"));
+                user.setActive(resultSet.getBoolean("is_active"));
+                user.setDisplayId(resultSet.getString("display_id"));
+                user.setCreatedAt(resultSet.getTimestamp("created_at"));
+                user.setUpdatedAt(resultSet.getTimestamp("updated_at"));
+                user.setCreatedBy(resultSet.getString("created_by"));
+                user.setUpdatedBy(resultSet.getString("updated_by"));
+            }
+            resultSet.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+
+    @Override
+    public String getRole(int role_id) {
+        try (PreparedStatement statement = connection.prepareStatement(GET_ROLE);) {
+            statement.setInt(1, role_id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if(resultSet.next()){
+                String role = resultSet.getString("role");
+                return role;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 }

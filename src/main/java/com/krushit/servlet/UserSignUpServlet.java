@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 
-@WebServlet(value = "/UserSignUp")
 public class UserSignUpServlet extends HttpServlet {
 	private final UserServiceImpl userService = new UserServiceImpl();
 

@@ -6,5 +6,6 @@ import com.krushit.entity.UserBuilder;
 
 public interface IUserDAO {
     boolean registerUser(User user);
-    User getUserDetails(String email_id, String password);
+    User userLogin(String email_id, String password);
+    String getRole(int role_id);
 }

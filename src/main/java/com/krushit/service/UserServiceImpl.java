@@ -11,4 +11,9 @@ public class UserServiceImpl implements IUserService{
     public boolean registerUser(User user) {
         return userDAO.registerUser(user);
     }
+
+    @Override
+    public User userLogin(String email, String password) {
+        return userDAO.userLogin(email, password);
+    }
 }

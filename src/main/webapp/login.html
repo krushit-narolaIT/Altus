@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: "Uber Move";
+    }
+    .input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      outline: none;
+      margin-bottom: 5px;
+    }
+    .error-message {
+      color: red;
+      font-size: 0.85rem;
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+  <div class="bg-black flex items-center justify-center rounded py-6">
+    <h1 class="text-5xl text-white">Altus</h1>
+  </div>
+
+  <h2 class="text-xl font-bold text-center text-gray-800 mb-4 mt-4">User Login</h2>
+
+  <form id="loginForm">
+    <div class="mb-3">
+      <input type="email" name="emailId" id="emailId" class="input" placeholder="Email" required />
+      <p class="error-message">Enter a valid email</p>
+    </div>
+    <div class="mb-3">
+      <input type="password" name="password" id="password" class="input" placeholder="Password" required />
+      <p class="error-message">Password is required</p>
+    </div>
+    <button type="submit" class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-300 hover:text-black shadow-lg">
+      Login
+    </button>
+  </form>
+
+  <div class="bg-black flex items-center justify-center rounded mt-4">
+    <p id="responseMessage" class="text-center font-semibold hidden"></p>
+  </div>
+
+  <p class="text-center mt-4">
+    Don't have an account?
+    <a href="signup.html" class="text-blue-500">Sign Up</a>
+  </p>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#loginForm").on("submit", function (event) {
+      event.preventDefault();
+
+      let isValid = true;
+      $("#responseMessage").addClass("hidden");
+
+      const email = $("#emailId").val().trim();
+      const password = $("#password").val().trim();
+
+      if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        $("#emailId").next(".error-message").show();
+        isValid = false;
+      } else {
+        $("#emailId").next(".error-message").hide();
+      }
+
+      if (!password) {
+        $("#password").next(".error-message").show();
+        isValid = false;
+      } else {
+        $("#password").next(".error-message").hide();
+      }
+
+      if (isValid) {
+        $.ajax({
+          url: "UserLogin",
+          type: "POST",
+          contentType: "application/json",
+          data: JSON.stringify({ emailId: email, password: password }),
+          success: function (response) {
+            localStorage.setItem("user", JSON.stringify(response.data));
+            window.location.href = "profile.html";
+          },
+          error: function (xhr) {
+            const errorMsg = xhr.responseJSON?.error || "Invalid email or password.";
+            $("#responseMessage").text(errorMsg).removeClass("hidden text-green-600").addClass("text-red-600");
+          },
+        });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -14,8 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class UserSignUpServlet extends HttpServlet {
-    private final CustomerServiceImpl userService = new CustomerServiceImpl();
+public class DriverSignUpServlet extends HttpServlet {
     private final DriverServiceImpl driverService = new DriverServiceImpl();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -49,13 +48,13 @@ public class UserSignUpServlet extends HttpServlet {
                 return;
             }
 
-            String message = userService.registerUser(user);
+            String message = driverService.registerDriver(user);
             System.out.println("Message :: " + message);
 
-            if (Message.REGISTRATION_SUCCESSFUL.equals(message)) {
-                sendResponse(response, HttpServletResponse.SC_CREATED, Message.USER_REGISTERED_SUCCESSFULLY, user.getEmailId());
-            }  else if (Message.USER_ALREADY_EXIST.equals(message)) {
-                sendResponse(response, HttpServletResponse.SC_CONFLICT, Message.USER_ALREADY_EXIST, null);
+            if (Message.DRIVER_REGISTERED_SUCCESSFULLY.equals(message)) {
+                sendResponse(response, HttpServletResponse.SC_CREATED, Message.DRIVER_REGISTERED_SUCCESSFULLY, user.getEmailId());
+            } else if (Message.DRIVER_ALREADY_EXIST.equals(message)) {
+                sendResponse(response, HttpServletResponse.SC_CONFLICT, Message.DRIVER_ALREADY_EXIST, null);
             } else {
                 sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.INTERNAL_SERVER_ERROR, null);
             }

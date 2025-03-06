@@ -1,17 +1,15 @@
 package com.krushit.utils;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBConnection {
     private static final String DB_URL;
     private static final String DB_USER_NAME;
     private static final String DB_PASSWORD;
-    private static Connection connection;
+    private static final Connection connection;
 
     static {
         Properties prop = new Properties();

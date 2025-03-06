@@ -2,13 +2,14 @@ package com.krushit.service;
 
 import com.krushit.dao.UserDAOImpl;
 import com.krushit.entity.User;
-import com.krushit.entity.UserBuilder;
 
-public class UserServiceImpl implements IUserService{
+import java.sql.SQLException;
+
+public class CustomerServiceImpl implements ICustomerService {
     private final UserDAOImpl userDAO = new UserDAOImpl();
 
     @Override
-    public boolean registerUser(User user) {
+    public String registerUser(User user) throws SQLException {
         return userDAO.registerUser(user);
     }
 

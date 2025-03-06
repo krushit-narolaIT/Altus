@@ -5,7 +5,7 @@
          version="5.0">
     
     <servlet>
-        <servlet-name>UserSignUp</servlet-name>
+        <servlet-name>UserLogin</servlet-name>
         <servlet-class>com.krushit.servlet.UserLoginServlet</servlet-class>
     </servlet>
     <servlet-mapping>
@@ -14,11 +14,20 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>UserLogin</servlet-name>
+        <servlet-name>UserSignUp</servlet-name>
         <servlet-class>com.krushit.servlet.UserSignUpServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserSignUp</servlet-name>
         <url-pattern>/UserSignUp</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverSignUp</servlet-name>
+        <servlet-class>com.krushit.servlet.DriverSignUpServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverSignUp</servlet-name>
+        <url-pattern>/DriverSignUp</url-pattern>
     </servlet-mapping>
 </web-app>

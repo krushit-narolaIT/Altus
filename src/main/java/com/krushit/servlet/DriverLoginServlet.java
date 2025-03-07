@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.entity.User;
 import com.krushit.model.ApiResponse;
-import com.krushit.service.CustomerService;
+import com.krushit.service.DriverServiceImpl; // ✅ Use DriverServiceImpl
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,8 +13,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-public class UserLoginServlet extends HttpServlet {
-	private final CustomerService userService = new CustomerService();
+public class DriverLoginServlet extends HttpServlet {
+	private final DriverServiceImpl driverService = new DriverServiceImpl();
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
@@ -31,11 +31,12 @@ public class UserLoginServlet extends HttpServlet {
 			return;
 		}
 
-		User authenticatedUser = userService.userLogin(email, password);
-		if (authenticatedUser != null) {
+		User authenticatedDriver = driverService.driverLogin(email, password);
+		if (authenticatedDriver != null) {
 			HttpSession session = request.getSession(true);
-			session.setAttribute("user", authenticatedUser);
-			sendResponse(response, HttpServletResponse.SC_OK, Message.LOGIN_SUCCESSFUL, authenticatedUser);
+			session.setAttribute("driver", authenticatedDriver);
+
+			sendResponse(response, HttpServletResponse.SC_OK, Message.LOGIN_SUCCESSFUL, authenticatedDriver);
 		} else {
 			sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, Message.INVALID_EMAIL_AND_PASS, null);
 		}

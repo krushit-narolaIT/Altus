@@ -5,7 +5,7 @@ import com.krushit.common.Message;
 import com.krushit.entity.User;
 import com.krushit.model.ApiResponse;
 import com.krushit.service.DriverServiceImpl;
-import com.krushit.service.CustomerServiceImpl;
+import com.krushit.service.CustomerService;
 import com.krushit.utils.Validation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -13,23 +13,22 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class UserSignUpServlet extends HttpServlet {
-    private final CustomerServiceImpl userService = new CustomerServiceImpl();
+    private final CustomerService userService = new CustomerService();
     private final DriverServiceImpl driverService = new DriverServiceImpl();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("application/json");
-
         System.out.println("in doPost");
         if (!"application/json".equals(request.getContentType())) {
             System.out.println("Here");
             sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.INVALID_CONTENT_TYPE, null);
             return;
         }
-
         try {
             User user = objectMapper.readValue(request.getReader(), User.class);
             System.out.println("Received User: " + user);
@@ -49,20 +48,16 @@ public class UserSignUpServlet extends HttpServlet {
                 return;
             }
 
-            String message = userService.registerUser(user);
-            System.out.println("Message :: " + message);
-
-            if (Message.REGISTRATION_SUCCESSFUL.equals(message)) {
-                sendResponse(response, HttpServletResponse.SC_CREATED, Message.USER_REGISTERED_SUCCESSFULLY, user.getEmailId());
-            }  else if (Message.USER_ALREADY_EXIST.equals(message)) {
-                sendResponse(response, HttpServletResponse.SC_CONFLICT, Message.USER_ALREADY_EXIST, null);
-            } else {
-                sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.INTERNAL_SERVER_ERROR, null);
-            }
+            user.setCreatedAt(LocalDateTime.now());
+            userService.registerUser(user);
+            sendResponse(response, HttpServletResponse.SC_CREATED, Message.USER_REGISTERED_SUCCESSFULLY, user.getEmailId());
         } catch (Exception e) {
             e.printStackTrace();
             sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.INVALID_CONTENT_TYPE, null);
         }
+//        catch (ApplicationException e) {
+//
+//        }
     }
 
     @Override

@@ -1,10 +1,10 @@
 package com.krushit.entity;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class User {
     private int userId;
-    private Role roleId;
+    private Role role;
     private String firstName;
     private String lastName;
     private String phoneNo;
@@ -12,17 +12,17 @@ public class User {
     private String password;
     private boolean isActive;
     private String displayId;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private String createdBy;
     private String updatedBy;
 
     public User() {
     }
 
-    public User(int userId, Role roleId, String firstName, String lastName, String phoneNo, String emailId, String password, boolean isActive, String displayId, Timestamp createdAt, Timestamp updatedAt, String createdBy, String updatedBy) {
+    public User(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId, String password, boolean isActive, String displayId, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy) {
         this.userId = userId;
-        this.roleId = roleId;
+        this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNo = phoneNo;
@@ -36,8 +36,8 @@ public class User {
         this.updatedBy = updatedBy;
     }
 
-    public User(Role roleId, String firstName, String lastName, String phoneNo, String emailId, String password) {
-        this.roleId = roleId;
+    public User(Role role, String firstName, String lastName, String phoneNo, String emailId, String password) {
+        this.role = role;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNo = phoneNo;
@@ -55,11 +55,11 @@ public class User {
     }
 
     public Role getRole() {
-        return roleId;
+        return role;
     }
 
     public void setRole(Role roleId) {
-        this.roleId = roleId;
+        this.role = roleId;
     }
 
     public String getFirstName() {
@@ -118,19 +118,19 @@ public class User {
         this.displayId = displayId;
     }
 
-    public Timestamp getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
@@ -154,7 +154,7 @@ public class User {
     public String toString() {
         return "User{" +
                 "userId=" + userId +
-                ", roleId=" + roleId +
+                ", roleId=" + role +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +

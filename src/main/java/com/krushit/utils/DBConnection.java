@@ -3,6 +3,7 @@ package com.krushit.utils;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBConnection {
@@ -28,7 +29,7 @@ public class DBConnection {
         }
     }
 
-    public static Connection getConnection() {
-        return connection;
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
     }
 }

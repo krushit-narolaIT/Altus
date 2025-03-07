@@ -7,5 +7,5 @@ import java.sql.SQLException;
 
 public interface IDriverService {
     String registerDriver(User driver) throws SQLException;
-    Driver driverLogin(String email, String password);
+    User driverLogin(String email, String password);
 }

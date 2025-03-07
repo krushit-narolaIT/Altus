@@ -1,7 +1,7 @@
 package com.krushit.entity;
 
 import java.sql.Blob;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class Driver extends User {
     private int driverId;
@@ -16,7 +16,7 @@ public class Driver extends User {
         super();
     }
 
-    public Driver(int userId, Role roleId, String firstName, String lastName, String phoneNo, String emailId, String password, boolean isActive, String displayId, Timestamp createdAt, Timestamp updatedAt, String createdBy, String updatedBy, int driverId, String licenseNumber, boolean isDocumentVerified, Blob licensePhoto, boolean isAvailable, String verificationStatus, String comment) {
+    public Driver(int userId, Role roleId, String firstName, String lastName, String phoneNo, String emailId, String password, boolean isActive, String displayId, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, int driverId, String licenseNumber, boolean isDocumentVerified, Blob licensePhoto, boolean isAvailable, String verificationStatus, String comment) {
         super(userId, roleId, firstName, lastName, phoneNo, emailId, password, isActive, displayId, createdAt, updatedAt, createdBy, updatedBy);
         this.driverId = driverId;
         this.licenseNumber = licenseNumber;

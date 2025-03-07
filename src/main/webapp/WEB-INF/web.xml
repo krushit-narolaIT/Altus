@@ -3,7 +3,26 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
-    
+    <context-param>
+        <param-name>db.url</param-name>
+        <param-value>jdbc:mysql://localhost:3306/altus</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>db.username</param-name>
+        <param-value>root</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>db.password</param-name>
+        <param-value>password123#</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>db.driver</param-name>
+        <param-value>com.mysql.cj.jdbc.Driver</param-value>
+    </context-param>
+
     <servlet>
         <servlet-name>UserLogin</servlet-name>
         <servlet-class>com.krushit.servlet.UserLoginServlet</servlet-class>
@@ -29,5 +48,14 @@
     <servlet-mapping>
         <servlet-name>DriverSignUp</servlet-name>
         <url-pattern>/DriverSignUp</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>DriverLogin</servlet-name>
+        <servlet-class>com.krushit.servlet.DriverLoginServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DriverLogin</servlet-name>
+        <url-pattern>/DriverLogin</url-pattern>
     </servlet-mapping>
 </web-app>

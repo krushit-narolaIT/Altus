@@ -5,7 +5,6 @@ import com.krushit.common.Message;
 import com.krushit.entity.User;
 import com.krushit.model.ApiResponse;
 import com.krushit.service.DriverServiceImpl;
-import com.krushit.service.CustomerServiceImpl;
 import com.krushit.utils.Validation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

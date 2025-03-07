@@ -1,38 +1,32 @@
 package com.krushit.entity;
 
-public class Role {
-    private int role_id;
-    private String role;
+public enum Role {
+    ROLE_CUSTOMER("Customer",3),
+    ROLE_SUPER_ADMIN("Admin", 1),
+    ROLE_DRIVER("Driver",2);
 
-    public Role() {
+    private String roleName;
+    private int roleId;
+
+    Role(String name, int id) {
+        roleName = name;
+        roleId = id;
     }
 
-    public Role(int role_id, String role) {
-        this.role_id = role_id;
-        this.role = role;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public int getRole_id() {
-        return role_id;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRole_id(int role_id) {
-        this.role_id = role_id;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    @Override
-    public String toString() {
-        return "Role{" +
-                "role_id=" + role_id +
-                ", role='" + role + '\'' +
-                '}';
+    public static Role getRole(int roleId) {
+        for (Role role : Role.values()) {
+            if (role.getRoleId() == roleId) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("Invalid Role ID: " + roleId);
     }
 }

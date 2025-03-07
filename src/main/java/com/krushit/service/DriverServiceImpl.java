@@ -1,13 +1,12 @@
 package com.krushit.service;
 
-import com.krushit.dao.DriverDAOImpl;
-import com.krushit.entity.Driver;
+import com.krushit.dao.DriverDAO;
 import com.krushit.entity.User;
 
 import java.sql.SQLException;
 
 public class DriverServiceImpl implements IDriverService {
-    private final DriverDAOImpl driverDAO = new DriverDAOImpl();
+    private final DriverDAO driverDAO = new DriverDAO();
 
     @Override
     public String registerDriver(User driver) throws SQLException {
@@ -15,7 +14,7 @@ public class DriverServiceImpl implements IDriverService {
     }
 
     @Override
-    public Driver driverLogin(String email, String password) {
+    public User driverLogin(String email, String password) {
         return driverDAO.driverLogin(email, password);
     }
 }

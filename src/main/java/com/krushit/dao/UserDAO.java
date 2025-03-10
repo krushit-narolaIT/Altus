@@ -15,6 +15,7 @@ public class UserDAO {
     private final String INSERT_USER_DATA = "INSERT INTO users (role_id , first_name, last_name, phone_no, email_id, password, display_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
     private final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
+    private final String GET_USER_DETAIL = "SELECT * FROM users WHERE user_id = ?";
     private final String GET_ROLE = "SELECT role FROM roles WHERE role_id = ?";
     private final String CHECK_USER_EXISTENCE = "SELECT COUNT(*) FROM users WHERE email_id = ?";
 
@@ -97,8 +98,8 @@ public class UserDAO {
                 // user.setPassword(resultSet.getString("password"));
                 user.setActive(resultSet.getBoolean("is_active"));
                 user.setDisplayId(resultSet.getString("display_id"));
-                user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
-                user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
+                //user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
+                //user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
                 user.setCreatedBy(resultSet.getString("created_by"));
                 user.setUpdatedBy(resultSet.getString("updated_by"));
             }
@@ -108,24 +109,6 @@ public class UserDAO {
             e.printStackTrace();
         }
         return user;
-    }
-
-    public String getRole(int role_id) {
-        try (Connection connection = DBConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(GET_ROLE)) {
-            statement.setInt(1, role_id);
-
-            ResultSet resultSet = statement.executeQuery();
-
-            if(resultSet.next()){
-                String role = resultSet.getString("role");
-                return role;
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     public boolean isUserExist(String emailID) throws SQLException {
@@ -147,4 +130,49 @@ public class UserDAO {
         String userIdPart = String.format("%04d", userId % 10000);
         return "US" + userIdPart + "R" + timestampPart;
     }
+
+    public User getUserDetails(int userId) {
+        User user = null;
+
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
+
+            preparedStatement.setInt(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                user = new User();
+                user.setUserId(resultSet.getInt("user_id"));
+
+                int roleId = resultSet.getInt("role_id");
+                System.out.println("Role Id :: " + roleId);
+                Role role = null;
+                for (Role r : Role.values()) {
+                    if (r.getRoleId() == roleId) {
+                        role = r;
+                        break;
+                    }
+                }
+
+                user.setRole(role);
+                user.setFirstName(resultSet.getString("first_name"));
+                user.setLastName(resultSet.getString("last_name"));
+                user.setPhoneNo(resultSet.getString("phone_no"));
+                user.setEmailId(resultSet.getString("email_id"));
+                //user.setPassword(resultSet.getString("password"));
+                //user.setActive(resultSet.getBoolean("is_active"));
+                user.setDisplayId(resultSet.getString("display_id"));
+                //user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                //user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
+                user.setCreatedBy(resultSet.getString("created_by"));
+                user.setUpdatedBy(resultSet.getString("updated_by"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+
 }

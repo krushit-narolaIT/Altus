@@ -3,74 +3,75 @@ package com.krushit.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.entity.User;
+import com.krushit.exception.GenericException;
 import com.krushit.model.ApiResponse;
-import com.krushit.service.DriverServiceImpl;
+import com.krushit.service.DriverService;
+import com.krushit.exception.DBException;
 import com.krushit.utils.Validation;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
+import java.sql.SQLException;
 
 public class DriverSignUpServlet extends HttpServlet {
-    private final DriverServiceImpl driverService = new DriverServiceImpl();
+    private final DriverService driverService = new DriverService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("application/json");
-
-        System.out.println("in doPost");
-        if (!"application/json".equals(request.getContentType())) {
-            System.out.println("Here");
-            sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.INVALID_CONTENT_TYPE, null);
-            return;
-        }
+        response.setContentType(Message.APPLICATION_JSON);
+        response.setCharacterEncoding("UTF-8");
 
         try {
+            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
+                throw new GenericException(Message.INVALID_CONTENT_TYPE);
+            }
+
             User user = objectMapper.readValue(request.getReader(), User.class);
-            System.out.println("Received User: " + user);
+            Validation.validateUser(user);
 
-            if (!Validation.isValidPassword(user.getPassword())) {
-                sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.PLEASE_ENTER_VALID_PASSWORD, null);
-                return;
-            }
+            driverService.registerDriver(user);
 
-            if (!Validation.isValidPhoneNumber(user.getPhoneNo())) {
-                sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.PLEASE_ENTER_VALID_PHONE_NO, null);
-                return;
-            }
-
-            if (!Validation.isValidEmail(user.getEmailId())) {
-                sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.PLEASE_ENTER_VALID_EMAIL, null);
-                return;
-            }
-
-            String message = driverService.registerDriver(user);
-            System.out.println("Message :: " + message);
-
-            if (Message.DRIVER_REGISTERED_SUCCESSFULLY.equals(message)) {
-                sendResponse(response, HttpServletResponse.SC_CREATED, Message.DRIVER_REGISTERED_SUCCESSFULLY, user.getEmailId());
-            } else if (Message.DRIVER_ALREADY_EXIST.equals(message)) {
-                sendResponse(response, HttpServletResponse.SC_CONFLICT, Message.DRIVER_ALREADY_EXIST, null);
-            } else {
-                sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.INTERNAL_SERVER_ERROR, null);
-            }
+            createResponse(response, Message.DRIVER_REGISTERED_SUCCESSFULLY, user.getEmailId());
+        } catch (GenericException | DBException e) {
+            createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
+        } catch (SQLException e) {
+            createResponse(response, "Database Error: " + e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            e.printStackTrace();
-            sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.INVALID_CONTENT_TYPE, null);
+            createResponse(response, Message.INTERNAL_SERVER_ERROR + e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doPost(req, resp);
     }
 
-    private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
+    private void createResponse(HttpServletResponse response, String message, Object data) throws IOException {
+        int statusCode;
+        if (Message.DRIVER_REGISTERED_SUCCESSFULLY.equals(message)) {
+            statusCode = HttpServletResponse.SC_CREATED;
+        } else if (Message.DRIVER_ALREADY_EXIST.equals(message)) {
+            statusCode = HttpServletResponse.SC_CONFLICT;
+        } else if (Message.INTERNAL_SERVER_ERROR.equals(message)) {
+            statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+        } else {
+            statusCode = HttpServletResponse.SC_BAD_REQUEST;
+        }
+        createResponse(response, message, data, statusCode);
+    }
+
+    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
+        ApiResponse apiResponse = null;
+        if(data == null){
+            apiResponse = new ApiResponse(message);
+        } else {
+            apiResponse = new ApiResponse(message, data);
+        }
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
     }
 }

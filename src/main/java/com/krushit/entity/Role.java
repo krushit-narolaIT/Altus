@@ -1,12 +1,12 @@
 package com.krushit.entity;
 
 public enum Role {
-    ROLE_CUSTOMER("Customer",3),
-    ROLE_SUPER_ADMIN("Admin", 1),
-    ROLE_DRIVER("Driver",2);
+    ROLE_CUSTOMER("Customer",1),
+    ROLE_SUPER_ADMIN("Admin", 2),
+    ROLE_DRIVER("Driver",3);
 
-    private String roleName;
-    private int roleId;
+    private final String roleName;
+    private final int roleId;
 
     Role(String name, int id) {
         roleName = name;
@@ -28,5 +28,13 @@ public enum Role {
             }
         }
         throw new IllegalArgumentException("Invalid Role ID: " + roleId);
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleName='" + roleName + '\'' +
+                ", roleId=" + roleId +
+                '}';
     }
 }

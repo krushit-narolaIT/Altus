@@ -1,5 +1,13 @@
 package com.krushit.utils;
 
+
+
+import com.krushit.common.Message;
+import com.krushit.entity.Driver;
+import com.krushit.entity.User;
+import com.krushit.exception.ValidationException;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.regex.Pattern;
 
 public class Validation {
@@ -7,24 +15,55 @@ public class Validation {
     private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])[A-Za-z\\d@#$%^&+=!]{8,20}$";
     private static final String PHONE_REGEX = "^\\d{10}$";
 
-    public static boolean isValidPassword(String password) {
-        if (password == null || password.length() < 8 || password.length() > 20) {
-            return false;
+    public static void validateUser(User user) throws ValidationException {
+        if (user == null) {
+            throw new ValidationException("Invalid user data: User object is null.");
         }
-        return password.matches(PASSWORD_REGEX);
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new ValidationException(Message.PLEASE_ENTER_VALID_PASSWORD);
+        }
+        if (user.getPhoneNo() == null || user.getPhoneNo().isEmpty()) {
+            throw new ValidationException(Message.PLEASE_ENTER_VALID_PHONE_NO);
+        }
+        if (user.getEmailId() == null || user.getEmailId().isEmpty()) {
+            throw new ValidationException(Message.PLEASE_ENTER_VALID_EMAIL);
+        }
+
+        Validation.validatePassword(user.getPassword());
+        Validation.validatePhoneNumber(user.getPhoneNo());
+        Validation.validateEmail(user.getEmailId());
     }
 
-    public static boolean isValidEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            return false;
+    public static void validatePassword(String password) throws ValidationException {
+        if (password == null || password.length() < 8 || password.length() > 20 || !password.matches(PASSWORD_REGEX)) {
+            throw new ValidationException(Message.PLEASE_ENTER_VALID_PASSWORD);
         }
-        return email.matches(EMAIL_REGEX);
     }
 
-    public static boolean isValidPhoneNumber(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.length() != 10) {
-            return false;
+    public static void validateEmail(String email) throws ValidationException {
+        if (email == null || email.isEmpty() || !email.matches(EMAIL_REGEX)) {
+            throw new ValidationException(Message.PLEASE_ENTER_VALID_EMAIL);
         }
-        return phoneNumber.matches(PHONE_REGEX);
+    }
+
+    public static void validatePhoneNumber(String phoneNumber) throws ValidationException {
+        if (phoneNumber == null || phoneNumber.length() != 10 || !phoneNumber.matches(PHONE_REGEX)) {
+            throw new ValidationException(Message.PLEASE_ENTER_VALID_PHONE_NO);
+        }
+    }
+
+    public static void validateDriver(Driver driver) {
+        if (driver.getUserId() <= 0) {
+            throw new IllegalArgumentException("Invalid user ID");
+        }
+        if (driver.getLicenceNumber() == null || driver.getLicenceNumber().isEmpty()) {
+            throw new IllegalArgumentException("Licence number is required");
+        }
+    }
+
+    public static void validateLoginCredentials(String email, String password) throws ValidationException {
+        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            throw new ValidationException(Message.EMAIL_AND_PASS_REQUIRED);
+        }
     }
 }

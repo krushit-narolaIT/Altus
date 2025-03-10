@@ -1,8 +1,11 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
+import com.krushit.entity.Driver;
 import com.krushit.entity.Role;
 import com.krushit.entity.User;
+import com.krushit.exception.DBException;
+import com.krushit.exception.GenericException;
 import com.krushit.utils.DBConnection;
 import com.krushit.utils.DateUtils;
 
@@ -17,18 +20,18 @@ public class DriverDAO {
     private final String DRIVER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
     private final String GET_ROLE = "SELECT role FROM roles WHERE role_id = ?";
     private final String CHECK_DRIVER_EXISTENCE = "SELECT COUNT(*) FROM users WHERE email_id = ?";
+    private static final String INSERT_DRIVER_DETAILS = "INSERT INTO Drivers (user_id, licence_number, licence_photo) VALUES (?, ?, ?)";
 
-    public String registerDriver(User driver) throws SQLException {
+    public void registerDriver(User driver) throws SQLException, GenericException, DBException {
         try (Connection connection = DBConnection.getConnection()) {
-            if (isDriverExist(driver.getEmailId())) return Message.DRIVER_ALREADY_EXIST;
-            connection.setAutoCommit(false);
+            if (isDriverExist(driver.getEmailId()))
+                throw new GenericException(Message.DRIVER_ALREADY_EXIST);
 
-            RoleDAO roleDAO = new RoleDAO();
-            int role_id = roleDAO.getRoleID("Driver");
+            connection.setAutoCommit(false);
             int userId = -1;
 
             try (PreparedStatement insertStmt = connection.prepareStatement(INSERT_DRIVER_DATA, PreparedStatement.RETURN_GENERATED_KEYS)) {
-                insertStmt.setInt(1, role_id);
+                insertStmt.setInt(1, driver.getRole().getRoleId());
                 insertStmt.setString(2, driver.getFirstName());
                 insertStmt.setString(3, driver.getLastName());
                 insertStmt.setString(4, driver.getPhoneNo());
@@ -53,18 +56,14 @@ public class DriverDAO {
                     updateStmt.setInt(2, userId);
                     updateStmt.executeUpdate();
                 }
-
                 connection.commit();
-                return Message.REGISTRATION_SUCCESSFUL;
             } else {
                 connection.rollback();
+                throw new DBException(Message.DATABASE_ERROR);
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DBException(Message.DRIVER_ALREADY_EXIST);
         }
-
-        return Message.INTERNAL_SERVER_ERROR;
     }
 
     public User driverLogin(String emailId, String password) {
@@ -82,6 +81,7 @@ public class DriverDAO {
                     user.setUserId(resultSet.getInt("user_id"));
 
                     int roleId = resultSet.getInt("role_id");
+                    System.out.println("Role Id :: " + roleId);
 
                     Role role = null;
                     for (Role r : Role.values()) {
@@ -97,8 +97,8 @@ public class DriverDAO {
                     user.setPhoneNo(resultSet.getString("phone_no"));
                     user.setEmailId(resultSet.getString("email_id"));
                     user.setDisplayId(resultSet.getString("display_id"));
-                    user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
-                    user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
+//                    user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
+//                    user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
                     user.setCreatedBy(resultSet.getString("created_by"));
                     user.setUpdatedBy(resultSet.getString("updated_by"));
                 }
@@ -109,7 +109,6 @@ public class DriverDAO {
         }
         return user;
     }
-
 
     public String getRole(int role_id) {
         try (Connection connection = DBConnection.getConnection();
@@ -143,6 +142,23 @@ public class DriverDAO {
     private String generateDisplayId(int userId) {
         String timestampPart = String.valueOf(System.currentTimeMillis() % 1000);
         String userIdPart = String.format("%04d", userId % 10000);
-        return "US" + userIdPart + "R" + timestampPart;
+        return "DR" + userIdPart + "V" + timestampPart;
+    }
+
+    public void insertDriverDetails(Driver driver) throws SQLException, DBException {
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(INSERT_DRIVER_DETAILS)) {
+
+            statement.setInt(1, driver.getUserId());
+            statement.setString(2, driver.getLicenceNumber());
+            statement.setString(3, driver.getLicencePhoto());
+
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted == 0) {
+                throw new DBException(Message.Driver.Fail.FAILED_TO_INSERT_DRIVER_DETAIL);
+            }
+        } catch (DBException e){
+            throw new DBException(Message.DRIVER_ALREADY_EXIST);
+        }
     }
 }

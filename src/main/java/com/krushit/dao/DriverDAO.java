@@ -88,6 +88,7 @@ public class DriverDAO {
                     System.out.println("Role Id :: " + roleId);
 
                     Role role = null;
+                    role= null;
                     for (Role r : Role.values()) {
                         if (r.getRoleId() == roleId) {
                             role = r;

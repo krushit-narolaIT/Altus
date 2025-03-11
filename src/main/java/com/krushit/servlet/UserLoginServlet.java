@@ -2,10 +2,9 @@ package com.krushit.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
-import com.krushit.entity.User;
-import com.krushit.model.ApiResponse;
+import com.krushit.model.User;
+import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,18 +18,15 @@ public class UserLoginServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws IOException {
 		response.setContentType("application/json");
-
 		User loginUser = objectMapper.readValue(request.getReader(), User.class);
 		String email = loginUser.getEmailId();
 		String password = loginUser.getPassword();
-
 		if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
 			sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, Message.EMAIL_AND_PASS_REQUIRED, null);
 			return;
 		}
-
 		User authenticatedUser = userService.userLogin(email, password);
 		if (authenticatedUser != null) {
 			HttpSession session = request.getSession(true);

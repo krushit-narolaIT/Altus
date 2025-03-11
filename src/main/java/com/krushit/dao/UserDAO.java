@@ -1,10 +1,9 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.entity.Role;
-import com.krushit.entity.User;
+import com.krushit.model.Role;
+import com.krushit.model.User;
 import com.krushit.utils.DBConnection;
-import com.krushit.utils.DateUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -67,30 +66,15 @@ public class UserDAO {
 
     public User userLogin(String emailId, String password) {
         User user = null;
-
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(USER_LOGIN)) {
             statement.setString(1, emailId);
             statement.setString(2, password);
-
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
                 user = new User();
                 user.setUserId(resultSet.getInt("user_id"));
-
-                int roleId = resultSet.getInt("role_id");
-
-                Role role = null;
-                for (Role r : Role.values()) {
-                    if (r.getRoleId() == roleId) {
-                        role = r;
-                        break;
-                    }
-                }
-                System.out.println("Role :: " + role);
-                user.setRole(role);
-
+                user.setRole(Role.getRole(resultSet.getInt("role_id")));
                 user.setFirstName(resultSet.getString("first_name"));
                 user.setLastName(resultSet.getString("last_name"));
                 user.setPhoneNo(resultSet.getString("phone_no"));
@@ -104,7 +88,6 @@ public class UserDAO {
                 user.setUpdatedBy(resultSet.getString("updated_by"));
             }
             resultSet.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -113,15 +96,13 @@ public class UserDAO {
 
     public boolean isUserExist(String emailID) throws SQLException {
         try (Connection connection = DBConnection.getConnection();
-                PreparedStatement checkStmt = connection.prepareStatement(CHECK_USER_EXISTENCE)) {
+             PreparedStatement checkStmt = connection.prepareStatement(CHECK_USER_EXISTENCE)) {
             checkStmt.setString(1, emailID);
             ResultSet resultSet = checkStmt.executeQuery();
-
             if (resultSet.next() && resultSet.getInt(1) > 0) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -133,13 +114,10 @@ public class UserDAO {
 
     public User getUserDetails(int userId) {
         User user = null;
-
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
-
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
-
             if (resultSet.next()) {
                 user = new User();
                 user.setUserId(resultSet.getInt("user_id"));
@@ -173,4 +151,6 @@ public class UserDAO {
         }
         return user;
     }
+
+
 }

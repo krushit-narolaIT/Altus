@@ -1,9 +1,9 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.entity.Driver;
-import com.krushit.entity.Role;
-import com.krushit.entity.User;
+import com.krushit.model.Driver;
+import com.krushit.model.Role;
+import com.krushit.model.User;
 import com.krushit.exception.DBException;
 import com.krushit.exception.GenericException;
 import com.krushit.utils.DBConnection;
@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAO {
-    private UserDAO userDAO = new UserDAO();
-
     private final String INSERT_DRIVER_DATA = "INSERT INTO users (role_id, first_name, last_name, phone_no, email_id, password, display_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
     private final String DRIVER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
@@ -26,6 +24,7 @@ public class DriverDAO {
     private final String CHECK_DRIVER_EXISTENCE = "SELECT COUNT(*) FROM users WHERE email_id = ?";
     private final String INSERT_DRIVER_DETAILS = "INSERT INTO Drivers (user_id, licence_number, licence_photo) VALUES (?, ?, ?)";
     private final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE varification_status = FALSE";
+    private UserDAO userDAO = new UserDAO();
 
     public void registerDriver(User driver) throws SQLException, GenericException, DBException {
         try (Connection connection = DBConnection.getConnection()) {
@@ -102,8 +101,8 @@ public class DriverDAO {
                     user.setPhoneNo(resultSet.getString("phone_no"));
                     user.setEmailId(resultSet.getString("email_id"));
                     user.setDisplayId(resultSet.getString("display_id"));
-//                    user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
-//                    user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
+                    user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
+                    user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
                     user.setCreatedBy(resultSet.getString("created_by"));
                     user.setUpdatedBy(resultSet.getString("updated_by"));
                 }
@@ -117,7 +116,7 @@ public class DriverDAO {
 
     public String getRole(int role_id) {
         try (Connection connection = DBConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(GET_ROLE)) {
+             PreparedStatement statement = connection.prepareStatement(GET_ROLE)) {
             statement.setInt(1, role_id);
 
             ResultSet resultSet = statement.executeQuery();
@@ -153,16 +152,13 @@ public class DriverDAO {
     public void insertDriverDetails(Driver driver) throws SQLException, DBException {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(INSERT_DRIVER_DETAILS)) {
-
             statement.setInt(1, driver.getUserId());
             statement.setString(2, driver.getLicenceNumber());
             statement.setString(3, driver.getLicencePhoto());
-
-            int rowsInserted = statement.executeUpdate();
-            if (rowsInserted == 0) {
-                throw new DBException(Message.Driver.FAILED_TO_INSERT_DRIVER_DETAIL);
-            }
-        } catch (DBException e){
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DBException(Message.DRIVER_ALREADY_EXIST);
+        } catch (Exception e) {
             throw new DBException(Message.DRIVER_ALREADY_EXIST);
         }
     }

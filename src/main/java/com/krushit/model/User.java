@@ -1,4 +1,4 @@
-package com.krushit.entity;
+package com.krushit.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 

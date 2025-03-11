@@ -3,9 +3,9 @@ package com.krushit.service;
 import com.krushit.common.Message;
 import com.krushit.dao.DriverDAO;
 import com.krushit.dao.UserDAO;
-import com.krushit.entity.Driver;
-import com.krushit.entity.Role;
-import com.krushit.entity.User;
+import com.krushit.model.Driver;
+import com.krushit.model.Role;
+import com.krushit.model.User;
 import com.krushit.exception.DBException;
 import com.krushit.exception.GenericException;
 

@@ -1,4 +1,4 @@
-package com.krushit.entity;
+package com.krushit.model;
 
 import java.sql.Timestamp;
 
@@ -92,8 +92,8 @@ public class UserBuilder {
             return this;
         }
 
-        public com.krushit.entity.UserBuilder build() {
-            return new com.krushit.entity.UserBuilder(this);
+        public com.krushit.model.UserBuilder build() {
+            return new com.krushit.model.UserBuilder(this);
         }
     }
 

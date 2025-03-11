@@ -2,18 +2,17 @@ package com.krushit.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
-import com.krushit.entity.User;
+import com.krushit.model.User;
 import com.krushit.exception.GenericException;
-import com.krushit.model.ApiResponse;
+import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
-import com.krushit.utils.Validation;
+import com.krushit.utils.SignupValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class UserSignUpServlet extends HttpServlet {
     private final CustomerService userService = new CustomerService();
@@ -23,27 +22,19 @@ public class UserSignUpServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         response.setCharacterEncoding("UTF-8");
-
         System.out.println("in doPost");
-
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
                 throw new GenericException(Message.INVALID_CONTENT_TYPE);
             }
-
             User user = objectMapper.readValue(request.getReader(), User.class);
             System.out.println("Received User: " + user);
-
-            Validation.validateUser(user);
-            user.setCreatedAt(LocalDateTime.now());
-
+            SignupValidator.validateUser(user);
             userService.registerUser(user);
-
             createResponse(response, Message.USER_REGISTERED_SUCCESSFULLY, user.getEmailId());
         } catch (GenericException e) {
+            e.printStackTrace();
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
-        } catch (IOException e) {
-            createResponse(response, Message.INVALID_CONTENT_TYPE + e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
             createResponse(response, Message.INTERNAL_SERVER_ERROR + e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

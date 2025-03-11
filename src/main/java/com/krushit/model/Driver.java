@@ -1,4 +1,4 @@
-package com.krushit.entity;
+package com.krushit.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -22,7 +22,11 @@ public class Driver extends User {
         super();
     }
 
-    public Driver(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId, String password, boolean isActive, String displayId, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy, int driverId, String licenceNumber, boolean isDocumentVerified, String licencePhoto, boolean isAvailable, String verificationStatus, String comment) {
+    public Driver(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId,
+                  String password, boolean isActive, String displayId, LocalDateTime createdAt,
+                  LocalDateTime updatedAt, String createdBy, String updatedBy,
+                  int driverId, String licenceNumber, boolean isDocumentVerified, String licencePhoto,
+                  boolean isAvailable, String verificationStatus, String comment) {
         super(userId, role, firstName, lastName, phoneNo, emailId, password, isActive, displayId, createdAt, updatedAt, createdBy, updatedBy);
         this.driverId = driverId;
         this.licenceNumber = licenceNumber;

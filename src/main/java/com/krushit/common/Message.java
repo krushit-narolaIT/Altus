@@ -1,6 +1,10 @@
 package com.krushit.common;
 
 public final class Message {
+
+    private Message() {
+    }
+
     public static final String GENERIC_ERROR = "OOps something went wong. please try after sometime or contact our support team.";
     public static final String USER_ALREADY_EXIST = "User Already Exist";
     public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
@@ -25,13 +29,9 @@ public final class Message {
     public static final String EMPTY_EMAIL = "Please enter email";
     public static final String UNAUTHORIZED = "You don't have valid privilege to perform this operation";
 
-    private Message() {
-    }
-
     public static final class Driver {
         private Driver() {
         }
-
         public static final String REGISTERED_SUCCESSFUL = "Driver Registered Successful";
         public static final String DOCUMENT_STORED_SUCCESSFULLY = "Document Stored Successfully";
         public static final String FAILED_TO_INSERT_DRIVER_DETAIL = "Failed to insert driver detail";

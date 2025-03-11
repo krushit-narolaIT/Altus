@@ -1,12 +1,13 @@
 package com.krushit.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.krushit.common.Message;
-import com.krushit.entity.User;
+import com.krushit.model.User;
 import com.krushit.exception.ValidationException;
-import com.krushit.model.ApiResponse;
+import com.krushit.dto.ApiResponse;
 import com.krushit.service.DriverService;
-import com.krushit.utils.Validation;
+import com.krushit.utils.SignupValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,8 +18,8 @@ import java.io.IOException;
 
 public class DriverLoginServlet extends HttpServlet {
     private final DriverService driverService = new DriverService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    //.registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule());
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -30,12 +31,13 @@ public class DriverLoginServlet extends HttpServlet {
         String password = loginUser.getPassword();
 
         try {
-            Validation.validateLoginCredentials(email, password);
+            SignupValidator.validateLoginCredentials(email, password);
 
             User authenticatedDriver = driverService.driverLogin(email, password);
             if (authenticatedDriver != null) {
-                System.out.println("Authenticated User :: " + authenticatedDriver);
-                HttpSession session = request.getSession(true);
+                System.out.println("Authenticated Driver :: " + authenticatedDriver);
+                HttpSession session = request.getSession();
+                System.out.println("Session ID :: " + session.getId());
                 session.setAttribute("user", authenticatedDriver);
 
                 sendResponse(response, HttpServletResponse.SC_OK, Message.LOGIN_SUCCESSFUL, authenticatedDriver);

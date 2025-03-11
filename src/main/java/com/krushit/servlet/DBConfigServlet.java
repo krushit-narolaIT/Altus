@@ -17,6 +17,7 @@ public class DBConfigServlet extends HttpServlet {
 
         try {
             DBConnection.init(dbUrl, dbUsername, dbPassword, dbDriver);
+
             System.out.println(Message.DATABASE_CONNECTION_ESTABLISHED);
         } catch (Exception e) {
             System.out.println("failed...!!");

@@ -3,14 +3,11 @@ package com.krushit.utils;
 
 
 import com.krushit.common.Message;
-import com.krushit.entity.Driver;
-import com.krushit.entity.User;
+import com.krushit.model.Driver;
+import com.krushit.model.User;
 import com.krushit.exception.ValidationException;
-import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.regex.Pattern;
-
-public class Validation {
+public class SignupValidator {
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,20}$";
     private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!])[A-Za-z\\d@#$%^&+=!]{8,20}$";
     private static final String PHONE_REGEX = "^\\d{10}$";
@@ -29,9 +26,9 @@ public class Validation {
             throw new ValidationException(Message.PLEASE_ENTER_VALID_EMAIL);
         }
 
-        Validation.validatePassword(user.getPassword());
-        Validation.validatePhoneNumber(user.getPhoneNo());
-        Validation.validateEmail(user.getEmailId());
+        validatePassword(user.getPassword());
+        validatePhoneNumber(user.getPhoneNo());
+        validateEmail(user.getEmailId());
     }
 
     public static void validatePassword(String password) throws ValidationException {

@@ -1,4 +1,4 @@
-package com.krushit.model;
+package com.krushit.dto;
 
 public class ApiResponse {
     private String message;

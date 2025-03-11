@@ -3,18 +3,18 @@ package com.krushit.servlet;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
-import com.krushit.entity.Driver;
-import com.krushit.model.ApiResponse;
+import com.krushit.model.Driver;
+import com.krushit.dto.ApiResponse;
+import com.krushit.model.User;
 import com.krushit.service.DriverService;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.List;
 
 public class DriverVerificationServlet extends HttpServlet {
@@ -25,6 +25,14 @@ public class DriverVerificationServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.INVALID_CONTENT_TYPE);
         try {
+            HttpSession session = request.getSession();
+            User user = (User) session.getAttribute("user");
+
+            System.out.println("User :: " + user.getRole());
+            if(user.getRole().getRoleId() != 1){
+                createResponse(response, Message.UNAUTHORIZED, null, HttpServletResponse.SC_UNAUTHORIZED);
+            }
+
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
                 createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
                 return;

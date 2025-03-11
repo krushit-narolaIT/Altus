@@ -2,12 +2,12 @@ package com.krushit.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
-import com.krushit.entity.User;
+import com.krushit.model.User;
 import com.krushit.exception.GenericException;
-import com.krushit.model.ApiResponse;
+import com.krushit.dto.ApiResponse;
 import com.krushit.service.DriverService;
 import com.krushit.exception.DBException;
-import com.krushit.utils.Validation;
+import com.krushit.utils.SignupValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,7 +30,7 @@ public class DriverSignUpServlet extends HttpServlet {
             }
 
             User user = objectMapper.readValue(request.getReader(), User.class);
-            Validation.validateUser(user);
+            SignupValidator.validateUser(user);
 
             driverService.registerDriver(user);
 

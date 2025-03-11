@@ -33,7 +33,6 @@ public class DriverLoginServlet extends HttpServlet {
             Validation.validateLoginCredentials(email, password);
 
             User authenticatedDriver = driverService.driverLogin(email, password);
-            System.out.println("Here");
             if (authenticatedDriver != null) {
                 System.out.println("Authenticated User :: " + authenticatedDriver);
                 HttpSession session = request.getSession(true);

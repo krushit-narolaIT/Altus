@@ -1,7 +1,10 @@
 package com.krushit.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.time.LocalDateTime;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Driver extends User {
     private int driverId;
     private String licenceNumber;

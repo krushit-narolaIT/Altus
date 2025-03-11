@@ -33,7 +33,7 @@ public class DriverDetailsServlet extends HttpServlet {
 
             driverService.storeDriverDetails(driver);
 
-            createResponse(response, Message.Driver.Success.DOCUMENT_STORED_SUCCESSFULLY, driver);
+            createResponse(response, Message.Driver.DOCUMENT_STORED_SUCCESSFULLY, driver);
         } catch (IllegalArgumentException e) {
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (DBException e) {

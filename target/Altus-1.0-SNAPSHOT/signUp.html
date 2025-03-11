@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: "Uber Move";
+        }
+        .input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            margin-bottom: 5px;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.85rem;
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+
+    <div class="bg-black flex items-center justify-center rounded py-6">
+        <h1 class="text-5xl text-white">Altus</h1>
+    </div>
+
+    <h2 class="text-xl font-bold text-center text-gray-800 mb-4 mt-4">User Sign Up</h2>
+
+    <form id="signupForm">
+        <div class="mb-3">
+            <input type="text" name="firstName" id="firstName" class="input" placeholder="First Name" required/>
+            <p class="error-message">First name is required</p>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="lastName" id="lastName" class="input" placeholder="Last Name" required/>
+            <p class="error-message">Last name is required</p>
+        </div>
+        <div class="mb-3">
+            <input type="text" name="phoneNo" id="phoneNo" class="input" placeholder="Phone Number" required/>
+            <p class="error-message">Enter a valid 10-digit phone number</p>
+        </div>
+        <div class="mb-3">
+            <input type="email" name="emailId" id="emailId" class="input" placeholder="Email" required/>
+            <p class="error-message">Enter a valid email</p>
+        </div>
+        <div class="mb-3">
+            <input type="password" name="password" id="password" class="input" placeholder="Password" required/>
+            <p class="error-message">Password length must be greater than 8</p>
+        </div>
+
+        <button type="submit" class="w-full bg-black text-white py-2 rounded-md hover:bg-gray-300 hover:text-black shadow-lg">
+            Sign Up
+        </button>
+    </form>
+
+    <div class="bg-black flex items-center justify-center rounded mt-4">
+        <p id="responseMessage" class="text-center font-semibold hidden"></p>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("#signupForm").submit(function (event) {
+            event.preventDefault();
+
+            let isValid = true;
+            const responseMessage = $("#responseMessage");
+            responseMessage.addClass("hidden");
+
+            const formFields = ["firstName", "lastName", "phoneNo", "emailId", "password"];
+            const formData = {};
+
+            formFields.forEach((field) => {
+                const input = $("#" + field);
+                const error = input.next(".error-message");
+
+                formData[field] = input.val().trim();
+
+                if (
+                    !formData[field] ||
+                    (field === "phoneNo" && !/^\d{10}$/.test(formData[field])) ||
+                    (field === "emailId" && !/^\S+@\S+\.\S+$/.test(formData[field])) ||
+                    (field === "password" && formData[field].length < 8)
+                ) {
+                    error.removeClass("hidden");
+                    isValid = false;
+                } else {
+                    error.addClass("hidden");
+                }
+            });
+
+            if (isValid) {
+                $.ajax({
+                    url: "UserSignUp",
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        console.log("Server Response:", response);
+                        responseMessage.text(response.message);
+                        responseMessage.removeClass("hidden text-red-600").addClass("text-green-600");
+                    },
+                    error: function (xhr) {
+                        console.log("Error Response:", xhr.responseText);
+
+                        try {
+                            const errorResponse = JSON.parse(xhr.responseText);
+                            responseMessage.text(errorResponse.message || "An error occurred.");
+                        } catch (e) {
+                            responseMessage.text("Something went wrong!");
+                        }
+
+                        responseMessage.removeClass("hidden text-green-600").addClass("text-red-600");
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

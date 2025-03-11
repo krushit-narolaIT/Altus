@@ -1,7 +1,7 @@
 package com.krushit.utils;
 
-import com.krushit.exception.GenericException;
-import jakarta.servlet.ServletContext;
+import com.krushit.common.Message;
+import com.krushit.exception.DBException;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,20 +13,21 @@ public class DBConnection {
     private static String DB_PASSWORD;
     private static String DB_DRIVER;
 
-    static {
-        try {
-            ServletContext context = ContextListener.getServletContext();
-            DB_URL = context.getInitParameter("db.url");
-            DB_USER_NAME = context.getInitParameter("db.username");
-            DB_PASSWORD = context.getInitParameter("db.password");
-            DB_DRIVER = context.getInitParameter("db.driver");
+    public static void init(String url, String username, String password, String driver) throws Exception {
+        DB_URL = url;
+        DB_USER_NAME = username;
+        DB_PASSWORD = password;
+        DB_DRIVER = driver;
 
-            Class.forName(DB_DRIVER);
-        } catch (Exception e) {
-            try {
-                throw new GenericException("Error loading database configuration");
-            } catch (GenericException ex) {
-                ex.printStackTrace();
+        if (DB_URL == null || DB_USER_NAME == null || DB_PASSWORD == null || DB_DRIVER == null) {
+            throw new Exception("Missing database  credentials.");
+        }
+
+        Class.forName(DB_DRIVER);
+
+        try (Connection conn = getConnection()) {
+            if (conn == null) {
+                throw new DBException(Message.DATABASE_CONNECTION_FAILED);
             }
         }
     }

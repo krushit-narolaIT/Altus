@@ -88,7 +88,7 @@ public class UserDAO {
                         break;
                     }
                 }
-
+                System.out.println("Role :: " + role);
                 user.setRole(role);
 
                 user.setFirstName(resultSet.getString("first_name"));
@@ -173,6 +173,4 @@ public class UserDAO {
         }
         return user;
     }
-
-
 }

@@ -10,6 +10,7 @@ import com.krushit.exception.DBException;
 import com.krushit.exception.GenericException;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class DriverService {
     private final DriverDAO driverDAO = new DriverDAO();
@@ -57,5 +58,10 @@ public class DriverService {
         } catch (SQLException e) {
             throw new DBException(Message.DRIVER_ALREADY_EXIST);
         }
+    }
+
+    public List<Driver> getPendingVerificationDrivers() throws SQLException {
+        System.out.println("In service");
+        return driverDAO.getPendingVerificationDrivers();
     }
 }

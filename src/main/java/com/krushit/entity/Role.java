@@ -1,8 +1,8 @@
 package com.krushit.entity;
 
 public enum Role {
-    ROLE_CUSTOMER("Customer",1),
-    ROLE_SUPER_ADMIN("Admin", 2),
+    ROLE_CUSTOMER("Customer",2),
+    ROLE_SUPER_ADMIN("Admin", 1),
     ROLE_DRIVER("Driver",3);
 
     private final String roleName;

@@ -2,6 +2,7 @@ package com.krushit.service;
 
 import com.krushit.dao.DriverDAO;
 import com.krushit.dao.UserDAO;
+import com.krushit.exception.DBException;
 import com.krushit.model.Driver;
 import com.krushit.model.Role;
 import com.krushit.model.User;
@@ -28,9 +29,7 @@ public class CustomerService {
         return userDAO.fetchAllCustomers();
     }
 
-    public List<Driver> getAllDrivers() {
+    public List<Driver> getAllDrivers() throws DBException {
         return driverDAO.fetchAllDrivers();
     }
-
-
 }

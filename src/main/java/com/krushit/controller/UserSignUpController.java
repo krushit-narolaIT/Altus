@@ -1,9 +1,10 @@
-package com.krushit.servlet;
+package com.krushit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
+import com.krushit.model.Role;
 import com.krushit.model.User;
-import com.krushit.exception.GenericException;
+import com.krushit.exception.ApplicationException;
 import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
 import com.krushit.utils.SignupValidator;
@@ -14,25 +15,30 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-public class UserSignUpServlet extends HttpServlet {
+public class UserSignUpController extends HttpServlet {
     private final CustomerService userService = new CustomerService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(Message.UTF_8);
         System.out.println("in doPost");
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
-                throw new GenericException(Message.INVALID_CONTENT_TYPE);
+                throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
             }
+            String path = request.getServletPath();
             User user = objectMapper.readValue(request.getReader(), User.class);
-            System.out.println("Received User: " + user);
             SignupValidator.validateUser(user);
+            if(path.equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)){
+                user.setRole(Role.ROLE_CUSTOMER);
+            } else {
+                user.setRole(Role.ROLE_DRIVER);
+            }
             userService.registerUser(user);
             createResponse(response, Message.USER_REGISTERED_SUCCESSFULLY, user.getEmailId());
-        } catch (GenericException e) {
+        } catch (ApplicationException e) {
             e.printStackTrace();
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {

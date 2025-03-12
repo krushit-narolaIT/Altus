@@ -1,4 +1,4 @@
-package com.krushit.servlet;
+package com.krushit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
@@ -13,14 +13,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class DriverDetailsServlet extends HttpServlet {
+public class DriverDetailsController extends HttpServlet {
     private final DriverService driverService = new DriverService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
-        response.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding(Message.UTF_8);
 
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {

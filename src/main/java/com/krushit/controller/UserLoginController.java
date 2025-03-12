@@ -1,4 +1,4 @@
-package com.krushit.servlet;
+package com.krushit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
@@ -12,14 +12,14 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
-public class UserLoginServlet extends HttpServlet {
+public class UserLoginController extends HttpServlet {
 	private final CustomerService userService = new CustomerService();
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		response.setContentType("application/json");
+		response.setContentType(Message.APPLICATION_JSON);
 		User loginUser = objectMapper.readValue(request.getReader(), User.class);
 		String email = loginUser.getEmailId();
 		String password = loginUser.getPassword();

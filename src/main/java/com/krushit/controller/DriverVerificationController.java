@@ -1,6 +1,5 @@
-package com.krushit.servlet;
+package com.krushit.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.model.Driver;
@@ -13,11 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.List;
 
-public class DriverVerificationServlet extends HttpServlet {
+public class DriverVerificationController extends HttpServlet {
     private final DriverService driverService = new DriverService();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -31,35 +29,13 @@ public class DriverVerificationServlet extends HttpServlet {
             System.out.println("User :: " + user.getRole());
             if(user.getRole().getRoleId() != 1){
                 createResponse(response, Message.UNAUTHORIZED, null, HttpServletResponse.SC_UNAUTHORIZED);
-            }
-
-            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
-                createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-
-            BufferedReader reader = request.getReader();
-            StringBuilder requestBody = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                requestBody.append(line);
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode jsonNode = objectMapper.readTree(requestBody.toString());
-
-            int roleId = jsonNode.has("roleId") ? jsonNode.get("roleId").asInt() : -1;
-            System.out.println("Role ID: " + roleId);
-
-            if (roleId != 1) {
-                createResponse(response, Message.UNAUTHORIZED, null, HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
             System.out.println("In doGet");
 
             List<Driver> pendingDrivers = driverService.getPendingVerificationDrivers();
+            System.out.println("Pending Drivers :: " + pendingDrivers);
 
             if (pendingDrivers.isEmpty()) {
                 createResponse(response, Message.Driver.NO_PENDING_VERIFICATION, null, HttpServletResponse.SC_OK);
@@ -75,7 +51,13 @@ public class DriverVerificationServlet extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = (data == null) ? new ApiResponse(message) : new ApiResponse(message, data);
+        ApiResponse apiResponse = null;
+        if(data == null){
+            apiResponse = new ApiResponse(message);
+        } else {
+            apiResponse = new ApiResponse(message, data);
+        }
+        System.out.println("API Response :: " + apiResponse);
         response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
     }
 

@@ -1,4 +1,4 @@
-package com.krushit.servlet;
+package com.krushit.controller;
 
 import com.krushit.common.Message;
 import com.krushit.utils.DBConnection;
@@ -6,7 +6,7 @@ import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 
-public class DBConfigServlet extends HttpServlet {
+public class DBConfigController extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
 

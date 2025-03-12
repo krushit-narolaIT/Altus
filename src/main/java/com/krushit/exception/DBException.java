@@ -1,6 +1,12 @@
 package com.krushit.exception;
 
-public class DBException extends Exception {
+import java.sql.SQLException;
+
+public class DBException extends ApplicationException {
+    public DBException(String message, SQLException e) {
+        super(message, e);
+    }
+
     public DBException(String message) {
         super(message);
     }

@@ -26,7 +26,7 @@
 
     <servlet>
         <servlet-name>DBConfigServlet</servlet-name>
-        <servlet-class>com.krushit.servlet.DBConfigServlet</servlet-class>
+        <servlet-class>com.krushit.controller.DBConfigController</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -36,7 +36,7 @@
 
     <servlet>
         <servlet-name>DriverVerificationServlet</servlet-name>
-        <servlet-class>com.krushit.servlet.DriverVerificationServlet</servlet-class>
+        <servlet-class>com.krushit.controller.DriverVerificationController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DriverVerificationServlet</servlet-name>
@@ -45,7 +45,7 @@
 
     <servlet>
         <servlet-name>UserLogin</servlet-name>
-        <servlet-class>com.krushit.servlet.UserLoginServlet</servlet-class>
+        <servlet-class>com.krushit.controller.UserLoginController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserLogin</servlet-name>
@@ -54,7 +54,7 @@
 
     <servlet>
         <servlet-name>UserSignUp</servlet-name>
-        <servlet-class>com.krushit.servlet.UserSignUpServlet</servlet-class>
+        <servlet-class>com.krushit.controller.UserSignUpController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserSignUp</servlet-name>
@@ -62,29 +62,56 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>DriverSignUp</servlet-name>
-        <servlet-class>com.krushit.servlet.DriverSignUpServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DriverSignUp</servlet-name>
-        <url-pattern>/DriverSignUp</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>DriverLogin</servlet-name>
-        <servlet-class>com.krushit.servlet.DriverLoginServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>DriverLogin</servlet-name>
-        <url-pattern>/DriverLogin</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
         <servlet-name>DriverDetailsServlet</servlet-name>
-        <servlet-class>com.krushit.servlet.DriverDetailsServlet</servlet-class>
+        <servlet-class>com.krushit.controller.DriverDetailsController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DriverDetailsServlet</servlet-name>
         <url-pattern>/DriverDetailsServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetAllUsersServlet</servlet-name>
+        <servlet-class>com.krushit.controller.GetAllUsersController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetAllUsersServlet</servlet-name>
+        <url-pattern>/GetAllUsersServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetAllDriversServlet</servlet-name>
+        <servlet-class>com.krushit.controller.GetAllDriversController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetAllDriversServlet</servlet-name>
+        <url-pattern>/GetAllDriversServlet</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>VerifyDriverDocument</servlet-name>
+        <servlet-class>com.krushit.controller.VerifyDriverDocumentController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>VerifyDriverDocument</servlet-name>
+        <url-pattern>/VerifyDriverDocument</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddVehicleService</servlet-name>
+        <servlet-class>com.krushit.controller.AddVehicleServiceController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddVehicleService</servlet-name>
+        <url-pattern>/AddVehicleService</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddBrandModelController</servlet-name>
+        <servlet-class>com.krushit.controller.AddBrandModelController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddBrandModelController</servlet-name>
+        <url-pattern>/AddBrandModel</url-pattern>
     </servlet-mapping>
 </web-app>

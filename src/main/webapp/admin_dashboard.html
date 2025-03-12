@@ -25,7 +25,7 @@
     }
   </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen width-100">
 <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl">
   <div class="bg-black flex items-center justify-center rounded py-6">
     <h1 class="text-5xl text-white">Altus</h1>
@@ -57,27 +57,37 @@
       url: "DriverVerificationServlet",
       type: "GET",
       dataType: "json",
-      success: function (data) {
+      success: function (response) {
+        console.log("API Response:", response);
+
         let tableBody = $("#pendingDriversTable");
         tableBody.empty();
 
-        if (data.length === 0) {
+        if (!response.data || !Array.isArray(response.data)) {
+          console.error("Invalid response format:", response);
+          alert("Invalid data received. Please check the server response.");
+          return;
+        }
+
+        let drivers = response.data;
+
+        if (drivers.length === 0) {
           tableBody.append(`
-            <tr>
-              <td colspan="5" class="text-center py-4 text-gray-600">No pending driver verifications.</td>
-            </tr>
-          `);
+                    <tr>
+                        <td colspan="5" class="text-center py-4 text-gray-600">No pending driver verifications.</td>
+                    </tr>
+                `);
         } else {
-          data.forEach(driver => {
+          drivers.forEach(driver => {
             tableBody.append(`
-              <tr>
-                <td class="border px-4 py-2">${driver.firstName} ${driver.lastName}</td>
-                <td class="border px-4 py-2">${driver.emailId}</td>
-                <td class="border px-4 py-2">${driver.phoneNo}</td>
-                <td class="border px-4 py-2">${driver.licenceNumber}</td>
-                <td class="border px-4 py-2 text-yellow-600 font-bold">${driver.verificationStatus}</td>
-              </tr>
-            `);
+                        <tr>
+                            <td class="border px-4 py-2">${driver.firstName} ${driver.lastName}</td>
+                            <td class="border px-4 py-2">${driver.emailId}</td>
+                            <td class="border px-4 py-2">${driver.displayId}</td>
+                            <td class="border px-4 py-2">${driver.documentVerified ? "✔ Verified" : "❌ Not Verified"}</td>
+                            <td class="border px-4 py-2 text-yellow-600 font-bold">${driver.active ? "Active" : "Pending"}</td>
+                        </tr>
+                    `);
           });
         }
       },

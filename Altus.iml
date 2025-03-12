@@ -35,5 +35,10 @@
     <orderEntry type="library" scope="TEST" name="Maven: org.apiguardian:apiguardian-api:1.1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.jupiter:junit-jupiter-engine:5.8.1" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.junit.platform:junit-platform-engine:1.8.1" level="project" />
+    <orderEntry type="library" name="jackson-annotations-2.18.31" level="project" />
+    <orderEntry type="library" name="jackson-core-2.18.3" level="project" />
+    <orderEntry type="library" name="jackson-databind-2.18.3" level="project" />
+    <orderEntry type="library" name="mysql-connector-j-9.1.0" level="project" />
+    <orderEntry type="library" name="jackson-datatype-jsr310-2.18.3" level="project" />
   </component>
 </module>

@@ -1,8 +1,10 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
-import com.krushit.dao.DriverDAO;
-import com.krushit.dao.UserDAO;
+import com.krushit.dao.DriverDAOImpl;
+import com.krushit.dao.IDriverDAO;
+import com.krushit.dao.IUserDAO;
+import com.krushit.dao.UserDAOImpl;
 import com.krushit.model.Driver;
 import com.krushit.model.Role;
 import com.krushit.model.User;
@@ -13,19 +15,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class DriverService {
-    private final DriverDAO driverDAO = new DriverDAO();
-    private final UserDAO userDAO = new UserDAO();
-
-    public void registerDriver(User user) throws SQLException, DBException, ApplicationException {
-        try {
-            user.setRole(Role.ROLE_DRIVER);
-            driverDAO.registerDriver(user);
-        } catch (DBException e) {
-            throw new DBException(e.getMessage());
-        } catch (ApplicationException e){
-            throw new ApplicationException(e.getMessage());
-        }
-    }
+    private final IDriverDAO driverDAO = new DriverDAOImpl();
+    private final IUserDAO userDAO = new UserDAOImpl();
 
     public User driverLogin(String email, String password) throws DBException {
         return driverDAO.driverLogin(email, password);
@@ -76,7 +67,7 @@ public class DriverService {
         driverDAO.verifyDriver(driverId, isVerified, rejectionMessage);
     }
 
-    public List<Driver> getAllDrivers() {
+    public List<Driver> getAllDrivers() throws DBException {
         return driverDAO.fetchAllDrivers();
     }
 }

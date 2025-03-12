@@ -1,10 +1,12 @@
 package com.krushit.service;
 
-import com.krushit.dao.DriverDAO;
-import com.krushit.dao.UserDAO;
+import com.krushit.dao.DriverDAOImpl;
+import com.krushit.dao.IDriverDAO;
+import com.krushit.dao.IUserDAO;
+import com.krushit.dao.UserDAOImpl;
+import com.krushit.exception.ApplicationException;
 import com.krushit.exception.DBException;
 import com.krushit.model.Driver;
-import com.krushit.model.Role;
 import com.krushit.model.User;
 
 import java.sql.SQLException;
@@ -12,16 +14,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class CustomerService {
-    private final UserDAO userDAO = new UserDAO();
-    private final DriverDAO driverDAO = new DriverDAO();
+    private final IUserDAO userDAO = new UserDAOImpl();
+    private final IDriverDAO driverDAO = new DriverDAOImpl();
 
-    public String registerUser(User user) throws SQLException {
-        user.setRole(Role.ROLE_CUSTOMER);
+    public void registerUser(User user) throws SQLException, ApplicationException {
         user.setCreatedAt(LocalDateTime.now());
-        return userDAO.registerUser(user);
+        userDAO.registerUser(user);
     }
 
     public User userLogin(String email, String password) {
+        System.out.println("In UserLogin");
         return userDAO.userLogin(email, password);
     }
 

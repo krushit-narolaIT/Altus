@@ -60,6 +60,11 @@
         <servlet-name>UserSignUp</servlet-name>
         <url-pattern>/UserSignUp</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserSignUp</servlet-name>
+        <url-pattern>/DriverSignUp</url-pattern>
+    </servlet-mapping>
+
 
     <servlet>
         <servlet-name>DriverDetailsServlet</servlet-name>
@@ -114,4 +119,14 @@
         <servlet-name>AddBrandModelController</servlet-name>
         <url-pattern>/AddBrandModel</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddVehicle</servlet-name>
+        <servlet-class>com.krushit.controller.AddVehicleController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddVehicle</servlet-name>
+        <url-pattern>/AddVehicle</url-pattern>
+    </servlet-mapping>
+
 </web-app>

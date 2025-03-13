@@ -1,38 +1,45 @@
 package com.krushit.utils;
 
-import com.krushit.common.Message;
-import com.krushit.exception.DBException;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DBConnection {
-    private static String DB_URL;
-    private static String DB_USER_NAME;
-    private static String DB_PASSWORD;
-    private static String DB_DRIVER;
+    public static DBConnection INSTANCE = null;
 
-    public static void init(String url, String username, String password, String driver) throws Exception {
-        DB_URL = url;
-        DB_USER_NAME = username;
-        DB_PASSWORD = password;
-        DB_DRIVER = driver;
+    private String dbUrl;
+    private String dbUsername;
+    private String dbPassword;
+    private String dbDriver;
 
-        if (DB_URL == null || DB_USER_NAME == null || DB_PASSWORD == null || DB_DRIVER == null) {
-            throw new Exception("Missing database  credentials.");
-        }
-
-        Class.forName(DB_DRIVER);
-
-        try (Connection conn = getConnection()) {
-            if (conn == null) {
-                throw new DBException(Message.DATABASE_CONNECTION_FAILED);
-            }
-        }
+    private DBConnection(String url, String username, String password, String driver) throws SQLException, ClassNotFoundException {
+        dbUrl = url;
+        dbUsername = username;
+        dbPassword = password;
+        dbDriver = driver;
     }
 
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(DB_URL, DB_USER_NAME, DB_PASSWORD);
+    public static DBConnection getInstance(String url, String username, String password, String driver) throws SQLException, ClassNotFoundException {
+        if (INSTANCE == null) {
+            INSTANCE = new DBConnection(url,username,password,driver);
+        }
+        return INSTANCE;
+    }
+
+    public void validateConnection() throws SQLException, ClassNotFoundException {
+        getConnection();
+    }
+
+    public Connection getConnection() throws ClassNotFoundException, SQLException {
+        Class.forName(this.dbDriver);
+        return DriverManager.getConnection(this.dbUrl, this.dbUsername, this.dbPassword);
+    }
+
+    public static void closeResources(ResultSet rs, PreparedStatement preparedStatement, Connection connection) {
+        try {
+            if (rs != null) rs.close();
+            if (preparedStatement != null) preparedStatement.close();
+            if (connection != null) connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

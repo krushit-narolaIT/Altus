@@ -67,12 +67,12 @@
 
 
     <servlet>
-        <servlet-name>DriverDetailsServlet</servlet-name>
-        <servlet-class>com.krushit.controller.DriverDetailsController</servlet-class>
+        <servlet-name>AddDriverDocument</servlet-name>
+        <servlet-class>com.krushit.controller.AddDriverDetailsController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DriverDetailsServlet</servlet-name>
-        <url-pattern>/DriverDetailsServlet</url-pattern>
+        <servlet-name>AddDriverDocument</servlet-name>
+        <url-pattern>/AddDriverDocument</url-pattern>
     </servlet-mapping>
 
     <servlet>

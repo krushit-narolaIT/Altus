@@ -17,5 +17,8 @@ public interface IDriverDAO {
     List<Driver> fetchAllDrivers() throws DBException;
     List<Driver> fetchPendingVerificationDrivers() throws DBException;
     void insertDriverDetails(Driver driver) throws SQLException, DBException;
-    List<Driver> getPendingVerificationDrivers() throws SQLException;
+    List<Driver> getPendingVerificationDrivers() throws SQLException, ClassNotFoundException;
+    Integer getDriverIdFromUserId(int userId) throws DBException;
+    boolean isDriverDocumentVerified(int driverId) throws ApplicationException;
+    boolean isDriverDocumentUploaded(int driverId) throws DBException;
 }

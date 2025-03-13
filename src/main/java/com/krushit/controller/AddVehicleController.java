@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.dto.ApiResponse;
 import com.krushit.exception.ApplicationException;
+import com.krushit.exception.DBException;
 import com.krushit.model.User;
 import com.krushit.model.Vehicle;
 import com.krushit.service.VehicleRideService;
@@ -35,14 +36,16 @@ public class AddVehicleController extends HttpServlet {
                 return;
             }
 
-            vehicle.setDriverId(user.getUserId());
-            vehicleRideService.addVehicle(vehicle);
+            vehicleRideService.addVehicle(vehicle, user.getUserId());
 
             createResponse(resp, "Vehicle registered successfully!", null, HttpServletResponse.SC_OK);
 
-        } catch (ApplicationException e) {
+        } catch (DBException e) {
             e.printStackTrace();
             createResponse(resp, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (ApplicationException e) {
+            e.printStackTrace();
+            createResponse(resp, e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             e.printStackTrace();
             createResponse(resp, "Server Error", null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

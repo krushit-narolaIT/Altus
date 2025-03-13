@@ -35,6 +35,8 @@ public final class Message {
         private Driver() {
         }
 
+        public static final String DOCUMENT_NOT_VERIFIED = "Driver document not verified";
+        public static final String DOCUMENT_UPLOADING_FAILED = "Failed to upload driver document";
         public static final String DRIVER_NOT_EXIST = "Driver Not Exist";
         public static final String DRIVER_PATH = "/DriverSignUp";
         public static final String NO_DRIVERS_FOUND = "No Drivers Found";
@@ -71,9 +73,11 @@ public final class Message {
         private Vehicle() {
         }
 
-        public static final String INVALID_VEHICLE_TYPE = "Please Enter Valid Vehicle Type";
+        public static String INVALID_VEHICLE_TYPE = "Please Enter Valid Vehicle Type";
         public static String ERROR_OCCUR_WHILE_ADDING_SERVICE = "Error Occur While Adding Vehicle Service";
         public static String ERROR_OCCUR_WHILE_ADDING_MODEL = "Error Occur While Adding Vehicle Model";
+        public static String ERROR_OCCUR_WHILE_CHECK_VEHICLE_EXISTENCE = "Error checking driver vehicle existence.";
+        public static String DRIVER_VEHICLE_ALREADY_EXIST = "Driver vehicle already exist";
     }
 
     public static final class Database {

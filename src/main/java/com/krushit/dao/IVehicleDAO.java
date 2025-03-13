@@ -9,4 +9,5 @@ public interface IVehicleDAO {
     void addVehicle(Vehicle vehicle) throws ApplicationException;
     void addVehicleService(VehicleService vehicleService) throws ApplicationException;
     void addBrandModel(BrandModel brandModel) throws ApplicationException;
+    boolean isDriverVehicleExist(int driverID) throws ApplicationException;
 }

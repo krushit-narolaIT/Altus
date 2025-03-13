@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IUserDAO {
-    void registerUser(User user) throws ApplicationException, SQLException;
+    void registerUser(User user) throws ApplicationException, SQLException, ClassNotFoundException;
     User userLogin(String emailId, String password);
-    boolean isUserExist(String emailID) throws SQLException;
+    boolean isUserExist(String emailID) throws SQLException, ClassNotFoundException;
     User getUserDetails(int userId);
     List<User> fetchAllCustomers();
 }

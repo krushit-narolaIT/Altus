@@ -14,7 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDAOImpl implements IUserDAO{
+public class UserDAOImpl implements IUserDAO {
     private final String INSERT_USER_DATA = "INSERT INTO users (role_id , first_name, last_name, phone_no, email_id, password, display_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
     private final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
@@ -22,12 +22,13 @@ public class UserDAOImpl implements IUserDAO{
     private final String GET_ROLE = "SELECT role FROM roles WHERE role_id = ?";
     private final String CHECK_USER_EXISTENCE = "SELECT COUNT(*) FROM users WHERE email_id = ?";
     private final String INSERT_DRIVER_ENTRY = "INSERT INTO drivers (user_id) VALUES (?)";
+    private final String GET_ALL_USERS = "SELECT * FROM users WHERE role_id = 2";
 
-    public void registerUser(User user) throws ApplicationException, SQLException {
+    public void registerUser(User user) throws ApplicationException, SQLException, ClassNotFoundException {
         if (isUserExist(user.getEmailId())) {
             throw new ApplicationException(Message.USER_ALREADY_EXIST);
         }
-        try (Connection connection = DBConnection.getConnection()) {
+        try (Connection connection = DBConnection.INSTANCE.getConnection()) {
             connection.setAutoCommit(false);
             int userId = -1;
 
@@ -68,7 +69,7 @@ public class UserDAOImpl implements IUserDAO{
                 connection.rollback();
                 throw new DBException(Message.DATABASE_ERROR, new SQLException("User ID generation failed"));
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.GENERIC_ERROR, e);
         }
     }
@@ -76,7 +77,7 @@ public class UserDAOImpl implements IUserDAO{
     public User userLogin(String emailId, String password) {
         System.out.println("In dao");
         User user = null;
-        try (Connection connection = DBConnection.getConnection();
+        try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(USER_LOGIN)) {
             statement.setString(1, emailId);
             statement.setString(2, password);
@@ -97,14 +98,14 @@ public class UserDAOImpl implements IUserDAO{
                 user.setUpdatedBy(resultSet.getString("updated_by"));
             }
             resultSet.close();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return user;
     }
 
-    public boolean isUserExist(String emailID) throws SQLException {
-        try (Connection connection = DBConnection.getConnection();
+    public boolean isUserExist(String emailID) throws SQLException, ClassNotFoundException {
+        try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement checkStmt = connection.prepareStatement(CHECK_USER_EXISTENCE)) {
             checkStmt.setString(1, emailID);
             ResultSet resultSet = checkStmt.executeQuery();
@@ -129,7 +130,7 @@ public class UserDAOImpl implements IUserDAO{
 
     public User getUserDetails(int userId) {
         User user = null;
-        try (Connection connection = DBConnection.getConnection();
+        try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -152,8 +153,6 @@ public class UserDAOImpl implements IUserDAO{
                 user.setLastName(resultSet.getString("last_name"));
                 user.setPhoneNo(resultSet.getString("phone_no"));
                 user.setEmailId(resultSet.getString("email_id"));
-                //user.setPassword(resultSet.getString("password"));
-                //user.setActive(resultSet.getBoolean("is_active"));
                 user.setDisplayId(resultSet.getString("display_id"));
                 user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
@@ -161,7 +160,7 @@ public class UserDAOImpl implements IUserDAO{
                 user.setUpdatedBy(resultSet.getString("updated_by"));
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         return user;
@@ -169,12 +168,9 @@ public class UserDAOImpl implements IUserDAO{
 
     public List<User> fetchAllCustomers() {
         List<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users WHERE role_id = 2";
-
-        try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(query);
+        try (Connection connection = DBConnection.INSTANCE.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
-
             while (resultSet.next()) {
                 User user = new User();
                 user.setUserId(resultSet.getInt("user_id"));
@@ -190,5 +186,4 @@ public class UserDAOImpl implements IUserDAO{
         }
         return users;
     }
-
 }

@@ -1,6 +1,7 @@
 package com.krushit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.krushit.common.Message;
 import com.krushit.model.User;
 import com.krushit.dto.ApiResponse;
@@ -14,7 +15,7 @@ import java.io.IOException;
 
 public class UserLoginController extends HttpServlet {
 	private final CustomerService userService = new CustomerService();
-	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

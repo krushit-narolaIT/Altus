@@ -1,8 +1,8 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.utils.DBConnection;

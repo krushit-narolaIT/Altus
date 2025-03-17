@@ -1,6 +1,4 @@
-package com.krushit.exception;
-
-import java.sql.SQLException;
+package com.krushit.common.exception;
 
 public class DBException extends ApplicationException {
     public DBException(String message) {

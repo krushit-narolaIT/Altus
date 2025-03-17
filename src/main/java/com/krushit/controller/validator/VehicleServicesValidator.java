@@ -1,7 +1,7 @@
-package com.krushit.utils;
+package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
-import com.krushit.exception.ValidationException;
+import com.krushit.common.exception.ValidationException;
 import com.krushit.model.*;
 
 import java.time.LocalDateTime;

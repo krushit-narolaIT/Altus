@@ -1,7 +1,7 @@
 package com.krushit.dao;
 
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.model.User;
 
 import java.sql.SQLException;

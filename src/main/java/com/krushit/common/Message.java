@@ -1,7 +1,6 @@
 package com.krushit.common;
 
 public final class Message {
-
     private Message() {
     }
 

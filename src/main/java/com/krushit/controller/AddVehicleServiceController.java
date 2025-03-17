@@ -1,17 +1,16 @@
 package com.krushit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.dto.ApiResponse;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.model.VehicleService;
 import com.krushit.service.VehicleRideService;
-import com.krushit.utils.AuthValidator;
+import com.krushit.controller.validator.AuthValidator;
 import com.krushit.utils.ObjectMapperUtil;
-import com.krushit.utils.VehicleServicesValidator;
+import com.krushit.controller.validator.VehicleServicesValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;

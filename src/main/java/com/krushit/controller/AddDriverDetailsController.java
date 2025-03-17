@@ -1,15 +1,15 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
-import com.krushit.exception.ApplicationException;
+import com.krushit.common.exception.ApplicationException;
 import com.krushit.model.Driver;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.DBException;
 import com.krushit.dto.ApiResponse;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
-import com.krushit.utils.AuthValidator;
-import com.krushit.utils.DriverDocumentValidator;
+import com.krushit.controller.validator.AuthValidator;
+import com.krushit.controller.validator.DriverDocumentValidator;
 import com.krushit.utils.ObjectMapperUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -22,7 +22,7 @@ import java.io.IOException;
 public class AddDriverDetailsController extends HttpServlet {
     private DriverService driverService = new DriverService();
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {

@@ -1,7 +1,7 @@
-package com.krushit.utils;
+package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
-import com.krushit.exception.AuthException;
+import com.krushit.common.exception.AuthException;
 import com.krushit.model.User;
 
 public class AuthValidator {

@@ -1,19 +1,16 @@
 package com.krushit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.dto.ApiResponse;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
-import com.krushit.exception.ValidationException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.model.BrandModel;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.service.VehicleRideService;
-import com.krushit.utils.AuthValidator;
+import com.krushit.controller.validator.AuthValidator;
 import com.krushit.utils.ObjectMapperUtil;
-import com.krushit.utils.VehicleServicesValidator;
-import jakarta.servlet.ServletException;
+import com.krushit.controller.validator.VehicleServicesValidator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +22,7 @@ public class AddBrandModelController extends HttpServlet {
     private VehicleRideService vehicleRideService = new VehicleRideService();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
@@ -50,14 +47,9 @@ public class AddBrandModelController extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
-    }
-
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = (data == null) ? new ApiResponse(message) : new ApiResponse(message, data);
+        ApiResponse apiResponse = new ApiResponse(message, data);
         response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
     }
 }

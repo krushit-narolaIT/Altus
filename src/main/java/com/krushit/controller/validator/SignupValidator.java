@@ -1,11 +1,10 @@
-package com.krushit.utils;
+package com.krushit.controller.validator;
 
 
 
 import com.krushit.common.Message;
-import com.krushit.model.Driver;
 import com.krushit.model.User;
-import com.krushit.exception.ValidationException;
+import com.krushit.common.exception.ValidationException;
 
 public class SignupValidator {
     private static final String EMAIL_REGEX = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,20}$";

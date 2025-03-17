@@ -1,15 +1,15 @@
 package com.krushit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.krushit.common.Message;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
-import com.krushit.exception.ValidationException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
+import com.krushit.common.exception.ValidationException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
-import com.krushit.utils.LoginValidator;
+import com.krushit.controller.validator.LoginValidator;
+import com.krushit.utils.ObjectMapperUtil;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,18 +19,18 @@ import java.io.IOException;
 
 public class UserLoginController extends HttpServlet {
     private CustomerService userService = new CustomerService();
-    private ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            User loginUser = objectMapper.readValue(request.getReader(), User.class);
+            User loginUser = ObjectMapperUtil.toObject(request.getReader(), User.class);
             LoginValidator.validateLoginCredentials(loginUser);
             String email = loginUser.getEmailId();
             String password = loginUser.getPassword();
-            User authenticatedUser = userService.userLogin(email, password);
+            UserDTO authenticatedUser = userService.userLogin(email, password);
+            //UserDTO authenticatedUser = userService.userLogin(email, password);
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
             sendResponse(response, HttpServletResponse.SC_OK, Message.User.LOGIN_SUCCESSFUL, authenticatedUser);
@@ -50,6 +50,6 @@ public class UserLoginController extends HttpServlet {
     private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
     }
 }

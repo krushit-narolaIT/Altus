@@ -51,7 +51,7 @@ public class Driver extends User {
     public void setDocumentVerified(boolean documentVerified) { isDocumentVerified = documentVerified; }
 
     public String getLicencePhoto() { return licencePhoto; }
-    public void setLicencePhoto(String licencePhoto) { this.licencePhoto = licencePhoto; }  // Changed from Blob to String
+    public void setLicencePhoto(String licencePhoto) { this.licencePhoto = licencePhoto; }
 
     public boolean isAvailable() { return isAvailable; }
     public void setAvailable(boolean available) { isAvailable = available; }

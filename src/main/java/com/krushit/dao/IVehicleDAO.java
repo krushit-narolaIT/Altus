@@ -1,6 +1,6 @@
 package com.krushit.dao;
 
-import com.krushit.exception.ApplicationException;
+import com.krushit.common.exception.ApplicationException;
 import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;
 import com.krushit.model.BrandModel;

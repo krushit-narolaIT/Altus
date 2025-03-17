@@ -97,7 +97,6 @@ public class UserBuilder {
         }
     }
 
-    // Getters
     public int getUserId() { return userId; }
     public int getRoleId() { return roleId; }
     public String getFirstName() { return firstName; }

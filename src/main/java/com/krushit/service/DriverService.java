@@ -1,12 +1,12 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.dao.DriverDAOImpl;
 import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 
@@ -14,12 +14,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 
 public class DriverService {
-    private static final String STORAGE_PATH = "D:\\Project\\Altus\\DriverLicences";
+    private static final String STORAGE_PATH = "D:\\Project\\AltusDriverLicences";
 
     private IDriverDAO driverDAO = new DriverDAOImpl();
     private IUserDAO userDAO = new UserDAOImpl();
@@ -39,13 +40,7 @@ public class DriverService {
         driver.setLastName(user.getLastName());
         driver.setPhoneNo(user.getPhoneNo());
         driver.setEmailId(user.getEmailId());
-        driver.setPassword(user.getPassword());
-        driver.setActive(user.isActive());
         driver.setDisplayId(user.getDisplayId());
-        driver.setCreatedAt(user.getCreatedAt());
-        driver.setUpdatedAt(user.getUpdatedAt());
-        driver.setCreatedBy(user.getCreatedBy());
-        driver.setUpdatedBy(user.getUpdatedBy());
         driverDAO.insertDriverDetails(driver);
     }
 
@@ -61,7 +56,7 @@ public class DriverService {
             }
             String extension = getFileExtension(sourceFile);
             String fileName = "DRI_" + licenceNumber + "_" + displayId + extension;
-            Path path = Path.of(STORAGE_PATH, fileName);
+            Path path = Paths.get(STORAGE_PATH, fileName);
             Files.copy(sourceFile.toPath(), path, StandardCopyOption.REPLACE_EXISTING);
             return path.toString();
         } catch (IOException e) {

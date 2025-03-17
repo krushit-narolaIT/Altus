@@ -24,22 +24,8 @@ public class DBConnection {
         return INSTANCE;
     }
 
-    public void validateConnection() throws SQLException, ClassNotFoundException {
-        getConnection();
-    }
-
     public Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName(this.dbDriver);
         return DriverManager.getConnection(this.dbUrl, this.dbUsername, this.dbPassword);
-    }
-
-    public static void closeResources(ResultSet rs, PreparedStatement preparedStatement, Connection connection) {
-        try {
-            if (rs != null) rs.close();
-            if (preparedStatement != null) preparedStatement.close();
-            if (connection != null) connection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

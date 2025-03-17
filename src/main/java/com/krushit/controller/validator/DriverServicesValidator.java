@@ -1,8 +1,8 @@
-package com.krushit.utils;
+package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
 import com.krushit.dto.DriverVerificationRequest;
-import com.krushit.exception.ValidationException;
+import com.krushit.common.exception.ValidationException;
 
 public class DriverServicesValidator {
     public static void validateDriverApprovalRequest(DriverVerificationRequest verificationRequest) throws ValidationException {

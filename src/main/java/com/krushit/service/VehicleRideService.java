@@ -5,7 +5,7 @@ import com.krushit.dao.DriverDAOImpl;
 import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IVehicleDAO;
 import com.krushit.dao.VehicleDAOImpl;
-import com.krushit.exception.ApplicationException;
+import com.krushit.common.exception.ApplicationException;
 import com.krushit.model.BrandModel;
 import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;

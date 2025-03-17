@@ -23,7 +23,10 @@ public class User {
     public User() {
     }
 
-    public User(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId, String password, boolean isActive, String displayId, LocalDateTime createdAt, LocalDateTime updatedAt, String createdBy, String updatedBy) {
+    public User(int userId, Role role, String firstName, String lastName,
+                String phoneNo, String emailId, String password, boolean isActive,
+                String displayId, LocalDateTime createdAt, LocalDateTime updatedAt,
+                String createdBy, String updatedBy) {
         this.userId = userId;
         this.role = role;
         this.firstName = firstName;
@@ -48,6 +51,15 @@ public class User {
         this.password = password;
     }
 
+    public User(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId, String password) {
+        this.userId = userId;
+        this.role = role;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNo = phoneNo;
+        this.emailId = emailId;
+        this.password = password;
+    }
 
     public int getUserId() {
         return userId;

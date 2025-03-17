@@ -1,11 +1,13 @@
 package com.krushit.service;
 
+import com.krushit.common.mapper.Mapper;
 import com.krushit.dao.DriverDAOImpl;
 import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 
@@ -22,8 +24,13 @@ public class CustomerService {
         userDAO.registerUser(user);
     }
 
-    public User userLogin(String email, String password) throws ApplicationException, SQLException, ClassNotFoundException {
-        return userDAO.userLogin(email, password);
+    public UserDTO userLogin(String email, String password) throws ApplicationException, SQLException, ClassNotFoundException {
+//        User user = userDAO.userLogin(email, password);
+//        UserDTO userDTO = convertToDTO(user);
+//        return userDTO;
+        Mapper mapper = new Mapper();
+        UserDTO userDTO = mapper.convertToDTO(userDAO.userLogin(email, password));
+        return userDTO;
     }
 
     public List<User> getAllCustomers() throws DBException {

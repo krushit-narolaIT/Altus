@@ -1,15 +1,14 @@
 package com.krushit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.DBException;
 import com.krushit.model.Role;
 import com.krushit.model.User;
-import com.krushit.exception.ApplicationException;
+import com.krushit.common.exception.ApplicationException;
 import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
 import com.krushit.utils.ObjectMapperUtil;
-import com.krushit.utils.SignupValidator;
+import com.krushit.controller.validator.SignupValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,11 +44,6 @@ public class UserSignUpController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
     }
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {

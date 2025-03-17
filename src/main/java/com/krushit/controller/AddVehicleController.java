@@ -2,16 +2,15 @@ package com.krushit.controller;
 
 import com.krushit.common.Message;
 import com.krushit.dto.ApiResponse;
-import com.krushit.exception.ApplicationException;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.model.Vehicle;
 import com.krushit.service.VehicleRideService;
-import com.krushit.utils.AuthValidator;
+import com.krushit.controller.validator.AuthValidator;
 import com.krushit.utils.ObjectMapperUtil;
-import com.krushit.utils.VehicleServicesValidator;
-import jakarta.servlet.ServletException;
+import com.krushit.controller.validator.VehicleServicesValidator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,7 +22,7 @@ public class AddVehicleController extends HttpServlet {
     private VehicleRideService vehicleRideService = new VehicleRideService();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
@@ -46,11 +45,6 @@ public class AddVehicleController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doPost(req, resp);
     }
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {

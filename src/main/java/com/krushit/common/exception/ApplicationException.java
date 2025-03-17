@@ -1,6 +1,5 @@
-package com.krushit.exception;
+package com.krushit.common.exception;
 
-import java.sql.SQLException;
 
 public class ApplicationException extends Exception {
     public ApplicationException(String message) {

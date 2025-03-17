@@ -1,7 +1,7 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.exception.DBException;
+import com.krushit.common.exception.DBException;
 import com.krushit.utils.DBConnection;
 
 import java.sql.Connection;

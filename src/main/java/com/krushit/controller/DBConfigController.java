@@ -1,7 +1,7 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
-import com.krushit.exception.ApplicationException;
+import com.krushit.common.exception.ApplicationException;
 import com.krushit.utils.DBConnection;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;

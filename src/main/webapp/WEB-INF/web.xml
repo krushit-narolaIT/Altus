@@ -65,7 +65,6 @@
         <url-pattern>/DriverSignUp</url-pattern>
     </servlet-mapping>
 
-
     <servlet>
         <servlet-name>AddDriverDocument</servlet-name>
         <servlet-class>com.krushit.controller.AddDriverDetailsController</servlet-class>
@@ -76,12 +75,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>GetAllUsersServlet</servlet-name>
+        <servlet-name>GetAllUsers</servlet-name>
         <servlet-class>com.krushit.controller.GetAllUsersController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>GetAllUsersServlet</servlet-name>
-        <url-pattern>/GetAllUsersServlet</url-pattern>
+        <servlet-name>GetAllUsers</servlet-name>
+        <url-pattern>/GetAllUsers</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -112,11 +111,11 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>AddBrandModelController</servlet-name>
+        <servlet-name>AddBrandModel</servlet-name>
         <servlet-class>com.krushit.controller.AddBrandModelController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>AddBrandModelController</servlet-name>
+        <servlet-name>AddBrandModel</servlet-name>
         <url-pattern>/AddBrandModel</url-pattern>
     </servlet-mapping>
 
@@ -127,6 +126,24 @@
     <servlet-mapping>
         <servlet-name>AddVehicle</servlet-name>
         <url-pattern>/AddVehicle</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AddLocations</servlet-name>
+        <servlet-class>com.krushit.controller.AddLocationsController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AddLocations</servlet-name>
+        <url-pattern>/AddLocations</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetAllPendingDriverVerification</servlet-name>
+        <servlet-class>com.krushit.controller.GetAllPendingDriverVerificationController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetAllPendingDriverVerification</servlet-name>
+        <url-pattern>/GetAllPendingDriverVerification</url-pattern>
     </servlet-mapping>
 
 </web-app>

@@ -1,13 +1,16 @@
 package com.krushit.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
 import com.krushit.dto.ApiResponse;
 import com.krushit.exception.ApplicationException;
 import com.krushit.exception.DBException;
+import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.model.Vehicle;
 import com.krushit.service.VehicleRideService;
+import com.krushit.utils.AuthValidator;
+import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.VehicleServicesValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,38 +20,31 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class AddVehicleController extends HttpServlet {
-    private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private VehicleRideService vehicleRideService = new VehicleRideService();
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType(Message.APPLICATION_JSON);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType(Message.APPLICATION_JSON);
         try {
-            HttpSession session = req.getSession();
+            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
+                createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            HttpSession session = request.getSession();
             User user = (User) session.getAttribute("user");
-            if (user == null || !"Driver".equalsIgnoreCase(user.getRole().getRoleName())) {
-                createResponse(resp, Message.UNAUTHORIZED, null, HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            }
-            Vehicle vehicle = objectMapper.readValue(req.getReader(), Vehicle.class);
-            if (vehicle.getRegistrationNumber() == null || vehicle.getBrandModelId() == null || vehicle.getYear() == 0) {
-                createResponse(resp, "Invalid request! Missing required fields.", null, HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-
+            AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
+            Vehicle vehicle = ObjectMapperUtil.toObject(request.getReader(), Vehicle.class);
+            VehicleServicesValidator.validateVehicleDetails(vehicle);
             vehicleRideService.addVehicle(vehicle, user.getUserId());
-
-            createResponse(resp, "Vehicle registered successfully!", null, HttpServletResponse.SC_OK);
-
+            createResponse(response, Message.Vehicle.VEHICLE_REGISTERED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
-            createResponse(resp, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
-            e.printStackTrace();
-            createResponse(resp, e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            createResponse(resp, "Server Error", null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -59,7 +55,7 @@ public class AddVehicleController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = (data == null) ? new ApiResponse(message) : new ApiResponse(message, data);
-        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        ApiResponse apiResponse = new ApiResponse(message, data);
+        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
     }
 }

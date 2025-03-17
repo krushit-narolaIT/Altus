@@ -2,11 +2,13 @@ package com.krushit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.krushit.common.Message;
+import com.krushit.exception.DBException;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.exception.ApplicationException;
 import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
+import com.krushit.utils.ObjectMapperUtil;
 import com.krushit.utils.SignupValidator;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -16,34 +18,32 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class UserSignUpController extends HttpServlet {
-    private final CustomerService userService = new CustomerService();
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private CustomerService userService = new CustomerService();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
-        response.setCharacterEncoding(Message.UTF_8);
-        System.out.println("in doPost");
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
                 throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
             }
-            String path = request.getServletPath();
-            User user = objectMapper.readValue(request.getReader(), User.class);
+            User user = ObjectMapperUtil.toObject(request.getReader(), User.class);
             SignupValidator.validateUser(user);
-            if(path.equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)){
+            if(request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)){
                 user.setRole(Role.ROLE_CUSTOMER);
             } else {
                 user.setRole(Role.ROLE_DRIVER);
             }
             userService.registerUser(user);
-            createResponse(response, Message.USER_REGISTERED_SUCCESSFULLY, user.getEmailId());
+            createResponse(response, Message.User.USER_REGISTERED_SUCCESSFULLY, user.getEmailId(), HttpServletResponse.SC_OK);
+        } catch (DBException e) {
+            e.printStackTrace();
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
-            e.printStackTrace();
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             e.printStackTrace();
-            createResponse(response, Message.INTERNAL_SERVER_ERROR + e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -52,23 +52,9 @@ public class UserSignUpController extends HttpServlet {
         doPost(req, resp);
     }
 
-    private void createResponse(HttpServletResponse response, String message, Object data) throws IOException {
-        int statusCode;
-        if (Message.USER_REGISTERED_SUCCESSFULLY.equals(message)) {
-            statusCode = HttpServletResponse.SC_CREATED;
-        } else if (Message.DRIVER_ALREADY_EXIST.equals(message)) {
-            statusCode = HttpServletResponse.SC_CONFLICT;
-        } else if (Message.INTERNAL_SERVER_ERROR.equals(message)) {
-            statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        } else {
-            statusCode = HttpServletResponse.SC_BAD_REQUEST;
-        }
-        createResponse(response, message, data, statusCode);
-    }
-
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(objectMapper.writeValueAsString(apiResponse));
+        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
     }
 }

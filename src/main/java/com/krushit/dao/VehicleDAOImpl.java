@@ -18,24 +18,32 @@ public class VehicleDAOImpl implements IVehicleDAO{
             "VALUES (?, ?, ?, ?, ?, ?)";
     private final String INSERT_BRAND_MODEL = "INSERT INTO Brand_Models (service_id, brand_name, model, min_year) " +
             "VALUES (?, ?, ?, ?)";
-    private static final String INSERT_VEHICLE_QUERY = "INSERT INTO vehicles (driver_id, brand_model_id, registration_number, year, fuel_type,transmission, ground_clearance, wheel_base) " +
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String IS_DRIVER_VEHICLE_EXIST = "SELECT COUNT(*) FROM vehicles WHERE driver_id = ?";
+    private static final String INSERT_VEHICLE_QUERY = "INSERT INTO vehicles (driver_id, brand_model_id, registration_number, year, fuel_type,transmission, ground_clearance, wheel_base, verification_status) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String IS_DRIVER_VEHICLE_EXIST = "SELECT 1 FROM vehicles WHERE driver_id = ?";
+    private static final String CHECK_VEHICLE_SERVICE_EXIST = "SELECT 1 FROM Vehicle_Service WHERE LOWER(service_name) = ?";
 
     public void addVehicleService(VehicleService vehicleService) throws ApplicationException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_VEHICLE_SERVICE)) {
-
-            preparedStatement.setString(1, vehicleService.getServiceName());
-            preparedStatement.setDouble(2, vehicleService.getBaseFare());
-            preparedStatement.setDouble(3, vehicleService.getPerKmRate());
-            preparedStatement.setString(4, vehicleService.getVehicleType());
-            preparedStatement.setInt(5, vehicleService.getMaxPassengers());
-            preparedStatement.setDouble(6, vehicleService.getCommissionPercentage());
-
-            preparedStatement.executeUpdate();
+        try (Connection connection = DBConnection.INSTANCE.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(CHECK_VEHICLE_SERVICE_EXIST)) {
+                statement.setString(1, vehicleService.getServiceName().toLowerCase());
+                try (ResultSet rs = statement.executeQuery()) {
+                    if (rs.next()) {
+                        throw new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_ALREADY_EXISTS);
+                    }
+                }
+            }
+            try (PreparedStatement insertStmt = connection.prepareStatement(INSERT_VEHICLE_SERVICE)) {
+                insertStmt.setString(1, vehicleService.getServiceName());
+                insertStmt.setDouble(2, vehicleService.getBaseFare());
+                insertStmt.setDouble(3, vehicleService.getPerKmRate());
+                insertStmt.setString(4, vehicleService.getVehicleType());
+                insertStmt.setInt(5, vehicleService.getMaxPassengers());
+                insertStmt.setDouble(6, vehicleService.getCommissionPercentage());
+                insertStmt.executeUpdate();
+            }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_ADDING_SERVICE, e);
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_ADDING_SERVICE + " " + e.getMessage(), e);
         }
     }
 
@@ -48,15 +56,13 @@ public class VehicleDAOImpl implements IVehicleDAO{
             preparedStatement.setInt(4, brandModel.getMinYear());
             preparedStatement.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new ApplicationException(Message.Vehicle.ERROR_OCCUR_WHILE_ADDING_MODEL, e);
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_ADDING_MODEL + " " + e.getMessage(), e);
         }
     }
 
     public void addVehicle(Vehicle vehicle) throws ApplicationException {
-        System.out.println("Vehicle :: " + vehicle);
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(INSERT_VEHICLE_QUERY)) {
-
             stmt.setInt(1, vehicle.getDriverId());
             stmt.setInt(2, vehicle.getBrandModelId());
             stmt.setString(3, vehicle.getRegistrationNumber());
@@ -65,25 +71,22 @@ public class VehicleDAOImpl implements IVehicleDAO{
             stmt.setString(6, vehicle.getTransmission());
             stmt.setDouble(7, vehicle.getGroundClearance());
             stmt.setDouble(8, vehicle.getWheelBase());
+            stmt.setString(9, Message.Vehicle.VERIFICATION_PENDING);
             stmt.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new ApplicationException("Error adding vehicle to database.", e);
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_ADDING_VEHICLE + " " + e.getMessage(), e);
         }
     }
 
     public boolean isDriverVehicleExist(int driverID) throws ApplicationException {
-        System.out.println("in isDriverVehicleExist()");
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_DRIVER_VEHICLE_EXIST)) {
             stmt.setInt(1, driverID);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
+                return rs.next();
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECK_VEHICLE_EXISTENCE, e);
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECK_VEHICLE_EXISTENCE + " " + e.getMessage() , e);
         }
-        return false;
     }
 }

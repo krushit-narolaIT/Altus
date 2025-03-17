@@ -18,13 +18,11 @@ public class DBConfigController extends HttpServlet {
             String dbUsername = context.getInitParameter("db.username");
             String dbPassword = context.getInitParameter("db.password");
             String dbDriver = context.getInitParameter("db.driver");
-
             if (dbUrl == null || dbUsername == null || dbPassword == null || dbDriver == null) {
                 throw new ApplicationException(Message.DATABASE_ERROR);
             }
-
             DBConnection.INSTANCE = DBConnection.getInstance(dbUrl, dbUsername, dbPassword, dbDriver);
-            System.out.println(Message.APPLICATION_JSON);
+            System.out.println(Message.Database.CONNECTION_SUCCESSFUL);
         } catch (SQLException | ClassNotFoundException | ApplicationException e) {
             e.printStackTrace();
             System.exit(0);

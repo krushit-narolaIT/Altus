@@ -1,9 +1,9 @@
 package com.krushit.model;
 
 public class Vehicle {
-    private Integer vehicleId;
-    private Integer driverId;
-    private Integer brandModelId;
+    private int vehicleId;
+    private int driverId;
+    private int brandModelId;
     private String registrationNumber;
     private int year;
     private String fuelType;
@@ -15,27 +15,27 @@ public class Vehicle {
 
     public Vehicle() {}
 
-    public Integer getVehicleId() {
+    public int getVehicleId() {
         return vehicleId;
     }
 
-    public void setVehicleId(Integer vehicleId) {
+    public void setVehicleId(int vehicleId) {
         this.vehicleId = vehicleId;
     }
 
-    public Integer getDriverId() {
+    public int getDriverId() {
         return driverId;
     }
 
-    public void setDriverId(Integer driverId) {
+    public void setDriverId(int driverId) {
         this.driverId = driverId;
     }
 
-    public Integer getBrandModelId() {
+    public int getBrandModelId() {
         return brandModelId;
     }
 
-    public void setBrandModelId(Integer brandModelId) {
+    public void setBrandModelId(int brandModelId) {
         this.brandModelId = brandModelId;
     }
 

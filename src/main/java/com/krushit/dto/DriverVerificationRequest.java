@@ -1,15 +1,15 @@
 package com.krushit.dto;
 
 public class DriverVerificationRequest {
-    private Integer driverId;
+    private int driverId;
     private String verificationStatus;
     private String message;
 
-    public Integer getDriverId() {
+    public int getDriverId() {
         return driverId;
     }
 
-    public void setDriverId(Integer driverId) {
+    public void setDriverId(int driverId) {
         this.driverId = driverId;
     }
 

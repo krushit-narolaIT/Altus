@@ -7,7 +7,6 @@ import com.krushit.model.Driver;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.utils.DBConnection;
-import com.krushit.utils.DateUtils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,20 +18,21 @@ import java.util.List;
 public class DriverDAOImpl implements IDriverDAO{
     private final String DRIVER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
     private final String GET_ROLE = "SELECT role FROM roles WHERE role_id = ?";
-    private final String INSERT_DRIVER_DETAILS = "INSERT INTO Drivers (user_id, licence_number, licence_photo) VALUES (?, ?, ?)";
     private final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ? WHERE user_id = ?";
     private final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE";
-    private final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ? WHERE driver_id = ?";
+    private final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ? WHERE driver_id = ?";
     private final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
     private final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
     private final String GET_ALL_DRIVERS = "SELECT * FROM drivers";
     private final String GET_UNVERIFIED_DRIVER = "SELECT * FROM drivers WHERE document_verified = false";
     private final String GET_DRIVERID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
     private final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
+    private final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
 
     private UserDAOImpl userDAO = new UserDAOImpl();
 
-    public User driverLogin(String emailId, String password) throws DBException {
+    @Override
+    public User driverLogin(String emailId, String password) throws ApplicationException {
         User user = null;
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(DRIVER_LOGIN)) {
@@ -48,14 +48,16 @@ public class DriverDAOImpl implements IDriverDAO{
                     user.setPhoneNo(resultSet.getString("phone_no"));
                     user.setEmailId(resultSet.getString("email_id"));
                     user.setDisplayId(resultSet.getString("display_id"));
-                    user.setCreatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("created_at")));
-                    user.setUpdatedAt(DateUtils.toLocalDateTime(resultSet.getTimestamp("updated_at")));
+                    user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
+                    user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
                     user.setCreatedBy(resultSet.getString("created_by"));
                     user.setUpdatedBy(resultSet.getString("updated_by"));
+                } else {
+                    throw new ApplicationException(Message.User.INVALID_EMAIL_AND_PASS);
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return user;
     }
@@ -64,54 +66,46 @@ public class DriverDAOImpl implements IDriverDAO{
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_ROLE)) {
             statement.setInt(1, role_id);
-
             ResultSet resultSet = statement.executeQuery();
-
             if (resultSet.next()) {
                 return resultSet.getString("role");
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DRIVER_ALREADY_EXIST, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return null;
     }
 
-    public boolean isDriverExist(String emailID) throws SQLException {
+    public boolean isDriverExist(String emailID) throws SQLException, DBException {
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement checkStmt = connection.prepareStatement(CHECK_DRIVER_EXISTENCE)) {
             checkStmt.setString(1, emailID);
             ResultSet resultSet = checkStmt.executeQuery();
-
             if (resultSet.next() && resultSet.getInt(1) > 0) {
                 return true;
             }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return false;
     }
 
-    public void insertDriverDetails(Driver driver) throws DBException {
+    public void insertDriverDetails(Driver driver) throws ApplicationException {
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_DRIVER_DETAILS)) {
-
             statement.setString(1, driver.getLicenceNumber());
             statement.setString(2, driver.getLicencePhoto());
             statement.setInt(3, driver.getUserId());
-
             int rowsInserted = statement.executeUpdate();
             if (rowsInserted == 0) {
                 throw new DBException(Message.Driver.DOCUMENT_UPLOADING_FAILED);
             }
-        } catch (SQLException e) {
-            throw new DBException(Message.DRIVER_ALREADY_EXIST, e);
-        } catch (ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
     }
 
-
-    public List<Driver> getPendingVerificationDrivers() throws SQLException, ClassNotFoundException {
+    public List<Driver> getPendingVerificationDrivers() throws DBException {
         List<Driver> pendingDrivers = new ArrayList<>();
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_PENDING_VERIFICATION_DRIVERS);
@@ -133,6 +127,8 @@ public class DriverDAOImpl implements IDriverDAO{
                 driver.setComment(resultSet.getString("comment"));
                 pendingDrivers.add(driver);
             }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return pendingDrivers;
     }
@@ -145,7 +141,7 @@ public class DriverDAOImpl implements IDriverDAO{
                 return resultSet.next();
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
     }
 
@@ -167,11 +163,12 @@ public class DriverDAOImpl implements IDriverDAO{
             try (PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DRIVER_VERIFICATION_STATUS)) {
                 preparedStatement.setString(1, isVerified ? "ACCEPTED" : "REJECTED");
                 preparedStatement.setString(2, isVerified ? null : rejectionMessage);
-                preparedStatement.setInt(3, driverId);
+                preparedStatement.setBoolean(3, isVerified);
+                preparedStatement.setInt(4, driverId);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
     }
 
@@ -198,11 +195,10 @@ public class DriverDAOImpl implements IDriverDAO{
                 drivers.add(driver);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return drivers;
     }
-
 
     public List<Driver> fetchPendingVerificationDrivers() throws DBException {
         List<Driver> drivers = new ArrayList<>();
@@ -221,7 +217,7 @@ public class DriverDAOImpl implements IDriverDAO{
                 drivers.add(driver);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return drivers;
     }
@@ -235,7 +231,7 @@ public class DriverDAOImpl implements IDriverDAO{
                 return resultSet.getInt("driver_id");
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return null;
     }
@@ -243,7 +239,6 @@ public class DriverDAOImpl implements IDriverDAO{
     public boolean isDriverDocumentVerified(int driverId) throws ApplicationException {
         try (Connection connection = DBConnection.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_DOCUMENT_VERIFIED)) {
-
             stmt.setInt(1, driverId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -251,7 +246,7 @@ public class DriverDAOImpl implements IDriverDAO{
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new ApplicationException("Error checking driver document verification.", e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return false;
     }
@@ -267,8 +262,20 @@ public class DriverDAOImpl implements IDriverDAO{
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.DATABASE_ERROR, e);
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
         }
         return false;
+    }
+
+    public boolean isLicenseNumberExists(String licenseNumber) throws ApplicationException {
+        try (Connection connection = DBConnection.INSTANCE.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(IS_LICENCE_EXIST)) {
+            stmt.setString(1, licenseNumber);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+        }
     }
 }

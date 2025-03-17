@@ -94,13 +94,13 @@
 			"response": []
 		},
 		{
-			"name": "Driver Details",
+			"name": "Add Driver Document",
 			"request": {
-				"method": "POST",
+				"method": "PUT",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"userId\": 2,\r\n    \"licenceNumber\": \"GJ0855698712365\",\r\n    \"licencePhoto\": \"D:\\\\images\\\\driver-image.png\"\r\n}\r\n",
+					"raw": "{\r\n    \"userId\": 3,\r\n    \"licenceNumber\": \"GJ0855698712365\",\r\n    \"licencePhoto\": \"D:\\\\images\\\\driver-image.png\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -108,7 +108,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/DriverDetailsServlet",
+					"raw": "http://localhost:8080/Altus_war_exploded/AddDriverDocument",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -116,7 +116,7 @@
 					"port": "8080",
 					"path": [
 						"Altus_war_exploded",
-						"DriverDetailsServlet"
+						"AddDriverDocument"
 					]
 				}
 			},

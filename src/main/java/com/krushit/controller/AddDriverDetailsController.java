@@ -11,7 +11,6 @@ import com.krushit.service.DriverService;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.DriverDocumentValidator;
 import com.krushit.utils.ObjectMapperUtil;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

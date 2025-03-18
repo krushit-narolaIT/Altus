@@ -16,10 +16,13 @@ public class DriverDocumentValidator {
     }
 
     public static void validateLicenceNumber(String licenceNumber) throws ValidationException {
-        if (licenceNumber == null || licenceNumber.isEmpty()) {
-            throw new IllegalArgumentException(Message.Driver.LICENCE_NUMBER_IS_REQUIRED);
+        if (licenceNumber == null || licenceNumber.trim().isEmpty()) {
+            throw new ValidationException(Message.Driver.LICENCE_NUMBER_IS_REQUIRED);
         }
         if (licenceNumber.length() != 15) {
+            throw new ValidationException(Message.Driver.ENTER_VALID_LICENCE_NUMBER);
+        }
+        if (!licenceNumber.matches("^[A-Za-z0-9]+$")) {
             throw new ValidationException(Message.Driver.ENTER_VALID_LICENCE_NUMBER);
         }
     }

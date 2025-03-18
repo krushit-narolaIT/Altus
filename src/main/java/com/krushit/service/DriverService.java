@@ -29,20 +29,27 @@ public class DriverService {
         if (driverDAO.isLicenseNumberExists(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
+
         User user = userDAO.getUserDetails(driver.getUserId());
         if (user == null) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
         String photoPath = storeLicencePhoto(driver.getLicencePhoto(), driver.getLicenceNumber(), user.getDisplayId());
-        driver.setLicencePhoto(photoPath);
-        driver.setRole(user.getRole());
-        driver.setFirstName(user.getFirstName());
-        driver.setLastName(user.getLastName());
-        driver.setPhoneNo(user.getPhoneNo());
-        driver.setEmailId(user.getEmailId());
-        driver.setDisplayId(user.getDisplayId());
-        driverDAO.insertDriverDetails(driver);
+        Driver updatedDriver = (Driver) new Driver.DriverBuilder()
+                .setLicenceNumber(driver.getLicenceNumber())
+                .setLicencePhoto(photoPath)
+                .setDriverId(driver.getDriverId())
+                .setUserId(driver.getUserId())
+                .setRole(user.getRole())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setPhoneNo(user.getPhoneNo())
+                .setEmailId(user.getEmailId())
+                .setDisplayId(user.getDisplayId())
+                .build();
+        driverDAO.insertDriverDetails(updatedDriver);
     }
+
 
     private String storeLicencePhoto(String licencePhotoPath, String licenceNumber, String displayId) throws ApplicationException {
         try {

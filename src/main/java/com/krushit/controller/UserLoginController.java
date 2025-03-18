@@ -30,7 +30,6 @@ public class UserLoginController extends HttpServlet {
             String email = loginUser.getEmailId();
             String password = loginUser.getPassword();
             UserDTO authenticatedUser = userService.userLogin(email, password);
-            //UserDTO authenticatedUser = userService.userLogin(email, password);
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
             sendResponse(response, HttpServletResponse.SC_OK, Message.User.LOGIN_SUCCESSFUL, authenticatedUser);
@@ -43,7 +42,7 @@ public class UserLoginController extends HttpServlet {
             sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage(), null);
         } catch (Exception e) {
             e.printStackTrace();
-            sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage(), null);
+            sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);
         }
     }
 

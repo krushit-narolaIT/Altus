@@ -1,9 +1,11 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
+import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.Location;
 import com.krushit.model.Role;
 import com.krushit.model.User;
@@ -20,6 +22,7 @@ import java.io.IOException;
 
 public class AddLocationsController extends HttpServlet {
     private LocationService locationService = new LocationService();
+    private Mapper mapper = new Mapper();
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
@@ -29,7 +32,9 @@ public class AddLocationsController extends HttpServlet {
                 return;
             }
             HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            UserDTO userDTO = (UserDTO) session.getAttribute("user");
+            AuthValidator.isUserLoggedIn(userDTO);
+            User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
             Location location = ObjectMapperUtil.toObject(request.getReader(), Location.class);
             locationService.addLocation(location.getName());

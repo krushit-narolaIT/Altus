@@ -3,88 +3,106 @@ package com.krushit.dto;
 import com.krushit.model.Role;
 
 public class UserDTO {
-    private int userId;
-    private String role;
-    private String firstName;
-    private String lastName;
-    private String phoneNo;
-    private String emailId;
-    private String displayId;
+    private final int userId;
+    private final Role role;
+    private final String firstName;
+    private final String lastName;
+    private final String phoneNo;
+    private final String emailId;
+    private final String displayId;
 
-    public UserDTO() {
+    private UserDTO(UserDTOBuilder builder) {
+        this.userId = builder.userId;
+        this.role = builder.role;
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.phoneNo = builder.phoneNo;
+        this.emailId = builder.emailId;
+        this.displayId = builder.displayId;
     }
 
-    public UserDTO(int userId, String role, String firstName, String lastName, String phoneNo, String emailId, String displayId) {
-        this.userId = userId;
-        this.role = role;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNo = phoneNo;
-        this.emailId = emailId;
-        this.displayId = displayId;
+    public static class UserDTOBuilder {
+        private int userId;
+        private Role role;
+        private String firstName;
+        private String lastName;
+        private String phoneNo;
+        private String emailId;
+        private String displayId;
+
+        public UserDTOBuilder setUserId(int userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public UserDTOBuilder setRole(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public UserDTOBuilder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public UserDTOBuilder setLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public UserDTOBuilder setPhoneNo(String phoneNo) {
+            this.phoneNo = phoneNo;
+            return this;
+        }
+
+        public UserDTOBuilder setEmailId(String emailId) {
+            this.emailId = emailId;
+            return this;
+        }
+
+        public UserDTOBuilder setDisplayId(String displayId) {
+            this.displayId = displayId;
+            return this;
+        }
+
+        public UserDTO build() {
+            return new UserDTO(this);
+        }
     }
 
     public int getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public String getRole() {
+    public Role getRole() {
         return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public String getLastName() {
         return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
     }
 
     public String getPhoneNo() {
         return phoneNo;
     }
 
-    public void setPhoneNo(String phoneNo) {
-        this.phoneNo = phoneNo;
-    }
-
     public String getEmailId() {
         return emailId;
-    }
-
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
     }
 
     public String getDisplayId() {
         return displayId;
     }
 
-    public void setDisplayId(String displayId) {
-        this.displayId = displayId;
-    }
-
     @Override
     public String toString() {
         return "UserDTO{" +
                 "userId=" + userId +
-                ", role=" + role +
+                ", role='" + role + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +

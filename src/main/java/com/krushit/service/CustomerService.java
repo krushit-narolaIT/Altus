@@ -20,7 +20,6 @@ public class CustomerService {
     private IDriverDAO driverDAO = new DriverDAOImpl();
 
     public void registerUser(User user) throws SQLException, ApplicationException, ClassNotFoundException {
-        user.setCreatedAt(LocalDateTime.now());
         userDAO.registerUser(user);
     }
 

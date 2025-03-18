@@ -1,16 +1,17 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
+import com.krushit.common.mapper.Mapper;
+import com.krushit.controller.validator.LogOutValidator;
+import com.krushit.controller.validator.SignupValidator;
+import com.krushit.dto.ApiResponse;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Driver;
+import com.krushit.dto.UserSignUpDTO;
 import com.krushit.model.Role;
 import com.krushit.model.User;
-import com.krushit.service.DriverService;
-import com.krushit.controller.validator.AuthValidator;
+import com.krushit.service.CustomerService;
 import com.krushit.utils.ObjectMapperUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -19,33 +20,27 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.List;
 
-public class GetAllDriversController extends HttpServlet {
-    private DriverService driverService = new DriverService();
-    private Mapper mapper = new Mapper();
+public class UserLogOutController extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType(Message.APPLICATION_JSON);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
+                throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
+            }
             HttpSession session = request.getSession();
             UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
-            List<Driver> drivers = driverService.getAllDrivers();
-            if (drivers.isEmpty()) {
-                createResponse(response, Message.Driver.NO_DRIVERS_FOUND, null, HttpServletResponse.SC_OK);
-            } else {
-                createResponse(response, Message.Driver.SUCCESSFULLY_RETRIEVED_DRIVERS, drivers, HttpServletResponse.SC_OK);
-            }
+            LogOutValidator.validateLogOut(userDTO);
+            session.invalidate();
+            createResponse(response, Message.User.USER_LOGOUT_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
-            createResponse(response, e.getMessage(), null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

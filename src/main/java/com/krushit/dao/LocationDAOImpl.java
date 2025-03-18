@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class LocationDAOImpl implements ILocationDAO{
-    private final String ADD_LOCATION = "INSERT INTO LOCATIONS (name) VALUES (?)";
+    private final String ADD_LOCATION = "INSERT INTO locations (name) VALUES (?)";
     @Override
     public void addLocation(String location) throws SQLException, ClassNotFoundException, DBException {
         try(Connection connection = DBConnection.INSTANCE.getConnection();

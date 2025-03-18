@@ -4,7 +4,16 @@ public final class Message {
     private Message() {
     }
 
+    public static final class Ride {
+        public static final String LOCATION_IS_REQUIRE = "Please enter source & destination location";
+
+        private Ride(){
+        }
+    }
     public static final class User {
+        public static final String INVALID_OPERATION = "Please log in first";
+        public static final String USER_LOGOUT_SUCCESSFULLY = "Logout successfully";
+
         private User(){
         }
         public static final String PLEASE_ENTER_PASSWORD = "Please Enter Password";
@@ -94,6 +103,12 @@ public final class Message {
     }
 
     public static final class Vehicle {
+        public static final String BRAND_MODEL_ALREADY_EXISTS = "This model of this brand already exist";
+        public static final String SUCCESSFULLY_RETRIVED_ALL_BRAND_MODELS = "Successfully retrieve all brand models";
+        public static final String ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL = "Error occur while checking brand model";
+        public static final String ERROR_OCCUR_WHILE_CHECKING_MIN_YEAR = "Error occur while checking min year for brand model";
+        public static final String BRAND_MODEL_NOT_SUPPORTED = "Sorry, Your vehicle brand model not supported by system";
+
         private Vehicle() {
         }
 
@@ -136,6 +151,10 @@ public final class Message {
     }
 
     public static final class Database {
+        public static final String FLYWAY_SUCCESSFUL = "Flyway set up successful";
+        public static final String FLYWAY_FAILED = "Failed to set up flyway";
+        public static final String DRIVER_NOT_FOUND = "Driver not found";
+
         private Database() {
         }
 

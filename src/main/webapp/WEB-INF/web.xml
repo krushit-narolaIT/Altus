@@ -4,9 +4,9 @@
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
          version="5.0">
 
-<!--    <listener>-->
-<!--        <listener-class>com.krushit.utils.FlywayInitializer</listener-class>-->
-<!--    </listener>-->
+    <listener>
+        <listener-class>com.krushit.utils.FlywayConfiger</listener-class>
+    </listener>
 
     <context-param>
         <param-name>db.url</param-name>
@@ -148,6 +148,24 @@
     <servlet-mapping>
         <servlet-name>GetAllPendingDriverVerification</servlet-name>
         <url-pattern>/GetAllPendingDriverVerification</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserLogOutController</servlet-name>
+        <servlet-class>com.krushit.controller.UserLogOutController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>UserLogOutController</servlet-name>
+        <url-pattern>/UserLogOut</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetAllModelsController</servlet-name>
+        <servlet-class>com.krushit.controller.GetAllModelsController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetAllModelsController</servlet-name>
+        <url-pattern>/GetAllModels</url-pattern>
     </servlet-mapping>
 
 </web-app>

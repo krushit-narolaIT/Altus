@@ -83,19 +83,20 @@ public class UserDAOImpl implements IUserDAO {
             statement.setString(2, password);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
-                user = new User();
-                user.setUserId(resultSet.getInt("user_id"));
-                user.setRole(Role.getRole(resultSet.getInt("role_id")));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-                user.setPhoneNo(resultSet.getString("phone_no"));
-                user.setEmailId(resultSet.getString("email_id"));
-                user.setActive(resultSet.getBoolean("is_active"));
-                user.setDisplayId(resultSet.getString("display_id"));
-                user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
-                user.setCreatedBy(resultSet.getString("created_by"));
-                user.setUpdatedBy(resultSet.getString("updated_by"));
+                user = new User.UserBuilder()
+                        .setUserId(resultSet.getInt("user_id"))
+                        .setRole(Role.getRole(resultSet.getInt("role_id")))
+                        .setFirstName(resultSet.getString("first_name"))
+                        .setLastName(resultSet.getString("last_name"))
+                        .setPhoneNo(resultSet.getString("phone_no"))
+                        .setEmailId(resultSet.getString("email_id"))
+                        .setActive(resultSet.getBoolean("is_active"))
+                        .setDisplayId(resultSet.getString("display_id"))
+                        .setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime())
+                        .setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime())
+                        .setCreatedBy(resultSet.getString("created_by"))
+                        .setUpdatedBy(resultSet.getString("updated_by"))
+                        .build();
             } else {
                 throw new ApplicationException(Message.User.INVALID_EMAIL_AND_PASS);
             }
@@ -105,6 +106,7 @@ public class UserDAOImpl implements IUserDAO {
         }
         return user;
     }
+
 
     public boolean isUserExistWithEmail(String emailID) throws SQLException, ClassNotFoundException {
         try (Connection connection = DBConnection.INSTANCE.getConnection();
@@ -145,18 +147,19 @@ public class UserDAOImpl implements IUserDAO {
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                user = new User();
-                user.setUserId(resultSet.getInt("user_id"));
-                user.setRole(Role.getRole(resultSet.getInt("role_id")));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-                user.setPhoneNo(resultSet.getString("phone_no"));
-                user.setEmailId(resultSet.getString("email_id"));
-                user.setDisplayId(resultSet.getString("display_id"));
-                user.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
-                user.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
-                user.setCreatedBy(resultSet.getString("created_by"));
-                user.setUpdatedBy(resultSet.getString("updated_by"));
+                user = new User.UserBuilder()
+                        .setUserId(resultSet.getInt("user_id"))
+                        .setRole(Role.getRole(resultSet.getInt("role_id")))
+                        .setFirstName(resultSet.getString("first_name"))
+                        .setLastName(resultSet.getString("last_name"))
+                        .setPhoneNo(resultSet.getString("phone_no"))
+                        .setEmailId(resultSet.getString("email_id"))
+                        .setDisplayId(resultSet.getString("display_id"))
+                        .setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime())
+                        .setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime())
+                        .setCreatedBy(resultSet.getString("created_by"))
+                        .setUpdatedBy(resultSet.getString("updated_by"))
+                        .build();
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
@@ -170,12 +173,13 @@ public class UserDAOImpl implements IUserDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                User user = new User();
-                user.setUserId(resultSet.getInt("user_id"));
-                user.setFirstName(resultSet.getString("first_name"));
-                user.setLastName(resultSet.getString("last_name"));
-                user.setEmailId(resultSet.getString("email_id"));
-                user.setActive(resultSet.getBoolean("is_active"));
+                User user = new User.UserBuilder()
+                        .setUserId(resultSet.getInt("user_id"))
+                        .setFirstName(resultSet.getString("first_name"))
+                        .setLastName(resultSet.getString("last_name"))
+                        .setEmailId(resultSet.getString("email_id"))
+                        .setActive(resultSet.getBoolean("is_active"))
+                        .build();
                 users.add(user);
             }
         } catch (SQLException | ClassNotFoundException e) {

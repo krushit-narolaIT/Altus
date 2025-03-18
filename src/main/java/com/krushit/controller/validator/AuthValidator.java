@@ -2,6 +2,7 @@ package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.AuthException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 
 public class AuthValidator {
@@ -11,6 +12,12 @@ public class AuthValidator {
         }
         if (!user.getRole().getRoleName().equalsIgnoreCase(requiredRole)) {
             throw new AuthException(Message.Auth.UNAUTHORIZED);
+        }
+    }
+
+    public static void isUserLoggedIn(UserDTO userDTO) throws AuthException {  //*
+        if (userDTO == null || userDTO.getRole() == null) {
+            throw new AuthException(Message.Auth.PLEASE_LOGIN_FIRST);
         }
     }
 }

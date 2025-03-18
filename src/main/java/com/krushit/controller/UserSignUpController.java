@@ -2,6 +2,8 @@ package com.krushit.controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
+import com.krushit.common.mapper.Mapper;
+import com.krushit.dto.UserSignUpDTO;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.common.exception.ApplicationException;
@@ -18,21 +20,20 @@ import java.io.IOException;
 
 public class UserSignUpController extends HttpServlet {
     private CustomerService userService = new CustomerService();
+    private Mapper mapper = new Mapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType(Message.APPLICATION_JSON);
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
                 throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
             }
-            User user = ObjectMapperUtil.toObject(request.getReader(), User.class);
+            UserSignUpDTO userSignUpDTO = ObjectMapperUtil.toObject(request.getReader(), UserSignUpDTO.class);
+            Role userRole = request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)
+                    ? Role.ROLE_CUSTOMER
+                    : Role.ROLE_DRIVER;
+            User user = mapper.convertToEntity(userSignUpDTO, userRole);
             SignupValidator.validateUser(user);
-            if(request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)){
-                user.setRole(Role.ROLE_CUSTOMER);
-            } else {
-                user.setRole(Role.ROLE_DRIVER);
-            }
             userService.registerUser(user);
             createResponse(response, Message.User.USER_REGISTERED_SUCCESSFULLY, user.getEmailId(), HttpServletResponse.SC_OK);
         } catch (DBException e) {
@@ -40,7 +41,7 @@ public class UserSignUpController extends HttpServlet {
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

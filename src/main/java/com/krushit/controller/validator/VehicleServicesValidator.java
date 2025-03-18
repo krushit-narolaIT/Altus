@@ -54,7 +54,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.MODEL_NAME_IS_REQUIRED);
         }
 
-        if (model.getMinYear() > 2000 || model.getMinYear() < LocalDateTime.now().getYear()) {
+        if (model.getMinYear() < 1990 || model.getMinYear() > LocalDateTime.now().getYear()) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_MIN_YEAR);
         }
     }
@@ -80,7 +80,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.REGISTRATION_NUMBER_INVALID);
         }
 
-        if (String.valueOf(vehicle.getYear()).trim().isEmpty() || vehicle.getYear() > 1990 || vehicle.getYear() < LocalDateTime.now().getYear()) {
+        if (String.valueOf(vehicle.getYear()).trim().isEmpty() || vehicle.getYear() < 1990 || vehicle.getYear() > LocalDateTime.now().getYear()) {
             throw new ValidationException(Message.Vehicle.YEAR_INVALID);
         }
 

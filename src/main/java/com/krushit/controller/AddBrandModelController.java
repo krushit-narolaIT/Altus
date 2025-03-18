@@ -1,9 +1,11 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
+import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.BrandModel;
 import com.krushit.model.Role;
 import com.krushit.model.User;
@@ -20,6 +22,7 @@ import java.io.IOException;
 
 public class AddBrandModelController extends HttpServlet {
     private VehicleRideService vehicleRideService = new VehicleRideService();
+    private Mapper mapper = new Mapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -29,8 +32,10 @@ public class AddBrandModelController extends HttpServlet {
                 createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            HttpSession session = request.getSession(false);
+            UserDTO userDTO = (UserDTO) session.getAttribute("user");
+            AuthValidator.isUserLoggedIn(userDTO); //*
+            User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
             BrandModel brandModel = ObjectMapperUtil.toObject(request.getReader(), BrandModel.class);
             VehicleServicesValidator.validateVehicleModelDetails(brandModel);

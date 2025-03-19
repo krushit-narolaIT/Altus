@@ -165,6 +165,10 @@ public final class Message {
 
     public static final class Location {
         public static final String LOCATION_ADDED_SUCCESSFULLY = "Location Added Successfully";
+        public static final String LOCATIONS_NOT_FOUND = "Locations not found";
+        public static final String SUCCESSFULLY_RETRIEVED_ALL_LOCATIONS = "Successfully retrieved locations";
+        public static final String LOCATION_NOT_FOUND = "Location not found for deletion";
+        public static final String LOCATION_DELETED_SUCCESSFULLY = "Location deleted successfully";
 
         private Location(){
         }

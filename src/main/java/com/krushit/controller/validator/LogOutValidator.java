@@ -9,7 +9,6 @@ public class LogOutValidator {
     public static void validateLogOut(UserDTO userDTO) throws ValidationException {
         if(userDTO == null){
             throw new ValidationException(Message.User.INVALID_OPERATION);
-
         }
         if (String.valueOf(userDTO.getUserId()).isEmpty()) {
             throw new ValidationException(Message.User.INVALID_OPERATION);

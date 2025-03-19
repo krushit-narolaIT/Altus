@@ -5,12 +5,8 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.AuthValidator;
-import com.krushit.controller.validator.SignupValidator;
-import com.krushit.controller.validator.VehicleServicesValidator;
 import com.krushit.dto.ApiResponse;
 import com.krushit.dto.UserDTO;
-import com.krushit.dto.UserSignUpDTO;
-import com.krushit.model.BrandModel;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.service.VehicleRideService;
@@ -25,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 public class GetAllModelsController extends HttpServlet {
-    private VehicleRideService vehicleRideService = new VehicleRideService();
-    private Mapper mapper = new Mapper();
+    private final VehicleRideService vehicleRideService = new VehicleRideService();
+    private final Mapper mapper = new Mapper();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -34,7 +30,7 @@ public class GetAllModelsController extends HttpServlet {
         try {
             HttpSession session = request.getSession();
             UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.isUserLoggedIn(userDTO);
+            AuthValidator.userLoggedIn(userDTO);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
             Map<String, List<String>> brandModelMap = vehicleRideService.getAllBrandModels();

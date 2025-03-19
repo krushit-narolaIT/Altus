@@ -1,9 +1,11 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
+import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.model.VehicleService;
@@ -20,14 +22,17 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class AddVehicleServiceController extends HttpServlet {
-    private VehicleRideService vehicleRideService = new VehicleRideService();
+    private final VehicleRideService vehicleRideService = new VehicleRideService();
+    private final Mapper mapper = new Mapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            HttpSession session = request.getSession(false);
+            UserDTO userDTO = (UserDTO) session.getAttribute("user");
+            AuthValidator.userLoggedIn(userDTO);
+            User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
             VehicleService vehicleService = ObjectMapperUtil.toObject(request.getReader(), VehicleService.class);
             VehicleServicesValidator.validateVehicleServiceDetails(vehicleService);

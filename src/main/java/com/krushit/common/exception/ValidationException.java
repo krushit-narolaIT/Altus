@@ -1,6 +1,5 @@
 package com.krushit.common.exception;
 
-import java.sql.SQLException;
 
 public class ValidationException extends ApplicationException {
     public ValidationException(String message) {

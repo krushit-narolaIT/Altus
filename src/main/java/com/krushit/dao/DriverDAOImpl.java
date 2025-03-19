@@ -28,7 +28,7 @@ public class DriverDAOImpl implements IDriverDAO {
     private final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
     private final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
 
-    private UserDAOImpl userDAO = new UserDAOImpl();
+    private final UserDAOImpl userDAO = new UserDAOImpl();
 
     @Override
     public User driverLogin(String emailId, String password) throws ApplicationException {
@@ -56,7 +56,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
     }
 
@@ -82,7 +82,7 @@ public class DriverDAOImpl implements IDriverDAO {
             statement.setInt(3, driver.getUserId());
             statement.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
     }
 
@@ -107,26 +107,10 @@ public class DriverDAOImpl implements IDriverDAO {
                         .setRole(user.getRole())
                         .setDisplayId(user.getDisplayId())
                         .build();
-
-/*                Driver driver1 = (Driver) new Driver.DriverBuilder()
-                        .setDriverId(resultSet.getInt("driver_id"))
-                        .setUserId(resultSet.getInt("user_id"))
-                        .setEmailId(user.getEmailId())
-                        .setFirstName(user.getFirstName())
-                        .setLastName(user.getLastName())
-                        .setRole(user.getRole())
-                        .setDisplayId(user.getDisplayId())
-                        .setLicenceNumber(resultSet.getString("licence_number"))
-                        .setLicencePhoto(resultSet.getString("licence_photo"))
-                        .setDocumentVerified(resultSet.getBoolean("is_document_verified"))
-                        .setVerificationStatus(resultSet.getString("verification_status"))
-                        .setComment(resultSet.getString("comment"))
-                        .build();*/
                 pendingDrivers.add(driver);
-                System.out.println("Driver :: " + driver);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
         return pendingDrivers;
     }
@@ -167,7 +151,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
     }
 
@@ -192,10 +176,9 @@ public class DriverDAOImpl implements IDriverDAO {
                         .setEmailId(userDrive != null ? userDrive.getEmailId() : null)
                         .build();
                 drivers.add(driver);
-                System.out.println("--> :: " + driver);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
         return drivers;
     }
@@ -210,7 +193,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 return resultSet.getInt("driver_id");
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
         return null;
     }
@@ -225,7 +208,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
         return false;
     }
@@ -241,7 +224,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
         return false;
     }
@@ -254,7 +237,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 return rs.next();
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(e.getMessage(), e);
         }
     }
 }

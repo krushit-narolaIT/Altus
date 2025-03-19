@@ -16,6 +16,7 @@ public class FlywayConfiger implements ServletContextListener {
                             "root", "password123#")
                     .locations("classpath:db/migration")
                     .baselineOnMigrate(true)
+                    .baselineVersion("1")
                     .load();
             flyway.migrate();
             System.out.println(Message.Database.FLYWAY_SUCCESSFUL);

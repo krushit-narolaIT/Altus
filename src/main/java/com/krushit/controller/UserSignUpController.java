@@ -19,8 +19,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class UserSignUpController extends HttpServlet {
-    private CustomerService userService = new CustomerService();
-    private Mapper mapper = new Mapper();
+    private final CustomerService userService = new CustomerService();
+    private final Mapper mapper = new Mapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

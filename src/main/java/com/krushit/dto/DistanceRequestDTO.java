@@ -1,27 +1,30 @@
 package com.krushit.dto;
 
 public class DistanceRequestDTO {
-    private String from;
-    private String to;
+    private int from;
+    private int to;
 
-    public DistanceRequestDTO(String from, String to) {
+    public DistanceRequestDTO() {
+    }
+
+    public DistanceRequestDTO(int from, int to) {
         this.from = from;
         this.to = to;
     }
 
-    public String getFrom() {
+    public int getFrom() {
         return from;
     }
 
-    public void setFrom(String from) {
+    public void setFrom(int from) {
         this.from = from;
     }
 
-    public String getTo() {
+    public int getTo() {
         return to;
     }
 
-    public void setTo(String to) {
+    public void setTo(int to) {
         this.to = to;
     }
 }

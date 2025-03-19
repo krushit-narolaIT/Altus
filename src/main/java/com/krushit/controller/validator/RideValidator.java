@@ -6,8 +6,9 @@ import com.krushit.dto.DistanceRequestDTO;
 
 public class RideValidator {
     public static void validateLocation(DistanceRequestDTO distanceRequestDTO) throws ValidationException {
-        if (distanceRequestDTO.getFrom() == null || distanceRequestDTO.getFrom().trim().isEmpty()
-                || distanceRequestDTO.getTo() == null || distanceRequestDTO.getTo().trim().isEmpty()) {
+        if (String.valueOf(distanceRequestDTO.getFrom()).trim().isEmpty() ||
+                String.valueOf(distanceRequestDTO.getTo()).trim().isEmpty()) {
+            System.out.println("in validation");
             throw new ValidationException(Message.Ride.LOCATION_IS_REQUIRE);
         }
     }

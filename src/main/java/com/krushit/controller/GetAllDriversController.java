@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.util.List;
 
 public class GetAllDriversController extends HttpServlet {
-    private DriverService driverService = new DriverService();
-    private Mapper mapper = new Mapper();
+    private final DriverService driverService = new DriverService();
+    private final Mapper mapper = new Mapper();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);

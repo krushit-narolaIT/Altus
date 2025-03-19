@@ -7,6 +7,7 @@ import com.krushit.dao.DriverDAOImpl;
 import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
+import com.krushit.dto.DriverVerificationRequest;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 
@@ -22,8 +23,8 @@ import java.util.List;
 public class DriverService {
     private static final String STORAGE_PATH = "D:\\Project\\AltusDriverLicences";
 
-    private IDriverDAO driverDAO = new DriverDAOImpl();
-    private IUserDAO userDAO = new UserDAOImpl();
+    private final IDriverDAO driverDAO = new DriverDAOImpl();
+    private final IUserDAO userDAO = new UserDAOImpl();
 
     public void storeDriverDetails(Driver driver) throws ApplicationException, SQLException {
         if (driverDAO.isLicenseNumberExists(driver.getLicenceNumber())) {
@@ -88,11 +89,15 @@ public class DriverService {
         return driverDAO.isDriverExist(driverId);
     }
 
-    public void verifyDriver(Integer driverId, boolean isVerified, String rejectionMessage) throws ApplicationException {
-        if (!isDriverExist(driverId)) {
+    public void verifyDriver(DriverVerificationRequest verificationRequest) throws ApplicationException {
+        if (!isDriverExist(verificationRequest.getDriverId())) {
             throw new ApplicationException(Message.DRIVER_NOT_EXIST);
         }
-        driverDAO.verifyDriver(driverId, isVerified, rejectionMessage);
+        if("ACCEPT".equalsIgnoreCase(verificationRequest.getVerificationStatus())){
+            driverDAO.verifyDriver(verificationRequest.getDriverId(), true, null);
+        } else {
+            driverDAO.verifyDriver(verificationRequest.getDriverId(), false, verificationRequest.getMessage());
+        }
     }
 
     public List<Driver> getAllDrivers() throws DBException {

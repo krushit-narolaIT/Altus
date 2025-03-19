@@ -2,6 +2,8 @@ package com.krushit.controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.mapper.Mapper;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.ApiResponse;
@@ -19,7 +21,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class AddDriverDetailsController extends HttpServlet {
-    private DriverService driverService = new DriverService();
+    private final DriverService driverService = new DriverService();
+    private final Mapper mapper = new Mapper();
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
@@ -28,8 +31,10 @@ public class AddDriverDetailsController extends HttpServlet {
                 createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("user");
+            HttpSession session = request.getSession(false);
+            UserDTO userDTO = (UserDTO) session.getAttribute("user");
+            AuthValidator.userLoggedIn(userDTO);
+            User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
             Driver driver = ObjectMapperUtil.toObject(request.getReader(), Driver.class);
             DriverDocumentValidator.validateDriver(driver);

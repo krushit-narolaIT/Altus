@@ -4,6 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.exception.ValidationException;
+import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.dto.ApiResponse;
@@ -18,7 +19,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class UserLoginController extends HttpServlet {
-    private CustomerService userService = new CustomerService();
+    private final CustomerService userService = new CustomerService();
+    private final Mapper mapper = new Mapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

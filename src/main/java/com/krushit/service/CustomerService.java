@@ -12,12 +12,11 @@ import com.krushit.model.Driver;
 import com.krushit.model.User;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class CustomerService {
-    private IUserDAO userDAO = new UserDAOImpl();
-    private IDriverDAO driverDAO = new DriverDAOImpl();
+    private final IUserDAO userDAO = new UserDAOImpl();
+    private final IDriverDAO driverDAO = new DriverDAOImpl();
 
     public void registerUser(User user) throws SQLException, ApplicationException, ClassNotFoundException {
         userDAO.registerUser(user);
@@ -28,8 +27,7 @@ public class CustomerService {
 //        UserDTO userDTO = convertToDTO(user);
 //        return userDTO;
         Mapper mapper = new Mapper();
-        UserDTO userDTO = mapper.convertToDTO(userDAO.userLogin(email, password));
-        return userDTO;
+        return mapper.convertToDTO(userDAO.userLogin(email, password));
     }
 
     public List<User> getAllCustomers() throws DBException {

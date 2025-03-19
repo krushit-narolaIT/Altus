@@ -21,8 +21,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class AddVehicleController extends HttpServlet {
-    private VehicleRideService vehicleRideService = new VehicleRideService();
-    private Mapper mapper = new Mapper();
+    private final VehicleRideService vehicleRideService = new VehicleRideService();
+    private final Mapper mapper = new Mapper();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -34,7 +34,7 @@ public class AddVehicleController extends HttpServlet {
             }
             HttpSession session = request.getSession();
             UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.isUserLoggedIn(userDTO);
+            AuthValidator.userLoggedIn(userDTO);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
             Vehicle vehicle = ObjectMapperUtil.toObject(request.getReader(), Vehicle.class);

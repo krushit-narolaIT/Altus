@@ -6,7 +6,6 @@ import com.krushit.model.Role;
 import com.krushit.model.User;
 
 public class Mapper {
-
     public UserDTO convertToDTO(User user) {
         return new UserDTO.UserDTOBuilder()
                 .setUserId(user.getUserId())

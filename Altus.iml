@@ -41,4 +41,7 @@
     <orderEntry type="library" name="mysql-connector-j-9.1.0" level="project" />
     <orderEntry type="library" name="jackson-datatype-jsr310-2.18.3" level="project" />
   </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="950f9c71-4d70-4e05-b8ac-2996749806ee" />
+  </component>
 </module>

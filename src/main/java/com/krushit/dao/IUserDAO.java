@@ -13,7 +13,5 @@ public interface IUserDAO {
     boolean isUserExistWithEmail(String emailID) throws SQLException, ClassNotFoundException;
     boolean isUserExistWithPhone(String phoneNo) throws SQLException, ClassNotFoundException;
     User getUserDetails(int userId) throws DBException;
-//    User getUserDetails(int userId) throws DBException;
-//    User getUserDetails(int userId) throws DBException;
     List<User> fetchAllCustomers() throws DBException;
 }

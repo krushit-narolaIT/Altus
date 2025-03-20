@@ -7,340 +7,479 @@
 	},
 	"item": [
 		{
-			"name": "Register User",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"firstName\": \"Aline\",\r\n    \"lastName\": \"Patel\",\r\n    \"phoneNo\": \"9899995499\",\r\n    \"emailId\": \"alina@gmail.com\",\r\n    \"password\": \"Alina@123\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailId\": \"ksb@admin.in\",\r\n    \"password\": \"sadmin@123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/UserLogin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"UserLogin"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/UserSignUp",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"UserSignUp"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Register Driver",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"firstName\": \"David\",\r\n    \"lastName\": \"Singh\",\r\n    \"phoneNo\": \"8888895499\",\r\n    \"emailId\": \"david@gmail.com\",\r\n    \"password\": \"David@123\"\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get All Drivers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/GetAllDriversServlet",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"GetAllDriversServlet"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/DriverSignUp",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"DriverSignUp"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Admin Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"emailId\": \"ksb@admin.in\",\r\n    \"password\": \"sadmin@123\"\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get All Customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/GetAllUsersServlet",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"GetAllUsersServlet"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/UserLogin",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"UserLogin"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Driver Document",
-			"request": {
-				"method": "PUT",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"userId\": 3,\r\n    \"licenceNumber\": \"GJ0855698712365\",\r\n    \"licencePhoto\": \"D:\\\\images\\\\driver-image.png\"\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Add Vehicle Service",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"serviceName\": \"Altus Black\",\r\n    \"baseFare\": 250.00,\r\n    \"perKmRate\": 37.50,\r\n    \"vehicleType\": \"4W\",\r\n    \"maxPassengers\": 4,\r\n    \"commissionPercentage\": 13.4\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/AddVehicleService",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"AddVehicleService"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/AddDriverDocument",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"AddDriverDocument"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get Pending Varifiction",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"roleId\" : 1\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Add Location",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/AddLocations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"AddLocations"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/DriverVerificationServlet",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"DriverVerificationServlet"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "User Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"emailId\": \"vsa@narola.email\",\r\n    \"password\": \"Vikas@223\"\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Add Brand Model",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"serviceId\": 1,\r\n    \"brandName\": \"Suzuki\",\r\n    \"model\": \"Spresso\",\r\n    \"minYear\": 2017\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/AddBrandModel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"AddBrandModel"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/DriverLogin",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"DriverLogin"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Drivers",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/GetAllDriversServlet",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"GetAllDriversServlet"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Get All Customer",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/GetAllUsersServlet",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"GetAllUsersServlet"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Vehicle Service",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"serviceName\": \"Altus Black\",\r\n    \"baseFare\": 250.00,\r\n    \"perKmRate\": 37.50,\r\n    \"vehicleType\": \"4W\",\r\n    \"maxPassengers\": 4,\r\n    \"commissionPercentage\": 13.4\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Get Pending Varifiction",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"roleId\" : 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/DriverVerificationServlet",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"DriverVerificationServlet"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/AddVehicleService",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"AddVehicleService"
-					]
+				{
+					"name": "Get All Brand Model",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/GetAllModels",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"GetAllModels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calculate Distance",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"from\" : 6,\r\n    \"to\" : 7\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/CalculateDistance",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"CalculateDistance"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/GetAllLocations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"GetAllLocations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Location",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/DeleteLocation?locationId=10",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"DeleteLocation"
+							],
+							"query": [
+								{
+									"key": "locationId",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Driver Login",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"emailId\": \"vad@narola.email\",\r\n    \"password\": \"Vinay@123\"\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Customer",
+			"item": [
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailId\": \"rashu@email.com\",\r\n    \"password\": \"Rashu@123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/UserLogin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"UserLogin"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/UserLogin",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"UserLogin"
-					]
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"Aline\",\r\n    \"lastName\": \"Patel\",\r\n    \"phoneNo\": \"9899995499\",\r\n    \"emailId\": \"alina@gmail.com\",\r\n    \"password\": \"Alina@123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/UserSignUp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"UserSignUp"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "Add Brand Model",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"serviceId\": 1,\r\n    \"brandName\": \"Suzuki\",\r\n    \"model\": \"New Swift\",\r\n    \"minYear\": 2024\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Driver",
+			"item": [
+				{
+					"name": "Add Vechicle",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"driverId\": 1,\r\n  \"brandModelId\": 3,\r\n  \"registrationNumber\": \"GJ05AB1234\",\r\n  \"year\": 2016,\r\n  \"fuelType\": \"Petrol\",\r\n  \"transmission\": \"Manual\",\r\n  \"groundClearance\": 170.50,\r\n  \"wheelBase\": 250.75\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/AddVehicle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"AddVehicle"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/AddBrandModel",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"AddBrandModel"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Add Vechicle",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"driverId\": 1,\r\n  \"brandModelId\": 2,\r\n  \"registrationNumber\": \"GJ05AB1234\",\r\n  \"year\": 2022,\r\n  \"fuelType\": \"Petrol\",\r\n  \"transmission\": \"Manual\",\r\n  \"groundClearance\": 170.50,\r\n  \"wheelBase\": 250.75\r\n}\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+				{
+					"name": "Driver Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailId\": \"vad@narola.email\",\r\n    \"password\": \"Vinay@123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/UserLogin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"UserLogin"
+							]
 						}
-					}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:8080/Altus_war_exploded/AddVehicle",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"Altus_war_exploded",
-						"AddVehicle"
-					]
+				{
+					"name": "Register Driver",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"David\",\r\n    \"lastName\": \"Singh\",\r\n    \"phoneNo\": \"8888895499\",\r\n    \"emailId\": \"david@gmail.com\",\r\n    \"password\": \"David@123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/DriverSignUp",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"DriverSignUp"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Driver Document",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": 3,\r\n    \"licenceNumber\": \"GJ0855698712365\",\r\n    \"licencePhoto\": \"D:\\\\Public\\\\Images\\\\Licence_Photo.jpg\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/AddDriverDocument",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"AddDriverDocument"
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }

@@ -1,11 +1,11 @@
-package com.krushit.utils;
+package com.krushit.common.config;
 
 import com.krushit.common.Message;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import org.flywaydb.core.Flyway;
 
-public class FlywayConfiger implements ServletContextListener {
+public class FlywayConfig implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {

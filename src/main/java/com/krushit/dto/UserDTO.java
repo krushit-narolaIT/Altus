@@ -1,7 +1,10 @@
 package com.krushit.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.krushit.model.Role;
 
+@JsonDeserialize(builder = UserDTO.UserDTOBuilder.class)
 public class UserDTO {
     private final int userId;
     private final Role role;
@@ -9,6 +12,7 @@ public class UserDTO {
     private final String lastName;
     private final String phoneNo;
     private final String emailId;
+    private final String password;
     private final String displayId;
 
     private UserDTO(UserDTOBuilder builder) {
@@ -18,9 +22,11 @@ public class UserDTO {
         this.lastName = builder.lastName;
         this.phoneNo = builder.phoneNo;
         this.emailId = builder.emailId;
+        this.password = builder.password;
         this.displayId = builder.displayId;
     }
 
+    @JsonPOJOBuilder(withPrefix = "set")
     public static class UserDTOBuilder {
         private int userId;
         private Role role;
@@ -28,6 +34,7 @@ public class UserDTO {
         private String lastName;
         private String phoneNo;
         private String emailId;
+        private String password;
         private String displayId;
 
         public UserDTOBuilder setUserId(int userId) {
@@ -57,6 +64,11 @@ public class UserDTO {
 
         public UserDTOBuilder setEmailId(String emailId) {
             this.emailId = emailId;
+            return this;
+        }
+
+        public UserDTOBuilder setPassword(String password) {
+            this.password = password;
             return this;
         }
 
@@ -94,6 +106,10 @@ public class UserDTO {
         return emailId;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public String getDisplayId() {
         return displayId;
     }
@@ -102,7 +118,7 @@ public class UserDTO {
     public String toString() {
         return "UserDTO{" +
                 "userId=" + userId +
-                ", role='" + role + '\'' +
+                ", role=" + role +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +

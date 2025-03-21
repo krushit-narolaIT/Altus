@@ -12,11 +12,12 @@ import com.krushit.model.User;
 import com.krushit.service.DriverService;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.DriverDocumentValidator;
-import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.ApplicationUtils;
+import com.krushit.utils.ObjectMapperUtils;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -27,16 +28,11 @@ public class AddDriverDetailsController extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
-                createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-            HttpSession session = request.getSession(false);
-            UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.userLoggedIn(userDTO);
+            ApplicationUtils.validateJsonRequest(request.getContentType());
+            UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
-            Driver driver = ObjectMapperUtil.toObject(request.getReader(), Driver.class);
+            Driver driver = ObjectMapperUtils.toObject(request.getReader(), Driver.class);
             DriverDocumentValidator.validateDriver(driver);
             driverService.storeDriverDetails(driver);
             createResponse(response, Message.Driver.DOCUMENT_STORED_SUCCESSFULLY, driver, HttpServletResponse.SC_CREATED);
@@ -54,6 +50,6 @@ public class AddDriverDetailsController extends HttpServlet {
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse =  new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
     }
 }

@@ -6,7 +6,7 @@ import com.krushit.common.exception.DBException;
 import com.krushit.model.BrandModel;
 import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;
-import com.krushit.utils.DBConnection;
+import com.krushit.common.config.DBConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,9 +30,17 @@ public class VehicleDAOImpl implements IVehicleDAO{
     private static final String GET_ALL_BRAND_MODELS = "SELECT brand_model_id, brand_name, model FROM brand_models";
     private static final String GET_MINIMUM_VEHICLE_YEAR = "SELECT min_year FROM brand_models WHERE brand_model_id = ?";
     private static final String IS_BRAND_MODEL_EXIST = "SELECT 1 FROM brand_models WHERE brand_model_id = ?";
+    private static final String GET_AVAILABLE_SERVICES = "SELECT vs.service_id, vs.service_name, vs.base_fare, vs.per_km_rate, " +
+                                                            "vs.vehicle_type, vs.max_passengers " +
+                                                            "FROM Vehicle_Service vs " +
+                                                            "JOIN Brand_Models bm ON vs.service_id = bm.service_id " +
+                                                            "JOIN Vehicles v ON bm.brand_model_id = v.brand_model_id " +
+                                                            "JOIN Drivers d ON v.driver_id = d.driver_id " +
+                                                            "WHERE d.is_available = TRUE";
+
 
     public void addVehicleService(VehicleService vehicleService) throws ApplicationException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection()) {
+        try (Connection connection = DBConfig.INSTANCE.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(CHECK_VEHICLE_SERVICE_EXIST)) {
                 statement.setString(1, vehicleService.getServiceName().toLowerCase());
                 try (ResultSet rs = statement.executeQuery()) {
@@ -56,7 +64,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
     }
 
     public void addBrandModel(BrandModel brandModel) throws ApplicationException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement checkStatement = connection.prepareStatement(CHECK_BRAND_MODEL_EXISTENCE_QUERY)) {
             checkStatement.setString(1, brandModel.getBrandName());
             checkStatement.setString(2, brandModel.getModel());
@@ -78,7 +86,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
     }
 
     public void addVehicle(Vehicle vehicle) throws ApplicationException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(INSERT_VEHICLE_QUERY)) {
             stmt.setInt(1, vehicle.getDriverId());
             stmt.setInt(2, vehicle.getBrandModelId());
@@ -88,7 +96,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
             stmt.setString(6, vehicle.getTransmission());
             stmt.setDouble(7, vehicle.getGroundClearance());
             stmt.setDouble(8, vehicle.getWheelBase());
-            stmt.setString(9, Message.Vehicle.VERIFICATION_PENDING);
+            stmt.setString(9, Message.Vehicle.PENDING);
             stmt.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_ADDING_VEHICLE + " " + e.getMessage(), e);
@@ -96,7 +104,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
     }
 
     public boolean isDriverVehicleExist(int driverID) throws ApplicationException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_DRIVER_VEHICLE_EXIST)) {
             stmt.setInt(1, driverID);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -109,7 +117,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
 
     public Map<String, List<String>> getAllBrandModels() throws DBException {
         Map<String, List<String>> brandModelMap = new HashMap<>();
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BRAND_MODELS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -124,7 +132,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
     }
 
     public int getMinYearForBrandModel(int brandModelId) throws ApplicationException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(GET_MINIMUM_VEHICLE_YEAR)) {
             stmt.setInt(1, brandModelId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -140,7 +148,7 @@ public class VehicleDAOImpl implements IVehicleDAO{
     }
 
     public boolean isBrandModelExist(int brandModelId) throws DBException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_BRAND_MODEL_EXIST)) {
             stmt.setInt(1, brandModelId);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -149,5 +157,28 @@ public class VehicleDAOImpl implements IVehicleDAO{
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
         }
+    }
+
+    @Override
+    public List<VehicleService> getAllAvailableVehicleServices() throws DBException {
+        List<VehicleService> services = new ArrayList<>();
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement ps = conn.prepareStatement(GET_AVAILABLE_SERVICES);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                VehicleService service = new VehicleService(
+                        rs.getInt("service_id"),
+                        rs.getString("service_name"),
+                        rs.getDouble("base_fare"),
+                        rs.getDouble("per_km_rate"),
+                        rs.getString("vehicle_type"),
+                        rs.getInt("max_passengers")
+                );
+                services.add(service);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
+        }
+        return services;
     }
 }

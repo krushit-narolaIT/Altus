@@ -6,15 +6,23 @@ import com.krushit.model.Role;
 import com.krushit.model.User;
 
 public class Mapper {
+
     public UserDTO convertToDTO(User user) {
-        return new UserDTO.UserDTOBuilder()
-                .setUserId(user.getUserId())
-                .setRole(user.getRole())
-                .setFirstName(user.getFirstName())
-                .setLastName(user.getLastName())
-                .setPhoneNo(user.getPhoneNo())
-                .setEmailId(user.getEmailId())
-                .setDisplayId(user.getDisplayId())
+        return fromUserEntity(
+                user.getUserId(),
+                user.getRole(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getPhoneNo(),
+                user.getEmailId(),
+                user.getDisplayId()
+        );
+    }
+
+    public User fromLoginDTO(UserDTO userDTO) {
+        return new User.UserBuilder()
+                .setEmailId(userDTO.getEmailId())
+                .setPassword(userDTO.getPassword())
                 .build();
     }
 
@@ -37,6 +45,28 @@ public class Mapper {
                 .setLastName(userDTO.getLastName())
                 .setPhoneNo(userDTO.getPhoneNo())
                 .setEmailId(userDTO.getEmailId())
+                .build();
+    }
+
+    public static UserDTO fromSignUp(String firstName, String lastName, String phoneNo, String emailId, String password) {
+        return new UserDTO.UserDTOBuilder()
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setPhoneNo(phoneNo)
+                .setEmailId(emailId)
+                .setPassword(password)
+                .build();
+    }
+
+    public static UserDTO fromUserEntity(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId, String displayId) {
+        return new UserDTO.UserDTOBuilder()
+                .setUserId(userId)
+                .setRole(role)
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setPhoneNo(phoneNo)
+                .setEmailId(emailId)
+                .setDisplayId(displayId)
                 .build();
     }
 }

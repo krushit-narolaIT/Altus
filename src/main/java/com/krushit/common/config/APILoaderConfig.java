@@ -1,4 +1,4 @@
-package com.krushit.utils;
+package com.krushit.common.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;

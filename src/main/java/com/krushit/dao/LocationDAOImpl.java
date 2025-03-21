@@ -1,9 +1,8 @@
 package com.krushit.dao;
 
-import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Location;
-import com.krushit.utils.DBConnection;
+import com.krushit.common.config.DBConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,7 +19,7 @@ public class LocationDAOImpl implements ILocationDAO{
 
     @Override
     public void addLocation(String location) throws DBException {
-        try(Connection connection = DBConnection.INSTANCE.getConnection();
+        try(Connection connection = DBConfig.INSTANCE.getConnection();
             PreparedStatement statement = connection.prepareStatement(ADD_LOCATION)){
                 statement.setString(1, location);
                 statement.executeUpdate();
@@ -32,7 +31,7 @@ public class LocationDAOImpl implements ILocationDAO{
     @Override
     public String getLocationNameById(int locationId) throws DBException {
         String locationName = null;
-        try (Connection conn = DBConnection.INSTANCE.getConnection();
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement prepareStatement = conn.prepareStatement(GET_LOCATION)) {
             prepareStatement.setInt(1, locationId);
             ResultSet rs = prepareStatement.executeQuery();
@@ -48,7 +47,7 @@ public class LocationDAOImpl implements ILocationDAO{
     @Override
     public List<Location> getAllLocations() throws DBException {
         List<Location> locations = new ArrayList<>();
-        try (Connection conn = DBConnection.INSTANCE.getConnection();
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_ALL_LOCATIONS);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -62,7 +61,7 @@ public class LocationDAOImpl implements ILocationDAO{
 
     @Override
     public boolean deleteLocation(int locationId) throws DBException {
-        try (Connection conn = DBConnection.INSTANCE.getConnection();
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_LOCATION)) {
             stmt.setInt(1, locationId);
             return stmt.executeUpdate() > 0;

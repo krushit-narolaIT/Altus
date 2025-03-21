@@ -1,11 +1,18 @@
 package com.krushit.common;
 
 public final class Message {
+    public static final String SESSION_EXPIRED = "Session Expired";
+    public static final String UNAUTHORIZED_ACCESS = "Y";
+
     private Message() {
     }
 
     public static final class Ride {
         public static final String LOCATION_IS_REQUIRE = "Please enter source & destination location";
+        public static final String RIDE_SERVICES_FETCHED_SUCCESSFULLY = "Available ride services fetched successfully.";
+        public static final String PLEASE_ENTER_VALID_LOCATION = "Please Enter Valid Location Id";
+        public static final String INVALID_GRAPH_HOPPER_API_RESPONSE = "Graphhopper api response is invalid";
+        public static final String COORDINATES_NOT_FOUND_FOR = "Coordinates not found for location: ";
 
         private Ride(){
         }
@@ -13,6 +20,13 @@ public final class Message {
     public static final class User {
         public static final String INVALID_OPERATION = "Please log in first";
         public static final String USER_LOGOUT_SUCCESSFULLY = "Logout successfully";
+        public static final String ERROR_WHILE_REGISTERING_USER = "Error occur while registering user";
+        public static final String PLEASE_ENTER_VALID_EMAIL_OR_PASS = "Please enter valid email & password";
+        public static final String ERROR_WHILE_USER_LOGIN = "Error while user login";
+        public static final String ERROR_WHILE_VALIDATING_USER = "Error while validating user";
+        public static final String ERROR_WHILE_CHECKING_USER_EXISTENCE = "Error while checking user existence";
+        public static final String ERROR_WHILE_GET_USER_DETAILS = "Error while getting user details";
+        public static final String ERROR_WHILE_GETTING_ALL_CUSTOMERS = "Error while getting all customers";
 
         private User(){
         }
@@ -34,6 +48,8 @@ public final class Message {
     }
 
     public static final class Auth {
+        public static final String SESSION_EXPIRED = "Session Expired";
+
         private Auth (){
         }
         public static final String PLEASE_LOGIN_FIRST = "Please login first";
@@ -60,6 +76,18 @@ public final class Message {
     public static final String UNAUTHORIZED = "You don't have valid privilege to perform this operation";
 
     public static final class Driver {
+        public static final String ERROR_WHILE_UPDATING_DRIVER_AVAILABILITY = "Error occur while updating driver availability";
+        public static final String ERROR_WHILE_CHECKING_LICENCE_NUMBER = "Error while checking licence number";
+        public static final String ERROR_FOR_CHECKING_DRIVER_DOCUMENT_UPLOADED = "Error occur while checking driver document";
+        public static final String ERROR_FOR_CHECKING_DRIVER_DOCUMENT_VERIFIED = "Error occur while checking driver document verification";
+        public static final String ERROR_FOR_GETTING_DRIVER_ID_FROM_USER_ID = "Error while getting driver id from user id";
+        public static final String ERROR_WHILE_FETCHING_ALL_DRIVERS = "Error while fetching all drivers";
+        public static final String PLEASE_PERFORM_VALID_VERIFICATION_OPERATION = "Please enter valid approval request : only [ACCEPT : REJECT] accepted";
+        public static final String ERROR_WHILE_VERIFYING_DRIVER = "Error occur while verification of driver";
+        public static final String ERROR_WHILE_CHECKING_DRIVER_EXISTENCE = "Error occur while checking driver existence";
+        public static final String ERROR_WHILE_GETTING_PENDING_VERIFICATION_DRIVER = "Error while getting pending driver verification";
+        public static final String ERROR_WHILE_INSERT_DRIVER_DETAILS = "Error while inserting driver details";
+
         private Driver() {
         }
         public static final String LICENCE_NUMBER_IS_REQUIRED = "Please enter licence number";
@@ -108,6 +136,7 @@ public final class Message {
         public static final String ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL = "Error occur while checking brand model";
         public static final String ERROR_OCCUR_WHILE_CHECKING_MIN_YEAR = "Error occur while checking min year for brand model";
         public static final String BRAND_MODEL_NOT_SUPPORTED = "Sorry, Your vehicle brand model not supported by system";
+        public static final String PENDING = "Pending";
 
         private Vehicle() {
         }

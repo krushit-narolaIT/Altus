@@ -1,5 +1,6 @@
 package com.krushit.service;
 
+import com.krushit.common.Message;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dao.DriverDAOImpl;
 import com.krushit.dao.IDriverDAO;
@@ -19,13 +20,16 @@ public class CustomerService {
     private final IDriverDAO driverDAO = new DriverDAOImpl();
 
     public void registerUser(User user) throws SQLException, ApplicationException, ClassNotFoundException {
+        if (userDAO.isUserExist(user.getEmailId(), user.getPhoneNo())) {
+            throw new ApplicationException(Message.USER_ALREADY_EXIST);
+        }
         userDAO.registerUser(user);
     }
 
     public UserDTO userLogin(String email, String password) throws ApplicationException, SQLException, ClassNotFoundException {
-//        User user = userDAO.userLogin(email, password);
-//        UserDTO userDTO = convertToDTO(user);
-//        return userDTO;
+        if(!userDAO.isValidUser(email, password)){
+            throw new ApplicationException(Message.User.PLEASE_ENTER_VALID_EMAIL_OR_PASS);
+        }
         Mapper mapper = new Mapper();
         return mapper.convertToDTO(userDAO.userLogin(email, password));
     }

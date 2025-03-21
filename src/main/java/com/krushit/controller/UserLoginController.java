@@ -10,7 +10,7 @@ import com.krushit.model.User;
 import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
 import com.krushit.controller.validator.LoginValidator;
-import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.ObjectMapperUtils;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,11 +27,10 @@ public class UserLoginController extends HttpServlet {
             throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            User loginUser = ObjectMapperUtil.toObject(request.getReader(), User.class);
-            LoginValidator.validateLoginCredentials(loginUser);
-            String email = loginUser.getEmailId();
-            String password = loginUser.getPassword();
-            UserDTO authenticatedUser = userService.userLogin(email, password);
+            UserDTO loginUser = ObjectMapperUtils.toObject(request.getReader(), UserDTO.class);
+            User user = mapper.fromLoginDTO(loginUser);
+            LoginValidator.validateLoginCredentials(user);
+            UserDTO authenticatedUser = userService.userLogin(user.getEmailId(), user.getPassword());
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
             sendResponse(response, HttpServletResponse.SC_OK, Message.User.LOGIN_SUCCESSFUL, authenticatedUser);
@@ -51,6 +50,6 @@ public class UserLoginController extends HttpServlet {
     private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
     }
 }

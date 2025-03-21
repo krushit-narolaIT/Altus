@@ -1,5 +1,9 @@
 package com.krushit.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+@JsonDeserialize(builder = UserSignUpDTO.UserSignUpDTOBuilder.class)
 public class UserSignUpDTO {
     private final String firstName;
     private final String lastName;
@@ -15,6 +19,7 @@ public class UserSignUpDTO {
         this.password = builder.password;
     }
 
+    @JsonPOJOBuilder(withPrefix = "set")
     public static class UserSignUpDTOBuilder {
         private String firstName;
         private String lastName;

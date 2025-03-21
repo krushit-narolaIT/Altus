@@ -9,9 +9,8 @@ import com.krushit.model.User;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.dto.ApiResponse;
 import com.krushit.service.CustomerService;
-import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.controller.validator.SignupValidator;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,12 +22,12 @@ public class UserSignUpController extends HttpServlet {
     private final Mapper mapper = new Mapper();
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
                 throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
             }
-            UserSignUpDTO userSignUpDTO = ObjectMapperUtil.toObject(request.getReader(), UserSignUpDTO.class);
+            UserSignUpDTO userSignUpDTO = ObjectMapperUtils.toObject(request.getReader(), UserSignUpDTO.class);
             Role userRole = request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)
                     ? Role.ROLE_CUSTOMER
                     : Role.ROLE_DRIVER;
@@ -50,6 +49,6 @@ public class UserSignUpController extends HttpServlet {
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
     }
 }

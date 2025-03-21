@@ -101,3 +101,34 @@ SHOW INDEXES FROM drivers;
 
 ALTER TABLE drivers DROP INDEX unique_driver_license;
 
+
+SELECT DISTINCT vs.service_id, vs.service_name, vs.base_fare, vs.per_km_rate, 
+                vs.vehicle_type, vs.max_passengers 
+FROM Vehicle_Service vs 
+JOIN Brand_Models bm ON vs.service_id = bm.service_id 
+JOIN Vehicles v ON bm.brand_model_id = v.brand_model_id 
+JOIN Drivers d ON v.driver_id = d.driver_id  
+WHERE d.is_available = TRUE;
+
+
+CREATE TABLE ride_requests (
+    ride_request_id INT PRIMARY KEY AUTO_INCREMENT,
+    ride_request_status ENUM('Pending', 'Accepted', 'Cancelled', 'Rejected') NOT NULL,
+    pick_location_id INT NOT NULL,
+    drop_off_location_id INT NOT NULL,
+    user_id INT NOT NULL,
+    ride_request_date DATE NOT NULL,
+    pick_up_time TIME NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    FOREIGN KEY (pick_location_id) REFERENCES locations(location_id),
+    FOREIGN KEY (drop_off_location_id) REFERENCES locations(location_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+ALTER TABLE ride_requests 
+ADD CONSTRAINT chk_both_locations 
+CHECK (pick_location_id <> drop_off_location_id);
+
+make ride request status enum with Pending Accepted Cancelled Rejected

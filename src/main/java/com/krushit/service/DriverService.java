@@ -90,13 +90,19 @@ public class DriverService {
     }
 
     public void verifyDriver(DriverVerificationRequest verificationRequest) throws ApplicationException {
+        int driverId = verificationRequest.getDriverId();
         if (!isDriverExist(verificationRequest.getDriverId())) {
             throw new ApplicationException(Message.DRIVER_NOT_EXIST);
         }
+        if(!driverDAO.isDriverDocumentUploaded(driverId)){
+            throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
+        }
         if("ACCEPT".equalsIgnoreCase(verificationRequest.getVerificationStatus())){
             driverDAO.verifyDriver(verificationRequest.getDriverId(), true, null);
-        } else {
+        } else if("REJECT".equalsIgnoreCase(verificationRequest.getVerificationStatus())) {
             driverDAO.verifyDriver(verificationRequest.getDriverId(), false, verificationRequest.getMessage());
+        } else {
+            throw new ApplicationException(Message.Driver.PLEASE_PERFORM_VALID_VERIFICATION_OPERATION);
         }
     }
 

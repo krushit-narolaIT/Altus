@@ -11,12 +11,13 @@ import com.krushit.model.Role;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
 import com.krushit.controller.validator.AuthValidator;
-import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.ApplicationUtils;
+import com.krushit.utils.ObjectMapperUtils;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.List;
@@ -29,9 +30,8 @@ public class GetAllPendingDriverVerificationController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.INVALID_CONTENT_TYPE);
         try {
-            HttpSession session = request.getSession(false);
-            UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.userLoggedIn(userDTO);
+            ApplicationUtils.validateJsonRequest(request.getContentType());
+            UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
             List<Driver> pendingDrivers = driverService.getPendingVerificationDrivers();
@@ -54,6 +54,6 @@ public class GetAllPendingDriverVerificationController extends HttpServlet {
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
     }
 }

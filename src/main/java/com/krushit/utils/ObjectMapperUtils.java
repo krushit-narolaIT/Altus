@@ -7,7 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-public class ObjectMapperUtil {
+public class ObjectMapperUtils {
     private static final ObjectMapper objectMapper = new ObjectMapper();
     static {
         objectMapper.registerModule(new JavaTimeModule());

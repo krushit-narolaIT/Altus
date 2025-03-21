@@ -15,7 +15,7 @@ public class AuthValidator {
         }
     }
 
-    public static void userLoggedIn(UserDTO userDTO) throws AuthException {  //*
+    public static void userLoggedIn(UserDTO userDTO) throws AuthException {
         if (userDTO == null || userDTO.getRole() == null) {
             throw new AuthException(Message.Auth.PLEASE_LOGIN_FIRST);
         }

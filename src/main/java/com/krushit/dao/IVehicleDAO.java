@@ -17,4 +17,5 @@ public interface IVehicleDAO {
     Map<String, List<String>> getAllBrandModels() throws DBException;
     int getMinYearForBrandModel(int brandModelId) throws ApplicationException;
     boolean isBrandModelExist(int brandModelId) throws DBException;
+    List<VehicleService> getAllAvailableVehicleServices() throws DBException;
 }

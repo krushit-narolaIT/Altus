@@ -5,7 +5,7 @@
          version="5.0">
 
     <listener>
-        <listener-class>com.krushit.utils.FlywayConfiger</listener-class>
+        <listener-class>com.krushit.common.config.FlywayConfig</listener-class>
     </listener>
 
     <context-param>
@@ -39,12 +39,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>DriverVerificationServlet</servlet-name>
+        <servlet-name>DriverVerification</servlet-name>
         <servlet-class>com.krushit.controller.VerifyDriverDocumentController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>DriverVerificationServlet</servlet-name>
-        <url-pattern>/DriverVerificationServlet</url-pattern>
+        <servlet-name>DriverVerification</servlet-name>
+        <url-pattern>/DriverVerification</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -193,5 +193,14 @@
     <servlet-mapping>
         <servlet-name>DeleteLocationController</servlet-name>
         <url-pattern>/DeleteLocation</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookRide</servlet-name>
+        <servlet-class>com.krushit.controller.RequestRideController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookRide</servlet-name>
+        <url-pattern>/BookRideRequest</url-pattern>
     </servlet-mapping>
 </web-app>

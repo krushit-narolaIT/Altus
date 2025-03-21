@@ -9,7 +9,8 @@ public class VehicleService {
     private int maxPassengers;
     private double commissionPercentage;
 
-    public VehicleService() {}
+    public VehicleService() {
+    }
 
     public VehicleService(int serviceId, String serviceName, double baseFare, double perKmRate,
                           String vehicleType, int maxPassengers, double commissionPercentage) {
@@ -20,6 +21,16 @@ public class VehicleService {
         this.vehicleType = vehicleType;
         this.maxPassengers = maxPassengers;
         this.commissionPercentage = commissionPercentage;
+    }
+
+    public VehicleService(int serviceId, String serviceName, double baseFare, double perKmRate,
+                          String vehicleType, int maxPassengers) {
+        this.serviceId = serviceId;
+        this.serviceName = serviceName;
+        this.baseFare = baseFare;
+        this.perKmRate = perKmRate;
+        this.vehicleType = vehicleType;
+        this.maxPassengers = maxPassengers;
     }
 
     public int getServiceId() {

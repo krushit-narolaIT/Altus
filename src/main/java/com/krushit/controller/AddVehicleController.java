@@ -11,7 +11,7 @@ import com.krushit.model.User;
 import com.krushit.model.Vehicle;
 import com.krushit.service.VehicleRideService;
 import com.krushit.controller.validator.AuthValidator;
-import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.controller.validator.VehicleServicesValidator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +37,7 @@ public class AddVehicleController extends HttpServlet {
             AuthValidator.userLoggedIn(userDTO);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
-            Vehicle vehicle = ObjectMapperUtil.toObject(request.getReader(), Vehicle.class);
+            Vehicle vehicle = ObjectMapperUtils.toObject(request.getReader(), Vehicle.class);
             VehicleServicesValidator.validateVehicleDetails(vehicle);
             vehicleRideService.addVehicle(vehicle, user.getUserId());
             createResponse(response, Message.Vehicle.VEHICLE_REGISTERED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
@@ -55,6 +55,6 @@ public class AddVehicleController extends HttpServlet {
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
     }
 }

@@ -1,11 +1,10 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Role;
 import com.krushit.model.User;
-import com.krushit.utils.DBConnection;
+import com.krushit.common.config.DBConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,19 +18,13 @@ public class UserDAOImpl implements IUserDAO {
     private final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
     private final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
     private final String GET_USER_DETAIL = "SELECT * FROM users WHERE user_id = ?";
-    private final String CHECK_USER_EXISTENCE = "SELECT 1 FROM users WHERE email_id = ?";
-    private final String CHECK_USER_EXISTENCE_WITH_PHONE = "SELECT 1 FROM users WHERE phone_no = ?";
+    private final String CHECK_USER_EXISTENCE = "SELECT 1 FROM users WHERE email_id = ? OR phone_no = ?";
     private final String INSERT_DRIVER_ENTRY = "INSERT INTO drivers (user_id) VALUES (?)";
     private final String GET_ALL_USERS = "SELECT * FROM users WHERE role_id = 2";
+    private final String CHECK_USER_CREDENTIALS = "SELECT 1 FROM users WHERE email_id = ? AND password = ?";
 
-    public void registerUser(User user) throws ApplicationException, SQLException, ClassNotFoundException {
-        if (isUserExistWithEmail(user.getEmailId())) {
-            throw new ApplicationException(Message.USER_ALREADY_EXIST);
-        }
-        if (isUserExistWithPhone(user.getPhoneNo())) {
-            throw new ApplicationException(Message.USER_ALREADY_EXIST);
-        }
-        try (Connection connection = DBConnection.INSTANCE.getConnection()) {
+    public void registerUser(User user) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection()) {
             connection.setAutoCommit(false);
             int userId = -1;
             try (PreparedStatement insertStmt = connection.prepareStatement(INSERT_USER_DATA, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -71,13 +64,13 @@ public class UserDAOImpl implements IUserDAO {
                 throw new DBException(Message.DATABASE_ERROR, new SQLException("failed to generate user id"));
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(Message.User.ERROR_WHILE_REGISTERING_USER, e);
         }
     }
 
-    public User userLogin(String emailId, String password) throws ApplicationException {
+    public User userLogin(String emailId, String password) throws DBException {
         User user = null;
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(USER_LOGIN)) {
             statement.setString(1, emailId);
             statement.setString(2, password);
@@ -97,34 +90,37 @@ public class UserDAOImpl implements IUserDAO {
                         .setCreatedBy(resultSet.getString("created_by"))
                         .setUpdatedBy(resultSet.getString("updated_by"))
                         .build();
-            } else {
-                throw new ApplicationException(Message.User.INVALID_EMAIL_AND_PASS);
             }
             resultSet.close();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(Message.User.ERROR_WHILE_USER_LOGIN, e);
         }
         return user;
     }
 
-
-    public boolean isUserExistWithEmail(String emailID) throws SQLException, ClassNotFoundException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(CHECK_USER_EXISTENCE)) {
+    public boolean isValidUser(String emailID, String password) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(CHECK_USER_CREDENTIALS)) {
             statement.setString(1, emailID);
+            statement.setString(2, password);
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next();
             }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_VALIDATING_USER, e);
         }
     }
 
-    public boolean isUserExistWithPhone(String phoneNo) throws SQLException, ClassNotFoundException {
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(CHECK_USER_EXISTENCE_WITH_PHONE)) {
-            statement.setString(1, phoneNo);
+    public boolean isUserExist(String emailID, String phoneNo) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(CHECK_USER_EXISTENCE)) {
+            statement.setString(1, emailID);
+            statement.setString(2, phoneNo);
             try (ResultSet rs = statement.executeQuery()) {
                 return rs.next();
             }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_CHECKING_USER_EXISTENCE, e);
         }
     }
 
@@ -142,7 +138,7 @@ public class UserDAOImpl implements IUserDAO {
 
     public User getUserDetails(int userId) throws DBException {
         User user = null;
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -162,14 +158,14 @@ public class UserDAOImpl implements IUserDAO {
                         .build();
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(Message.User.ERROR_WHILE_GET_USER_DETAILS, e);
         }
         return user;
     }
 
     public List<User> fetchAllCustomers() throws DBException {
         List<User> users = new ArrayList<>();
-        try (Connection connection = DBConnection.INSTANCE.getConnection();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -183,7 +179,7 @@ public class UserDAOImpl implements IUserDAO {
                 users.add(user);
             }
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Database.DATABASE_ERROR + " " + e.getMessage(), e);
+            throw new DBException(Message.User.ERROR_WHILE_GETTING_ALL_CUSTOMERS, e);
         }
         return users;
     }

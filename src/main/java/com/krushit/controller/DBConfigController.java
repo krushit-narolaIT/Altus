@@ -2,7 +2,7 @@ package com.krushit.controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.utils.DBConnection;
+import com.krushit.common.config.DBConfig;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -21,7 +21,7 @@ public class DBConfigController extends HttpServlet {
             if (dbUrl == null || dbUsername == null || dbPassword == null || dbDriver == null) {
                 throw new ApplicationException(Message.DATABASE_ERROR);
             }
-            DBConnection.INSTANCE = DBConnection.getInstance(dbUrl, dbUsername, dbPassword, dbDriver);
+            DBConfig.INSTANCE = DBConfig.getInstance(dbUrl, dbUsername, dbPassword, dbDriver);
             System.out.println(Message.Database.CONNECTION_SUCCESSFUL);
         } catch (SQLException | ClassNotFoundException | ApplicationException e) {
             e.printStackTrace();

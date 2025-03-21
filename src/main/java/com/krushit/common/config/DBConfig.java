@@ -1,25 +1,25 @@
-package com.krushit.utils;
+package com.krushit.common.config;
 
 import java.sql.*;
 
-public class DBConnection {
-    public static DBConnection INSTANCE = null;
+public class DBConfig {
+    public static DBConfig INSTANCE = null;
 
     private final String dbUrl;
     private final String dbUsername;
     private final String dbPassword;
     private final String dbDriver;
 
-    private DBConnection(String url, String username, String password, String driver) {
+    private DBConfig(String url, String username, String password, String driver) {
         dbUrl = url;
         dbUsername = username;
         dbPassword = password;
         dbDriver = driver;
     }
 
-    public static DBConnection getInstance(String url, String username, String password, String driver) throws SQLException, ClassNotFoundException {
+    public static DBConfig getInstance(String url, String username, String password, String driver) throws SQLException, ClassNotFoundException {
         if (INSTANCE == null) {
-            INSTANCE = new DBConnection(url,username,password,driver);
+            INSTANCE = new DBConfig(url,username,password,driver);
         }
         return INSTANCE;
     }

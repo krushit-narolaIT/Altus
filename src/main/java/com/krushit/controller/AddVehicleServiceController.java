@@ -11,13 +11,14 @@ import com.krushit.model.User;
 import com.krushit.model.VehicleService;
 import com.krushit.service.VehicleRideService;
 import com.krushit.controller.validator.AuthValidator;
-import com.krushit.utils.ObjectMapperUtil;
+import com.krushit.utils.ApplicationUtils;
+import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.controller.validator.VehicleServicesValidator;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
@@ -29,12 +30,11 @@ public class AddVehicleServiceController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            HttpSession session = request.getSession(false);
-            UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.userLoggedIn(userDTO);
+            ApplicationUtils.validateJsonRequest(request.getContentType());
+            UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
-            VehicleService vehicleService = ObjectMapperUtil.toObject(request.getReader(), VehicleService.class);
+            VehicleService vehicleService = ObjectMapperUtils.toObject(request.getReader(), VehicleService.class);
             VehicleServicesValidator.validateVehicleServiceDetails(vehicleService);
             vehicleRideService.addVehicleService(vehicleService);
             createResponse(response, Message.Vehicle.VEHICLE_SERVICE_ADDED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
@@ -52,6 +52,6 @@ public class AddVehicleServiceController extends HttpServlet {
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
         ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtil.toString(apiResponse));
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
     }
 }

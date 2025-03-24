@@ -3,6 +3,7 @@ package com.krushit.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.krushit.common.enums.Role;
 
 import java.time.LocalDateTime;
 

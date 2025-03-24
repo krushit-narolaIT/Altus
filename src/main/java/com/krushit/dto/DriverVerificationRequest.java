@@ -3,7 +3,7 @@ package com.krushit.dto;
 public class DriverVerificationRequest {
     private int driverId;
     private String verificationStatus;
-    private String message; //**
+    private String message;
 
     public int getDriverId() {
         return driverId;

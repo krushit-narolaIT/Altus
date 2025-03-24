@@ -7,7 +7,7 @@ import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponse;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.VehicleRideService;
 import com.krushit.utils.ApplicationUtils;
@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class GetAllModelsController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

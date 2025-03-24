@@ -1,37 +1,45 @@
 package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
+import com.krushit.common.enums.FuelType;
+import com.krushit.common.enums.VehicleType;
+import com.krushit.common.exception.Transmission;
 import com.krushit.common.exception.ValidationException;
 import com.krushit.model.*;
 
 import java.time.LocalDateTime;
 
 public class VehicleServicesValidator {
+
+    private static boolean isNullOrEmpty(Object value) {
+        return value == null || String.valueOf(value).trim().isEmpty();
+    }
+
     public static void validateVehicleServiceDetails(VehicleService service) throws ValidationException {
         if (service == null) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_VEHICLE_SERVICE);
         }
-        
-        if (service.getServiceName() == null || service.getServiceName().trim().isEmpty()) {
+
+        if (isNullOrEmpty(service.getServiceName())) {
             throw new ValidationException(Message.Vehicle.VEHICLE_SERVICE_IS_REQUIRED);
         }
 
-        if (String.valueOf(service.getBaseFare()).trim().isEmpty() || service.getBaseFare() < 0) {
+        if (isNullOrEmpty(service.getBaseFare()) || service.getBaseFare() < 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_BASE_FARE);
         }
 
-        if (String.valueOf(service.getPerKmRate()).trim().isEmpty() || service.getPerKmRate() < 0) {
+        if (isNullOrEmpty(service.getPerKmRate()) || service.getPerKmRate() < 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_PER_KM_RATE);
         }
 
         if (!VehicleType.isValidVehicleType(service.getVehicleType())) {
             throw new ValidationException(Message.Vehicle.INVALID_VEHICLE_TYPE);
         }
-        
+
         if (service.getMaxPassengers() <= 0 || service.getMaxPassengers() > 8) {
             throw new ValidationException(Message.Vehicle.INVALID_PASSENGER_CAPACITY);
         }
-        
+
         if (service.getCommissionPercentage() < 0 || service.getCommissionPercentage() > 100) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_COMMISSION_PERCENTAGE);
         }
@@ -46,11 +54,11 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_SERVICE_ID);
         }
 
-        if (model.getBrandName() == null || model.getBrandName().trim().isEmpty()) {
+        if (isNullOrEmpty(model.getBrandName())) {
             throw new ValidationException(Message.Vehicle.BRAND_NAME_IS_REQUIRED);
         }
 
-        if (model.getModel() == null || model.getModel().trim().isEmpty()) {
+        if (isNullOrEmpty(model.getModel())) {
             throw new ValidationException(Message.Vehicle.MODEL_NAME_IS_REQUIRED);
         }
 
@@ -64,15 +72,15 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.VEHICLE_DATA_MISSING);
         }
 
-        if (String.valueOf(vehicle.getDriverId()).trim().isEmpty() || vehicle.getDriverId() <= 0) {
+        if (isNullOrEmpty(vehicle.getDriverId()) || vehicle.getDriverId() <= 0) {
             throw new ValidationException(Message.Vehicle.DRIVER_ID_INVALID);
         }
 
-        if (String.valueOf(vehicle.getBrandModelId()).trim().isEmpty() || vehicle.getBrandModelId() <= 0) {
+        if (isNullOrEmpty(vehicle.getBrandModelId()) || vehicle.getBrandModelId() <= 0) {
             throw new ValidationException(Message.Vehicle.BRAND_MODEL_ID_INVALID);
         }
 
-        if (vehicle.getRegistrationNumber() == null || vehicle.getRegistrationNumber().trim().isEmpty()) {
+        if (isNullOrEmpty(vehicle.getRegistrationNumber())) {
             throw new ValidationException(Message.Vehicle.REGISTRATION_NUMBER_REQUIRED);
         }
 
@@ -80,7 +88,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.REGISTRATION_NUMBER_INVALID);
         }
 
-        if (String.valueOf(vehicle.getYear()).trim().isEmpty() || vehicle.getYear() < 1990 || vehicle.getYear() > LocalDateTime.now().getYear()) {
+        if (isNullOrEmpty(vehicle.getYear()) || vehicle.getYear() < 1990 || vehicle.getYear() > LocalDateTime.now().getYear()) {
             throw new ValidationException(Message.Vehicle.YEAR_INVALID);
         }
 
@@ -92,13 +100,12 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.TRANSMISSION_TYPE_INVALID);
         }
 
-        if (String.valueOf(vehicle.getGroundClearance()).trim().isEmpty() || vehicle.getGroundClearance() <= 0) {
+        if (isNullOrEmpty(vehicle.getGroundClearance()) || vehicle.getGroundClearance() <= 0) {
             throw new ValidationException(Message.Vehicle.GROUND_CLEARANCE_INVALID);
         }
 
-        if (String.valueOf(vehicle.getWheelBase()).trim().isEmpty()|| vehicle.getWheelBase() <= 0) {
+        if (isNullOrEmpty(vehicle.getWheelBase()) || vehicle.getWheelBase() <= 0) {
             throw new ValidationException(Message.Vehicle.WHEEL_BASE_INVALID);
         }
     }
-
 }

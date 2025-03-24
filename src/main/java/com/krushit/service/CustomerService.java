@@ -19,26 +19,22 @@ public class CustomerService {
     private final IUserDAO userDAO = new UserDAOImpl();
     private final IDriverDAO driverDAO = new DriverDAOImpl();
 
-    public void registerUser(User user) throws SQLException, ApplicationException, ClassNotFoundException {
+    public void registerUser(User user) throws ApplicationException {
         if (userDAO.isUserExist(user.getEmailId(), user.getPhoneNo())) {
             throw new ApplicationException(Message.USER_ALREADY_EXIST);
         }
         userDAO.registerUser(user);
     }
 
-    public UserDTO userLogin(String email, String password) throws ApplicationException, SQLException, ClassNotFoundException {
+    public UserDTO userLogin(String email, String password) throws ApplicationException {
         if(!userDAO.isValidUser(email, password)){
             throw new ApplicationException(Message.User.PLEASE_ENTER_VALID_EMAIL_OR_PASS);
         }
-        Mapper mapper = new Mapper();
+        Mapper mapper = Mapper.getInstance();
         return mapper.convertToDTO(userDAO.userLogin(email, password));
     }
 
-    public List<User> getAllCustomers() throws DBException {
+    public List<User> getAllCustomers() throws ApplicationException {
         return userDAO.fetchAllCustomers();
-    }
-
-    public List<Driver> getAllDrivers() throws DBException {
-        return driverDAO.fetchAllDrivers();
     }
 }

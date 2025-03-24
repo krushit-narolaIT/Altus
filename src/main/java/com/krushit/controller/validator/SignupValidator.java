@@ -53,10 +53,4 @@ public class SignupValidator {
             throw new ValidationException(Message.User.PLEASE_ENTER_VALID_PHONE_NO);
         }
     }
-
-    public static void validateLoginCredentials(String email, String password) throws ValidationException {
-        if (email == null || email.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-            throw new ValidationException(Message.User.EMAIL_AND_PASS_REQUIRED);
-        }
-    }
 }

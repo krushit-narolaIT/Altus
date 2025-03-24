@@ -130,5 +130,3 @@ CREATE TABLE ride_requests (
 ALTER TABLE ride_requests 
 ADD CONSTRAINT chk_both_locations 
 CHECK (pick_location_id <> drop_off_location_id);
-
-make ride request status enum with Pending Accepted Cancelled Rejected

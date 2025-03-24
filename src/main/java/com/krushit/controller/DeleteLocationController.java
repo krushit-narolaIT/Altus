@@ -7,7 +7,7 @@ import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponse;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.LocationService;
 import com.krushit.utils.ApplicationUtils;
@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class DeleteLocationController extends HttpServlet {
     private final LocationService locationService = new LocationService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {

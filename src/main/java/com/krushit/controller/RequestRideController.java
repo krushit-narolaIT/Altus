@@ -18,7 +18,7 @@ import java.util.List;
 
 public class RequestRideController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

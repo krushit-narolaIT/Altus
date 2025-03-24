@@ -6,7 +6,7 @@ import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.CustomerService;
 import com.krushit.controller.validator.AuthValidator;
@@ -23,7 +23,7 @@ import java.util.List;
 
 public class GetAllUsersController extends HttpServlet {
     private final CustomerService customerService = new CustomerService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

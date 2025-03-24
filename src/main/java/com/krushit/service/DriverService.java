@@ -26,7 +26,7 @@ public class DriverService {
     private final IDriverDAO driverDAO = new DriverDAOImpl();
     private final IUserDAO userDAO = new UserDAOImpl();
 
-    public void storeDriverDetails(Driver driver) throws ApplicationException, SQLException {
+    public void storeDriverDetails(Driver driver) throws ApplicationException {
         if (driverDAO.isLicenseNumberExists(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
@@ -81,7 +81,7 @@ public class DriverService {
         return name.substring(lastIndexOf);
     }
 
-    public List<Driver> getPendingVerificationDrivers() throws SQLException, ClassNotFoundException, DBException {
+    public List<Driver> getPendingVerificationDrivers() throws DBException {
         return driverDAO.getPendingVerificationDrivers();
     }
 
@@ -106,7 +106,7 @@ public class DriverService {
         }
     }
 
-    public List<Driver> getAllDrivers() throws DBException {
+    public List<Driver> getAllDrivers() throws ApplicationException {
         return driverDAO.fetchAllDrivers();
     }
 }

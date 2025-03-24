@@ -2,15 +2,12 @@ package com.krushit.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.krushit.model.RideRequestStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @JsonDeserialize(builder = RideRequestDTO.RideRequestDTOBuilder.class)
 public class RideRequestDTO {
-    private final int rideRequestId;
-    private final RideRequestStatus rideRequestStatus;
     private final int pickUpLocationId;
     private final int dropOffLocationId;
     private final int vehicleServiceId;
@@ -19,8 +16,6 @@ public class RideRequestDTO {
     private final LocalTime pickUpTime;
 
     private RideRequestDTO(RideRequestDTOBuilder builder) {
-        this.rideRequestId = builder.rideRequestId;
-        this.rideRequestStatus = builder.rideRequestStatus;
         this.pickUpLocationId = builder.pickUpLocationId;
         this.dropOffLocationId = builder.dropOffLocationId;
         this.vehicleServiceId = builder.vehicleServiceId;
@@ -31,24 +26,12 @@ public class RideRequestDTO {
 
     @JsonPOJOBuilder(withPrefix = "set")
     public static class RideRequestDTOBuilder {
-        private int rideRequestId;
-        private RideRequestStatus rideRequestStatus;
         private int pickUpLocationId;
         private int dropOffLocationId;
         private int vehicleServiceId;
         private int userId;
         private LocalDate rideDate;
         private LocalTime pickUpTime;
-
-        public RideRequestDTOBuilder setRideRequestId(int rideRequestId) {
-            this.rideRequestId = rideRequestId;
-            return this;
-        }
-
-        public RideRequestDTOBuilder setRideRequestStatus(RideRequestStatus rideRequestStatus) {
-            this.rideRequestStatus = rideRequestStatus;
-            return this;
-        }
 
         public RideRequestDTOBuilder setPickUpLocationId(int pickUpLocationId) {
             this.pickUpLocationId = pickUpLocationId;
@@ -85,12 +68,34 @@ public class RideRequestDTO {
         }
     }
 
+    public int getPickUpLocationId() {
+        return pickUpLocationId;
+    }
+
+    public int getDropOffLocationId() {
+        return dropOffLocationId;
+    }
+
+    public int getVehicleServiceId() {
+        return vehicleServiceId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public LocalDate getRideDate() {
+        return rideDate;
+    }
+
+    public LocalTime getPickUpTime() {
+        return pickUpTime;
+    }
+
     @Override
     public String toString() {
         return "RideRequestDTO{" +
-                "rideRequestId=" + rideRequestId +
-                ", rideRequestStatus=" + rideRequestStatus +
-                ", pickUpLocationId=" + pickUpLocationId +
+                "pickUpLocationId=" + pickUpLocationId +
                 ", dropOffLocationId=" + dropOffLocationId +
                 ", vehicleServiceId=" + vehicleServiceId +
                 ", userId=" + userId +

@@ -10,7 +10,6 @@ public class FlywayConfig implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("Driver Loaded");
             Flyway flyway = Flyway.configure()
                     .dataSource("jdbc:mysql://localhost:3306/altus",
                             "root", "password123#")
@@ -27,9 +26,5 @@ public class FlywayConfig implements ServletContextListener {
             System.out.println(Message.Database.FLYWAY_FAILED);
             e.printStackTrace();
         }
-    }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
     }
 }

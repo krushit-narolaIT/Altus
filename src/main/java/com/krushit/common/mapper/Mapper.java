@@ -1,22 +1,32 @@
 package com.krushit.common.mapper;
 
+import com.krushit.common.enums.Role;
+import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.dto.UserSignUpDTO;
-import com.krushit.model.Role;
+import com.krushit.model.RideRequest;
 import com.krushit.model.User;
 
 public class Mapper {
+    private static final Mapper INSTANCE = new Mapper();
+
+    private Mapper() {
+    }
+
+    public static Mapper getInstance() {
+        return INSTANCE;
+    }
 
     public UserDTO convertToDTO(User user) {
-        return fromUserEntity(
-                user.getUserId(),
-                user.getRole(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getPhoneNo(),
-                user.getEmailId(),
-                user.getDisplayId()
-        );
+        return new UserDTO.UserDTOBuilder()
+                .setUserId(user.getUserId())
+                .setRole(user.getRole())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setPhoneNo(user.getPhoneNo())
+                .setEmailId(user.getEmailId())
+                .setDisplayId(user.getDisplayId())
+                .build();
     }
 
     public User fromLoginDTO(UserDTO userDTO) {
@@ -48,25 +58,14 @@ public class Mapper {
                 .build();
     }
 
-    public static UserDTO fromSignUp(String firstName, String lastName, String phoneNo, String emailId, String password) {
-        return new UserDTO.UserDTOBuilder()
-                .setFirstName(firstName)
-                .setLastName(lastName)
-                .setPhoneNo(phoneNo)
-                .setEmailId(emailId)
-                .setPassword(password)
-                .build();
-    }
-
-    public static UserDTO fromUserEntity(int userId, Role role, String firstName, String lastName, String phoneNo, String emailId, String displayId) {
-        return new UserDTO.UserDTOBuilder()
-                .setUserId(userId)
-                .setRole(role)
-                .setFirstName(firstName)
-                .setLastName(lastName)
-                .setPhoneNo(phoneNo)
-                .setEmailId(emailId)
-                .setDisplayId(displayId)
+    public RideRequest toRideRequest(RideRequestDTO rideRequestDTO) {
+        return new RideRequest.RideRequestBuilder()
+                .setUserId(rideRequestDTO.getUserId())
+                .setPickUpLocationId(rideRequestDTO.getPickUpLocationId())
+                .setDropOffLocationId(rideRequestDTO.getDropOffLocationId())
+                .setVehicleServiceId(rideRequestDTO.getVehicleServiceId())
+                .setRideDate(rideRequestDTO.getRideDate())
+                .setPickUpTime(rideRequestDTO.getPickUpTime())
                 .build();
     }
 }

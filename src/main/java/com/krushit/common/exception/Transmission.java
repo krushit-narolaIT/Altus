@@ -1,4 +1,4 @@
-package com.krushit.model;
+package com.krushit.common.exception;
 
 public enum Transmission {
     MANUAL("Manual"),

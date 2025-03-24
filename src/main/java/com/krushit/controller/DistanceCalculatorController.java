@@ -8,29 +8,29 @@ import com.krushit.controller.validator.RideValidator;
 import com.krushit.dto.ApiResponse;
 import com.krushit.dto.DistanceCalculatorDTO;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.LocationService;
+import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
 public class DistanceCalculatorController extends HttpServlet {
     private final LocationService locationService = new LocationService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            HttpSession session = request.getSession(false);
-            UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.userLoggedIn(userDTO);
+            ApplicationUtils.validateJsonRequest(request.getContentType());
+            UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
             DistanceCalculatorDTO distanceRequest = ObjectMapperUtils.toObject(request.getReader(), DistanceCalculatorDTO.class);

@@ -1,4 +1,4 @@
-package com.krushit.model;
+package com.krushit.common.enums;
 
 public enum VehicleType {
     TWO_WHEELER("2W"),

@@ -2,13 +2,10 @@ package com.krushit.service;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.dao.ILocationDAO;
 import com.krushit.dao.LocationDAOImpl;
-import com.krushit.common.exception.DBException;
 import com.krushit.model.Location;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -19,6 +16,7 @@ import java.util.List;
 
 public class LocationService {
     private final ILocationDAO locationDAO = new LocationDAOImpl();
+
 
     public List<Location> getAllLocations() throws ApplicationException {
         if(locationDAO.getAllLocations().isEmpty()){
@@ -103,17 +101,7 @@ public class LocationService {
         URL url = new URL(apiUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
-        int responseCode = conn.getResponseCode();
-        if (responseCode != 200) {
-            BufferedReader errorReader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            StringBuilder errorResponse = new StringBuilder();
-            String errorLine;
-            while ((errorLine = errorReader.readLine()) != null) {
-                errorResponse.append(errorLine);
-            }
-            errorReader.close();
-            throw new Exception("Error from API: HTTP " + responseCode + " - " + errorResponse);
-        }
+        conn.getResponseCode();
         BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         StringBuilder response = new StringBuilder();
         String inputLine;
@@ -133,7 +121,8 @@ public class LocationService {
             endIndex = responseString.indexOf("}", distanceInd);
         }
         String distanceValue = responseString.substring(distanceInd, endIndex).trim();
-        return Double.parseDouble(distanceValue) / 1000;
+        return Math.round(Double.parseDouble(distanceValue) / 1000 * 100.0) / 100.0;
+        //return Double.parseDouble(distanceValue) / 1000;
     }
 
     public void addLocation(String location) throws DBException {

@@ -6,35 +6,31 @@ import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.model.Vehicle;
 import com.krushit.service.VehicleRideService;
 import com.krushit.controller.validator.AuthValidator;
+import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.controller.validator.VehicleServicesValidator;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
 public class AddVehicleController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
-                createResponse(response, Message.INVALID_CONTENT_TYPE, null, HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-            HttpSession session = request.getSession();
-            UserDTO userDTO = (UserDTO) session.getAttribute("user");
-            AuthValidator.userLoggedIn(userDTO);
+            ApplicationUtils.validateJsonRequest(request.getContentType());
+            UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
             Vehicle vehicle = ObjectMapperUtils.toObject(request.getReader(), Vehicle.class);

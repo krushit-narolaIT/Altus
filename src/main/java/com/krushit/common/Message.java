@@ -1,9 +1,6 @@
 package com.krushit.common;
 
 public final class Message {
-    public static final String SESSION_EXPIRED = "Session Expired";
-    public static final String UNAUTHORIZED_ACCESS = "Y";
-
     private Message() {
     }
 
@@ -13,6 +10,18 @@ public final class Message {
         public static final String PLEASE_ENTER_VALID_LOCATION = "Please Enter Valid Location Id";
         public static final String INVALID_GRAPH_HOPPER_API_RESPONSE = "Graphhopper api response is invalid";
         public static final String COORDINATES_NOT_FOUND_FOR = "Coordinates not found for location: ";
+        public static final String RIDE_REQUEST_SUBMITTED_SUCCESSFULLY = "Ride Request Successful";
+        public static final String REQUESTED_SERVICE_IS_NOT_AVAILABLE = "Requested vehicle service is not available for this route.";
+        public static final String RIDE_REQUEST_NULL = "Ride request cannot be null";
+        public static final String INVALID_PICKUP_LOCATION_ID = "Invalid pick-up location";
+        public static final String INVALID_DROP_OFF_LOCATION_ID = "Invalid drop-off location";
+        public static final String SAME_PICKUP_DROP_OFF = "Pick-up and drop-off locations must be different";
+        public static final String INVALID_VEHICLE_SERVICE_ID = "Invalid vehicle service";
+        public static final String INVALID_USER_ID = "Invalid user";
+        public static final String RIDE_DATE_REQUIRED = "Ride date is required";
+        public static final String RIDE_DATE_IN_PAST = "Please enter valid ride date";
+        public static final String PICKUP_TIME_REQUIRED = "Pick-up time is required";
+        public static final String PICKUP_TIME_IN_PAST = "Please enter valid Pick-up time";
 
         private Ride(){
         }
@@ -52,7 +61,7 @@ public final class Message {
 
         private Auth (){
         }
-        public static final String PLEASE_LOGIN_FIRST = "Please login first";
+        public static final String PLEASE_LOGIN_FIRST = "Please login";
         public static final String UNAUTHORIZED = "You don't have valid privilege to perform this operation";
     }
 
@@ -137,6 +146,10 @@ public final class Message {
         public static final String ERROR_OCCUR_WHILE_CHECKING_MIN_YEAR = "Error occur while checking min year for brand model";
         public static final String BRAND_MODEL_NOT_SUPPORTED = "Sorry, Your vehicle brand model not supported by system";
         public static final String PENDING = "Pending";
+        public static final String ERROR_OCCUR_WHILE_CHECKING_SERVICE = "Error occur while checking service existence";
+        public static final String ERROR_OCCUR_WHILE_CHECKING_MODEL = "Error occur while checking brand model existence";
+        public static final String ERROR_OCCUR_WHILE_GETTING_ALL_BRAND_MODELS = "Error occur while getting all brand models";
+        public static final String BRAND_MODEL_YEAR_NOT_SUPPORTED = "Sorry, this brand model registration year is not supported";
 
         private Vehicle() {
         }
@@ -171,12 +184,12 @@ public final class Message {
         public static final String BRAND_NAME_IS_REQUIRED = "Brand name is required.";
         public static final String MODEL_NAME_IS_REQUIRED = "Model name is required.";
         public static final String PLEASE_ENTER_VALID_MIN_YEAR = "Please enter a valid minimum year.";
-        public static String INVALID_VEHICLE_TYPE = "Please Enter Valid Vehicle Type : Only 2W, 3W, 4W are allowed";
-        public static String ERROR_OCCUR_WHILE_ADDING_SERVICE = "Error Occur While Adding Vehicle Service";
-        public static String ERROR_OCCUR_WHILE_ADDING_MODEL = "Error Occur While Adding Vehicle Model";
-        public static String ERROR_OCCUR_WHILE_CHECK_VEHICLE_EXISTENCE = "Error checking driver vehicle existence.";
-        public static String DRIVER_VEHICLE_ALREADY_EXIST = "Driver vehicle already exist";
-        public static String PLEASE_ENTER_VALID_VEHICLE_SERVICE = "Please enter valid vehicle service";
+        public static final String INVALID_VEHICLE_TYPE = "Please Enter Valid Vehicle Type : Only 2W, 3W, 4W are allowed";
+        public static final String ERROR_OCCUR_WHILE_ADDING_SERVICE = "Error Occur While Adding Vehicle Service";
+        public static final String ERROR_OCCUR_WHILE_ADDING_MODEL = "Error Occur While Adding Vehicle Model";
+        public static final String ERROR_OCCUR_WHILE_CHECK_VEHICLE_EXISTENCE = "Error checking driver vehicle existence.";
+        public static final String DRIVER_VEHICLE_ALREADY_EXIST = "Driver vehicle already exist";
+        public static final String PLEASE_ENTER_VALID_VEHICLE_SERVICE = "Please enter valid vehicle service";
     }
 
     public static final class Database {
@@ -202,6 +215,4 @@ public final class Message {
         private Location(){
         }
     }
-
-
 }

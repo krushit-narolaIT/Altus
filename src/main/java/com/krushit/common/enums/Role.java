@@ -1,4 +1,4 @@
-package com.krushit.model;
+package com.krushit.common.enums;
 
 public enum Role {
     ROLE_CUSTOMER("Customer",2),

@@ -22,8 +22,7 @@ public class DriverDAOImpl implements IDriverDAO {
     private final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
     private final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
     private final String GET_ALL_DRIVERS = "SELECT * FROM drivers";
-    private final String GET_UNVERIFIED_DRIVER = "SELECT * FROM drivers WHERE document_verified = false";
-    private final String GET_DRIVERID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
+    private final String GET_DRIVER_ID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
     private final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
     private final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
     private final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Drivers SET is_available = TRUE WHERE driver_id = ?";
@@ -141,7 +140,7 @@ public class DriverDAOImpl implements IDriverDAO {
 
     public Integer getDriverIdFromUserId(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_DRIVERID_FROM_USERID)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_DRIVER_ID_FROM_USERID)) {
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -203,25 +202,6 @@ public class DriverDAOImpl implements IDriverDAO {
             ps.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Driver.ERROR_WHILE_UPDATING_DRIVER_AVAILABILITY, e);
-        }
-    }
-
-    private void validateDriverDocuments(Integer driverId) throws ApplicationException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement checkStmt = connection.prepareStatement(CHECK_DRIVER_DOCUMENTS)) {
-            checkStmt.setInt(1, driverId);
-            try (ResultSet resultSet = checkStmt.executeQuery()) {
-                if (resultSet.next()) {
-                    String licenceNumber = resultSet.getString("licence_number");
-                    if (licenceNumber == null || licenceNumber.trim().isEmpty()) {
-                        throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
-                    }
-                } else {
-                    throw new ApplicationException(Message.Driver.DRIVER_NOT_EXIST);
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(e.getMessage(), e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.krushit.model;
+package com.krushit.common.enums;
 
 public enum RideRequestStatus {
     PENDING("Pending"),

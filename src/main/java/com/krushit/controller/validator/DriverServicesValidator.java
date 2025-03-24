@@ -10,7 +10,7 @@ public class DriverServicesValidator {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_VERIFICATION_REQUEST);
         }
 
-        if (String.valueOf(verificationRequest.getDriverId()).trim().isEmpty() || verificationRequest.getDriverId() < 0) {
+        if (isNullOrEmpty(verificationRequest.getDriverId()) || verificationRequest.getDriverId() < 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_DRIVER_ID);
         }
 
@@ -26,5 +26,9 @@ public class DriverServicesValidator {
                 throw new ValidationException(Message.Vehicle.PLEASE_ENTER_REJECTION_MESSAGE);
             }
         }
+    }
+
+    private static boolean isNullOrEmpty(Object value) {
+        return value == null || String.valueOf(value).trim().isEmpty();
     }
 }

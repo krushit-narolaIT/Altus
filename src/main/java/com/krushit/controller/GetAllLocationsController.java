@@ -17,7 +17,7 @@ import java.util.List;
 
 public class GetAllLocationsController extends HttpServlet {
     private final LocationService locationService = new LocationService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

@@ -20,7 +20,7 @@ import java.io.IOException;
 
 public class UserLoginController extends HttpServlet {
     private final CustomerService userService = new CustomerService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -34,13 +34,11 @@ public class UserLoginController extends HttpServlet {
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
             sendResponse(response, HttpServletResponse.SC_OK, Message.User.LOGIN_SUCCESSFUL, authenticatedUser);
-        } catch (ValidationException e) {
-            sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), null);
         } catch (DBException e) {
             e.printStackTrace();
             sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);
         } catch (ApplicationException e) {
-            sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, e.getMessage(), null);
+            sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), null);
         } catch (Exception e) {
             e.printStackTrace();
             sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);

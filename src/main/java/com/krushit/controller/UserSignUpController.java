@@ -4,7 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserSignUpDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.dto.ApiResponse;
@@ -19,7 +19,7 @@ import java.io.IOException;
 
 public class UserSignUpController extends HttpServlet {
     private final CustomerService userService = new CustomerService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {

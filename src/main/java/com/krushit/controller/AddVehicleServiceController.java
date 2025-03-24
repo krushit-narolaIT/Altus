@@ -6,7 +6,7 @@ import com.krushit.dto.ApiResponse;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.model.VehicleService;
 import com.krushit.service.VehicleRideService;
@@ -24,7 +24,7 @@ import java.io.IOException;
 
 public class AddVehicleServiceController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final Mapper mapper = new Mapper();
+    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

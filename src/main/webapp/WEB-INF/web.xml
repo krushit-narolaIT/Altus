@@ -196,11 +196,20 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>BookRide</servlet-name>
+        <servlet-name>RequestRide</servlet-name>
         <servlet-class>com.krushit.controller.RequestRideController</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BookRide</servlet-name>
+        <servlet-name>RequestRide</servlet-name>
         <url-pattern>/BookRideRequest</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>BookRide</servlet-name>
+        <servlet-class>com.krushit.controller.BookRideController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>BookRide</servlet-name>
+        <url-pattern>/BookRide</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -2,7 +2,7 @@ package com.krushit.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 
 @JsonDeserialize(builder = UserDTO.UserDTOBuilder.class)
 public class UserDTO {

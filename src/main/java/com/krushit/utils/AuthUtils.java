@@ -4,12 +4,12 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.AuthException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Role;
+import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import jakarta.servlet.http.HttpSession;
 
 public class AuthUtils {
-    private static final Mapper mapper = new Mapper();
+    private static final Mapper mapper = Mapper.getInstance();
 
     public static User getAuthenticatedUser(HttpSession session, Role requiredRole) throws AuthException {
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
@@ -28,7 +28,7 @@ public class AuthUtils {
         }
     }
 
-    public static void userLoggedIn(UserDTO userDTO) throws AuthException {  //*
+    public static void userLoggedIn(UserDTO userDTO) throws AuthException {
         if (userDTO == null || userDTO.getRole() == null) {
             throw new AuthException(Message.Auth.PLEASE_LOGIN_FIRST);
         }

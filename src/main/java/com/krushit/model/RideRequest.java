@@ -3,6 +3,7 @@ package com.krushit.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.krushit.common.enums.RideRequestStatus;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -101,6 +102,46 @@ public class RideRequest {
         public RideRequest build() {
             return new RideRequest(this);
         }
+    }
+
+    public int getRideRequestId() {
+        return rideRequestId;
+    }
+
+    public RideRequestStatus getRideRequestStatus() {
+        return rideRequestStatus;
+    }
+
+    public int getPickUpLocationId() {
+        return pickUpLocationId;
+    }
+
+    public int getDropOffLocationId() {
+        return dropOffLocationId;
+    }
+
+    public int getVehicleServiceId() {
+        return vehicleServiceId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public LocalDate getRideDate() {
+        return rideDate;
+    }
+
+    public LocalTime getPickUpTime() {
+        return pickUpTime;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     @Override

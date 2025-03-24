@@ -12,7 +12,7 @@ public class SessionUtils {
     public static UserDTO validateSession(HttpServletRequest request) throws ApplicationException {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            throw new ApplicationException(Message.Auth.SESSION_EXPIRED);
+            throw new ApplicationException(Message.Auth.SESSION_EXPIRED + Message.Auth.PLEASE_LOGIN_FIRST);
         }
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
         if (userDTO == null) {

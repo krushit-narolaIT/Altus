@@ -3,6 +3,10 @@ package com.krushit.controller.validator;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ValidationException;
 import com.krushit.dto.DistanceCalculatorDTO;
+import com.krushit.dto.RideRequestDTO;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class RideValidator {
     public static void validateLocation(DistanceCalculatorDTO distanceCalculatorDTO) throws ValidationException {
@@ -11,5 +15,53 @@ public class RideValidator {
             System.out.println("in validation");
             throw new ValidationException(Message.Ride.LOCATION_IS_REQUIRE);
         }
+    }
+
+    public static void validateRideRequest(RideRequestDTO rideRequestDTO) {
+        if (rideRequestDTO == null) {
+            throw new IllegalArgumentException(Message.Ride.RIDE_REQUEST_NULL);
+        }
+
+        if (isNullOrEmpty(rideRequestDTO.getPickUpLocationId()) || rideRequestDTO.getPickUpLocationId() <= 0) {
+            throw new IllegalArgumentException(Message.Ride.INVALID_PICKUP_LOCATION_ID);
+        }
+
+        if (isNullOrEmpty(rideRequestDTO.getDropOffLocationId()) || rideRequestDTO.getDropOffLocationId() <= 0) {
+            throw new IllegalArgumentException(Message.Ride.INVALID_DROP_OFF_LOCATION_ID);
+        }
+
+        if (String.valueOf(rideRequestDTO.getPickUpLocationId()).trim().equals(String.valueOf(rideRequestDTO.getDropOffLocationId()).trim())) {
+            throw new IllegalArgumentException(Message.Ride.SAME_PICKUP_DROP_OFF);
+        }
+
+        if (isNullOrEmpty(rideRequestDTO.getVehicleServiceId()) || rideRequestDTO.getVehicleServiceId() <= 0) {
+            throw new IllegalArgumentException(Message.Ride.INVALID_VEHICLE_SERVICE_ID);
+        }
+
+        if (isNullOrEmpty(rideRequestDTO.getUserId()) || rideRequestDTO.getUserId() <= 0) {
+            throw new IllegalArgumentException(Message.Ride.INVALID_USER_ID);
+        }
+
+        if (rideRequestDTO.getRideDate() == null) {
+            throw new IllegalArgumentException(Message.Ride.RIDE_DATE_REQUIRED);
+        }
+
+        LocalDate rideDate = rideRequestDTO.getRideDate();
+        if (rideDate.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException(Message.Ride.RIDE_DATE_IN_PAST);
+        }
+
+        if (rideRequestDTO.getPickUpTime() == null) {
+            throw new IllegalArgumentException(Message.Ride.PICKUP_TIME_REQUIRED);
+        }
+
+        LocalTime pickUpTime = rideRequestDTO.getPickUpTime();
+        if (pickUpTime.isBefore(LocalTime.now()) && rideDate.equals(LocalDate.now())) {
+            throw new IllegalArgumentException(Message.Ride.PICKUP_TIME_IN_PAST);
+        }
+    }
+
+    private static boolean isNullOrEmpty(Object value) {
+        return value == null || String.valueOf(value).trim().isEmpty();
     }
 }

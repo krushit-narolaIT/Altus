@@ -212,4 +212,13 @@
         <servlet-name>BookRide</servlet-name>
         <url-pattern>/BookRide</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>GetAllRideRequests</servlet-name>
+        <servlet-class>com.krushit.controller.GetAllRideRequestsController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>GetAllRideRequests</servlet-name>
+        <url-pattern>/GetAllRideRequests</url-pattern>
+    </servlet-mapping>
 </web-app>

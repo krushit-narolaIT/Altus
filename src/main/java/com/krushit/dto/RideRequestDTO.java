@@ -8,6 +8,7 @@ import java.time.LocalTime;
 
 @JsonDeserialize(builder = RideRequestDTO.RideRequestDTOBuilder.class)
 public class RideRequestDTO {
+    private final int rideRequestId;
     private final int pickUpLocationId;
     private final int dropOffLocationId;
     private final int vehicleServiceId;
@@ -16,6 +17,7 @@ public class RideRequestDTO {
     private final LocalTime pickUpTime;
 
     private RideRequestDTO(RideRequestDTOBuilder builder) {
+        this.rideRequestId = builder.rideRequestId;
         this.pickUpLocationId = builder.pickUpLocationId;
         this.dropOffLocationId = builder.dropOffLocationId;
         this.vehicleServiceId = builder.vehicleServiceId;
@@ -26,12 +28,18 @@ public class RideRequestDTO {
 
     @JsonPOJOBuilder(withPrefix = "set")
     public static class RideRequestDTOBuilder {
+        private int rideRequestId;
         private int pickUpLocationId;
         private int dropOffLocationId;
         private int vehicleServiceId;
         private int userId;
         private LocalDate rideDate;
         private LocalTime pickUpTime;
+
+        public RideRequestDTOBuilder setRideRequestId(int rideRequestId) {
+            this.rideRequestId = rideRequestId;
+            return this;
+        }
 
         public RideRequestDTOBuilder setPickUpLocationId(int pickUpLocationId) {
             this.pickUpLocationId = pickUpLocationId;
@@ -66,6 +74,10 @@ public class RideRequestDTO {
         public RideRequestDTO build() {
             return new RideRequestDTO(this);
         }
+    }
+
+    public int getRideRequestId() {
+        return rideRequestId;
     }
 
     public int getPickUpLocationId() {

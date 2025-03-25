@@ -22,6 +22,9 @@ public class UserDAOImpl implements IUserDAO {
     private final String INSERT_DRIVER_ENTRY = "INSERT INTO drivers (user_id) VALUES (?)";
     private final String GET_ALL_USERS = "SELECT * FROM users WHERE role_id = 2";
     private final String CHECK_USER_CREDENTIALS = "SELECT 1 FROM users WHERE email_id = ? AND password = ?";
+    private final String GET_DISPLAY_ID_FROM_USER_ID = "SELECT display_id FROM users WHERE user_id = ?";
+    private final String GET_FULL_NAME_FROM_USER_ID = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+    private final String GET_PHONE_NO = "SELECT display_id FROM users WHERE user_id = ?";
 
     public void registerUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection()) {
@@ -182,5 +185,36 @@ public class UserDAOImpl implements IUserDAO {
             throw new DBException(Message.User.ERROR_WHILE_GETTING_ALL_CUSTOMERS, e);
         }
         return users;
+    }
+
+    public String getUserDisplayIdById(int userId) throws DBException {
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(GET_DISPLAY_ID_FROM_USER_ID)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("display_id");
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_GETTING_DISPLAY_ID, e);
+        }
+        return null;
+    }
+
+    public String getUserFullNameById(int userId) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_FULL_NAME_FROM_USER_ID)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String firstName = resultSet.getString("first_name");
+                String lastName = resultSet.getString("last_name");
+                return firstName + " " + lastName;
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_GETTING_USER_FULL_NAME, e);
+        }
+        return null;
     }
 }

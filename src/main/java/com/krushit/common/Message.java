@@ -22,6 +22,10 @@ public final class Message {
         public static final String RIDE_DATE_IN_PAST = "Please enter valid ride date";
         public static final String PICKUP_TIME_REQUIRED = "Pick-up time is required";
         public static final String PICKUP_TIME_IN_PAST = "Please enter valid Pick-up time";
+        public static final String PLEASE_ENTER_VALID_RIDE_ID = "Please enter valid ride id";
+        public static final String ERROR_WHILE_GETTING_ALL_RIDE_REQUEST_FOR_DRIVER = "Error occur while fetching ride request for driver";
+        public static final String ERROR_WHILE_GETTING_RIDE_REQUEST_BY_ID = "Error occur while getting ride request by id";
+        public static final String ERROR_WHILE_CREATING_RIDE = "Error occur while creating ride";
 
         private Ride(){
         }
@@ -36,6 +40,8 @@ public final class Message {
         public static final String ERROR_WHILE_CHECKING_USER_EXISTENCE = "Error while checking user existence";
         public static final String ERROR_WHILE_GET_USER_DETAILS = "Error while getting user details";
         public static final String ERROR_WHILE_GETTING_ALL_CUSTOMERS = "Error while getting all customers";
+        public static final String ERROR_WHILE_GETTING_DISPLAY_ID = "Error occur while getting user display id";
+        public static final String ERROR_WHILE_GETTING_USER_FULL_NAME = "Error while getting user full name";
 
         private User(){
         }
@@ -150,6 +156,8 @@ public final class Message {
         public static final String ERROR_OCCUR_WHILE_CHECKING_MODEL = "Error occur while checking brand model existence";
         public static final String ERROR_OCCUR_WHILE_GETTING_ALL_BRAND_MODELS = "Error occur while getting all brand models";
         public static final String BRAND_MODEL_YEAR_NOT_SUPPORTED = "Sorry, this brand model registration year is not supported";
+        public static final String NO_REQUEST_FOUND = "No request found";
+        public static final String FETCHING_ALL_REQUEST_SUCCESSFULLY = "Successfully fetched all requests";
 
         private Vehicle() {
         }

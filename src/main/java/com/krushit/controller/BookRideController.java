@@ -32,8 +32,8 @@ public class BookRideController extends HttpServlet {
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_CUSTOMER.getRoleName());
             RideRequestDTO rideRequestDTO = ObjectMapperUtils.toObject(request.getReader(), RideRequestDTO.class);
-            RideValidator.validateRideRequest(rideRequestDTO);
             rideRequestDTO = setUserId(rideRequestDTO, user.getUserId());
+            RideValidator.validateRideRequest(rideRequestDTO);
             RideRequest rideRequest = mapper.toRideRequest(rideRequestDTO);
             vehicleRideService.bookRide(rideRequest);
             createResponse(response, Message.Ride.RIDE_REQUEST_SUBMITTED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
@@ -53,7 +53,6 @@ public class BookRideController extends HttpServlet {
 
     private RideRequestDTO setUserId(RideRequestDTO rideRequestDTO, int userId){
         return new RideRequestDTO.RideRequestDTOBuilder()
-                .setServiceId(rideRequestDTO.getServiceId())
                 .setPickUpLocationId(rideRequestDTO.getPickUpLocationId())
                 .setDropOffLocationId(rideRequestDTO.getDropOffLocationId())
                 .setVehicleServiceId(rideRequestDTO.getVehicleServiceId())

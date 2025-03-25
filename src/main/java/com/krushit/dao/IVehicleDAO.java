@@ -23,4 +23,5 @@ public interface IVehicleDAO {
     Integer getMinYearForBrandModel(int brandModelId) throws DBException;
     List<VehicleService> getAllAvailableVehicleServices() throws DBException;
     void bookRide(RideRequest rideRequest) throws DBException;
+    VehicleService getServiceById(int vehicleServiceId) throws DBException;
 }

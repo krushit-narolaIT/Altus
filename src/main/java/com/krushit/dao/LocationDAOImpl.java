@@ -16,6 +16,7 @@ public class LocationDAOImpl implements ILocationDAO{
     private static final String ADD_LOCATION = "INSERT INTO locations (name) VALUES (?)";
     private static final String GET_ALL_LOCATIONS = "SELECT location_id, name FROM locations";
     private static final String DELETE_LOCATION = "DELETE FROM locations WHERE location_id = ?";
+    private static final String GET_COMMISSION_PERCENTAGE = "SELECT commission_percentage FROM commission_percentage WHERE ? BETWEEN from_km AND to_km";
 
     @Override
     public void addLocation(String location) throws DBException {
@@ -68,5 +69,21 @@ public class LocationDAOImpl implements ILocationDAO{
         } catch (SQLException | ClassNotFoundException e){
             throw new DBException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public double getCommissionByDistance(double distance) throws DBException {
+        double commissionPercentage = 0.0;
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(GET_COMMISSION_PERCENTAGE)) {
+            pstmt.setDouble(1, distance);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                commissionPercentage = rs.getDouble("commission_percentage");
+            }
+        } catch (SQLException | ClassNotFoundException e){
+            throw new DBException(e.getMessage(), e);
+        }
+        return commissionPercentage;
     }
 }

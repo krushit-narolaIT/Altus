@@ -1,14 +1,16 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
+import com.krushit.common.enums.PaymentMode;
+import com.krushit.common.enums.PaymentStatus;
+import com.krushit.common.enums.RideRequestStatus;
+import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
-import com.krushit.dto.RideRequestDTO;
+import com.krushit.dto.RideResponseDTO;
 import com.krushit.dto.RideServiceDTO;
-import com.krushit.model.BrandModel;
-import com.krushit.model.RideRequest;
-import com.krushit.model.Vehicle;
-import com.krushit.model.VehicleService;
+import com.krushit.model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +19,10 @@ import java.util.Map;
 public class VehicleRideService {
     private final IVehicleDAO vehicleDAO = new VehicleDAOImpl();
     private final IDriverDAO driverDAO = new DriverDAOImpl();
+    private final IUserDAO userDAO = new UserDAOImpl();
     private final ILocationDAO locationDAO = new LocationDAOImpl();
     private final LocationService locationService = new LocationService();
+    private final IRideDAO rideDAO = new RideDAOImpl();
 
     public void addVehicleService(VehicleService vehicleService) throws ApplicationException {
         if (vehicleDAO.isVehicleServiceExists(vehicleService.getServiceName())) {
@@ -95,5 +99,91 @@ public class VehicleRideService {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }
         vehicleDAO.bookRide(rideRequest);
+    }
+
+    public List<RideResponseDTO> getAllRequest(int userId) throws ApplicationException {
+        int driverId = driverDAO.getDriverIdFromUserId(userId);
+        List<RideRequest> rideRequests = rideDAO.getAllMatchingRideRequests(driverId);
+        List<RideResponseDTO> responseList = new ArrayList<>();
+        for (RideRequest rideRequest : rideRequests) {
+            try {
+                String pickUpLocation = locationDAO.getLocationNameById(rideRequest.getPickUpLocationId());
+                String dropOffLocation = locationDAO.getLocationNameById(rideRequest.getDropOffLocationId());
+                String userDisplayId = userDAO.getUserDisplayIdById(rideRequest.getUserId());
+                String userFullName = userDAO.getUserFullNameById(rideRequest.getUserId());
+                RideResponseDTO responseDTO = new RideResponseDTO.RideResponseDTOBuilder()
+                        .setRideRequestId(rideRequest.getRideRequestId())
+                        .setPickUpLocation(pickUpLocation)
+                        .setDropOffLocation(dropOffLocation)
+                        .setRideDate(rideRequest.getRideDate())
+                        .setPickUpTime(rideRequest.getPickUpTime())
+                        .setUserDisplayId(userDisplayId)
+                        .setUserFullName(userFullName)
+                        .build();
+                responseList.add(responseDTO);
+            } catch (DBException e) {
+                throw new DBException(e.getMessage(), e);
+            }
+        }
+        return responseList;
+    }
+
+    /*public List<RideResponseDTO> getAllRequest(int userId) throws ApplicationException {
+        int driverId = driverDAO.getDriverIdFromUserId(userId);
+        List<RideRequest> rideRequests = rideDAO.getAllMatchingRideRequests(driverId);
+        return rideRequests.stream()
+                .map(rideRequest -> {
+                    try {
+                        String pickUpLocation = locationDAO.getLocationNameById(rideRequest.getPickUpLocationId());
+                        String dropOffLocation = locationDAO.getLocationNameById(rideRequest.getDropOffLocationId());
+                        String userDisplayId = userDAO.getUserDisplayIdById(rideRequest.getUserId());
+
+                        return new RideResponseDTO.RideResponseDTOBuilder()
+                                .setRideRequestId(rideRequest.getRideRequestId())
+                                .setPickUpLocation(pickUpLocation)
+                                .setDropOffLocation(dropOffLocation)
+                                .setRideDate(rideRequest.getRideDate())
+                                .setPickUpTime(rideRequest.getPickUpTime())
+                                .setUserDisplayId(userDisplayId)
+                                .build();
+                    } catch (DBException e) {
+                        throw new DBException("Error fetching ride details", e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }*/
+
+    public void acceptRide(int driverId, int rideRequestId) throws Exception {
+        RideRequest rideRequest = rideDAO.getRideRequestById(rideRequestId);
+        if (rideRequest == null || !rideRequest.getRideRequestStatus().equals(RideRequestStatus.PENDING)) {
+            throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
+        }
+        String userIdPart = String.format("%04d", rideRequest.getUserId() % 10000);
+        String driverIdPart = String.format("%04d", driverId % 10000);
+        String displayId = "R" + userIdPart + "I" + driverIdPart;
+        VehicleService service = vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
+        double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
+        double commissionPercentage = locationDAO.getCommissionByDistance(distance);
+        double totalCost = service.getBaseFare() + (service.getPerKmRate() * distance);
+        double systemEarning = (totalCost * commissionPercentage) / 100;
+        double driverEarning = totalCost - systemEarning;
+        Ride ride = new Ride.RideBuilder()
+                .setRideStatus(RideStatus.SCHEDULED)
+                .setPickLocationId(rideRequest.getPickUpLocationId())
+                .setDropOffLocationId(rideRequest.getDropOffLocationId())
+                .setCustomerId(rideRequest.getUserId())
+                .setDriverId(driverId)
+                .setRideDate(rideRequest.getRideDate())
+                .setPickUpTime(rideRequest.getPickUpTime())
+                .setDisplayId(displayId)
+                .setTotalKm(distance)
+                .setTotalCost(totalCost)
+                .setPaymentMode(PaymentMode.CASH)
+                .setPaymentStatus(PaymentStatus.PENDING)
+                .setCommissionPercentage(commissionPercentage)
+                .setDriverEarning(driverEarning)
+                .setSystemEarning(systemEarning)
+                .build();
+        rideDAO.createRide(ride);
     }
 }

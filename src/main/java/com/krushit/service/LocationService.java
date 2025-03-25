@@ -16,7 +16,9 @@ import java.util.List;
 
 public class LocationService {
     private final ILocationDAO locationDAO = new LocationDAOImpl();
-
+    private static final String GEO_BASE_URL = "https://graphhopper.com/api/1/geocode";
+    private static final String ROUTE_BASE_URL = "https://graphhopper.com/api/1/route";
+    private static final String API_KEY = "6d96b6fb-13b1-43b6-99ab-2e1d55edd76b";
 
     public List<Location> getAllLocations() throws ApplicationException {
         if(locationDAO.getAllLocations().isEmpty()){

@@ -17,7 +17,6 @@ import java.util.List;
 
 public class CustomerService {
     private final IUserDAO userDAO = new UserDAOImpl();
-    private final IDriverDAO driverDAO = new DriverDAOImpl();
 
     public void registerUser(User user) throws ApplicationException {
         if (userDAO.isUserExist(user.getEmailId(), user.getPhoneNo())) {

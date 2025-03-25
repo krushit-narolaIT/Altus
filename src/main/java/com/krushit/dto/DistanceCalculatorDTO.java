@@ -3,13 +3,15 @@ package com.krushit.dto;
 public class DistanceCalculatorDTO {
     private int from;
     private int to;
+    private double price;
 
     public DistanceCalculatorDTO() {
     }
 
-    public DistanceCalculatorDTO(int from, int to) {
+    public DistanceCalculatorDTO(int from, int to, double price) {
         this.from = from;
         this.to = to;
+        this.price = price;
     }
 
     public int getFrom() {
@@ -26,5 +28,13 @@ public class DistanceCalculatorDTO {
 
     public void setTo(int to) {
         this.to = to;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 }

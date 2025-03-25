@@ -4,7 +4,6 @@ import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
 import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.RideRequestDTO;
 import com.krushit.model.BrandModel;
 import com.krushit.model.RideRequest;
 import com.krushit.model.Vehicle;
@@ -30,13 +29,14 @@ public class VehicleDAOImpl implements IVehicleDAO {
     private static final String GET_ALL_BRAND_MODELS = "SELECT brand_model_id, brand_name, model FROM brand_models";
     private static final String GET_MINIMUM_VEHICLE_YEAR = "SELECT min_year FROM brand_models WHERE brand_model_id = ?";
     private static final String IS_BRAND_MODEL_EXIST = "SELECT 1 FROM brand_models WHERE brand_model_id = ?";
-    private static final String GET_AVAILABLE_SERVICES = "SELECT vs.service_id, vs.service_name, vs.base_fare, vs.per_km_rate, " +
-            "vs.vehicle_type, vs.max_passengers " +
-            "FROM Vehicle_Service vs " +
-            "JOIN Brand_Models bm ON vs.service_id = bm.service_id " +
-            "JOIN Vehicles v ON bm.brand_model_id = v.brand_model_id " +
-            "JOIN Drivers d ON v.driver_id = d.driver_id " +
-            "WHERE d.is_available = TRUE";
+    private static final String GET_AVAILABLE_SERVICES =
+            "SELECT vs.service_id, vs.service_name, vs.base_fare, vs.per_km_rate, vs.vehicle_type, vs.max_passengers " +
+                    "FROM Vehicle_Service vs " +
+                    "JOIN Brand_Models bm ON vs.service_id = bm.service_id " +
+                    "JOIN Vehicles v ON bm.brand_model_id = v.brand_model_id " +
+                    "JOIN Drivers d ON v.driver_id = d.driver_id " +
+                    "WHERE d.is_available = TRUE";
+
     private static final String REQUEST_FOR_A_RIDE = "INSERT INTO ride_requests (ride_request_status, pick_up_location_id, drop_off_location_id, " +
             "vehicle_service_id, user_id, ride_date, pick_up_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
@@ -193,7 +193,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
 
     public void bookRide(RideRequest rideRequest) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
-                PreparedStatement preparedStatement = connection.prepareStatement(REQUEST_FOR_A_RIDE)) {
+             PreparedStatement preparedStatement = connection.prepareStatement(REQUEST_FOR_A_RIDE)) {
             preparedStatement.setString(1, RideRequestStatus.PENDING.getStatus());
             preparedStatement.setInt(2, rideRequest.getPickUpLocationId());
             preparedStatement.setInt(3, rideRequest.getDropOffLocationId());
@@ -205,5 +205,29 @@ public class VehicleDAOImpl implements IVehicleDAO {
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
         }
+    }
+
+    @Override
+    public VehicleService getServiceById(int serviceId) throws DBException {
+        String query = "SELECT * FROM Vehicle_Service WHERE service_id = ?";
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+                PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new VehicleService(
+                        rs.getInt("service_id"),
+                        rs.getString("service_name"),
+                        rs.getDouble("base_fare"),
+                        rs.getDouble("per_km_rate"),
+                        rs.getString("vehicle_type"),
+                        rs.getInt("max_passengers"),
+                        rs.getDouble("commission_percentage")
+                );
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
+        }
+        return null;
     }
 }

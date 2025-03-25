@@ -12,4 +12,6 @@ public interface IUserDAO {
     boolean isValidUser(String emailID, String password) throws DBException;
     User getUserDetails(int userId) throws DBException;
     List<User> fetchAllCustomers() throws DBException;
+    String getUserDisplayIdById(int userId) throws DBException;
+    String getUserFullNameById(int userId) throws DBException;
 }

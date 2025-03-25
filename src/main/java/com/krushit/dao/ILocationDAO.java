@@ -11,4 +11,5 @@ public interface ILocationDAO {
     String getLocationNameById(int locationId) throws DBException;
     List<Location> getAllLocations() throws DBException;
     boolean deleteLocation(int locationId) throws DBException;
+    double getCommissionByDistance(double distance) throws DBException;
 }

@@ -24,4 +24,5 @@ public interface IVehicleDAO {
     List<VehicleService> getAllAvailableVehicleServices() throws DBException;
     void bookRide(RideRequest rideRequest) throws DBException;
     VehicleService getServiceById(int vehicleServiceId) throws DBException;
+    void deleteVehicleByUserId(int userId) throws DBException;
 }

@@ -1,4 +1,4 @@
-package com.krushit.controller;
+package com.krushit.controller.driver_controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
@@ -15,12 +15,21 @@ import com.krushit.controller.validator.DriverDocumentValidator;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 
 import java.io.IOException;
 
+@WebServlet(value = "/addDriverDetails")
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024 * 2,
+        maxFileSize = 1024 * 1024 * 10,
+        maxRequestSize = 1024 * 1024 * 50
+)
 public class AddDriverDetailsController extends HttpServlet {
     private final DriverService driverService = new DriverService();
     private final Mapper mapper = Mapper.getInstance();
@@ -28,14 +37,20 @@ public class AddDriverDetailsController extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            ApplicationUtils.validateJsonRequest(request.getContentType());
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
-            Driver driver = ObjectMapperUtils.toObject(request.getReader(), Driver.class);
-            DriverDocumentValidator.validateDriver(driver);
+            String licenceNumber = request.getParameter("licenceNumber");
+            Part licencePhoto = request.getPart("licencePhoto");
+            String storedPhotoPath = driverService.storeLicencePhoto(licencePhoto, licenceNumber, user.getDisplayId());
+            Driver driver = (Driver) new Driver.DriverBuilder()
+                    .setLicenceNumber(licenceNumber)
+                    .setLicencePhoto(storedPhotoPath)
+                    .setUserId(userDTO.getUserId())
+                    .build();
+            DriverDocumentValidator.validateDriver(driver, licencePhoto);
             driverService.storeDriverDetails(driver);
-            createResponse(response, Message.Driver.DOCUMENT_STORED_SUCCESSFULLY, driver, HttpServletResponse.SC_CREATED);
+            createResponse(response, Message.Driver.DOCUMENT_STORED_SUCCESSFULLY, null, HttpServletResponse.SC_CREATED);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

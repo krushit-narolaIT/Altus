@@ -6,9 +6,11 @@ import com.krushit.common.config.DBConfig;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import java.sql.SQLException;
 
+@WebServlet(value = "/dbConfig", loadOnStartup = 1)
 public class DBConfigController extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {

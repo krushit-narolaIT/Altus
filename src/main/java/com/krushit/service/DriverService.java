@@ -10,9 +10,11 @@ import com.krushit.dao.UserDAOImpl;
 import com.krushit.dto.DriverVerificationRequest;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
+import jakarta.servlet.http.Part;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -30,15 +32,13 @@ public class DriverService {
         if (driverDAO.isLicenseNumberExists(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
-
         User user = userDAO.getUserDetails(driver.getUserId());
         if (user == null) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
-        String photoPath = storeLicencePhoto(driver.getLicencePhoto(), driver.getLicenceNumber(), user.getDisplayId());
         Driver updatedDriver = (Driver) new Driver.DriverBuilder()
                 .setLicenceNumber(driver.getLicenceNumber())
-                .setLicencePhoto(photoPath)
+                .setLicencePhoto(driver.getLicencePhoto())
                 .setDriverId(driver.getDriverId())
                 .setUserId(driver.getUserId())
                 .setRole(user.getRole())
@@ -51,21 +51,19 @@ public class DriverService {
         driverDAO.insertDriverDetails(updatedDriver);
     }
 
-
-    private String storeLicencePhoto(String licencePhotoPath, String licenceNumber, String displayId) throws ApplicationException {
+    public String storeLicencePhoto(Part filePart, String licenceNumber, String displayId) throws ApplicationException {
         try {
-            File sourceFile = new File(licencePhotoPath);
-            if (!sourceFile.exists()) {
-                throw new ApplicationException(Message.Driver.LICENCE_PHOTO_PATH_IS_REQUIRD + licencePhotoPath);
-            }
             File file = new File(STORAGE_PATH);
             if (!file.exists()) {
                 file.mkdirs();
             }
-            String extension = getFileExtension(sourceFile);
+            String originalFileName = filePart.getSubmittedFileName();
+            String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
             String fileName = "DRI_" + licenceNumber + "_" + displayId + extension;
             Path path = Paths.get(STORAGE_PATH, fileName);
-            Files.copy(sourceFile.toPath(), path, StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream input = filePart.getInputStream()) {
+                Files.copy(input, path, StandardCopyOption.REPLACE_EXISTING);
+            }
             return path.toString();
         } catch (IOException e) {
             throw new DBException(Message.Driver.FAILED_TO_STORE_DOCUMENT + e.getMessage());

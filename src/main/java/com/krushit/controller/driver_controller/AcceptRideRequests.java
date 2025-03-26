@@ -1,37 +1,43 @@
-package com.krushit.controller;
+package com.krushit.controller.driver_controller;
 
 import com.krushit.common.Message;
+import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
+import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponse;
-import com.krushit.model.Location;
-import com.krushit.service.LocationService;
+import com.krushit.dto.UserDTO;
+import com.krushit.model.User;
+import com.krushit.service.VehicleRideService;
+import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
+import com.krushit.utils.SessionUtils;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 
-public class GetAllLocationsController extends HttpServlet {
-    private final LocationService locationService = new LocationService();
+@WebServlet(value = "/acceptRide")
+public class AcceptRideRequests extends HttpServlet {
+    private final VehicleRideService vehicleRideService = new VehicleRideService();
     private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.setContentType(Message.APPLICATION_JSON);
         try {
-//            ApplicationUtils.validateJsonRequest(request.getContentType());
-//            UserDTO userDTO = SessionUtil.validateSession(request);
-//            User user = mapper.convertToEntityUserDTO(userDTO);
-//            AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
-            List<Location> locations = locationService.getAllLocations();
-            createResponse(response, Message.Location.SUCCESSFULLY_RETRIEVED_ALL_LOCATIONS, locations, HttpServletResponse.SC_OK);
+            UserDTO userDTO = SessionUtils.validateSession(request);
+            User user = mapper.convertToEntityUserDTO(userDTO);
+            AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
+            int rideRequestId = Integer.parseInt(request.getParameter("rideRequestId"));
+            if (String.valueOf(rideRequestId).trim().isEmpty() || !String.valueOf(rideRequestId).matches("\\d+")) {
+                throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_RIDE_ID);
+            }
+            vehicleRideService.acceptRide(user.getUserId(), rideRequestId);
+            createResponse(response, Message.Vehicle.VEHICLE_REGISTERED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -39,7 +45,7 @@ public class GetAllLocationsController extends HttpServlet {
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

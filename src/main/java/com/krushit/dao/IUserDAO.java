@@ -14,4 +14,5 @@ public interface IUserDAO {
     List<User> fetchAllCustomers() throws DBException;
     String getUserDisplayIdById(int userId) throws DBException;
     String getUserFullNameById(int userId) throws DBException;
+    void updateUser(User updatedUser) throws DBException;
 }

@@ -8,10 +8,14 @@ import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
+import com.krushit.dto.RideCancellationDetails;
+import com.krushit.dto.RideDTO;
 import com.krushit.dto.RideResponseDTO;
 import com.krushit.dto.RideServiceDTO;
 import com.krushit.model.*;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -185,5 +189,100 @@ public class VehicleRideService {
                 .setSystemEarning(systemEarning)
                 .build();
         rideDAO.createRide(ride);
+    }
+
+    public void cancelRide(int rideId, int userId, boolean isDriver) throws ApplicationException {
+        Ride ride = rideDAO.getRideById(rideId);
+        if (ride == null) {
+            throw new ApplicationException(Message.Ride.RIDE_NOT_FOUND_FOR_CANCELLATION);
+        }
+        if (!isDriver && ride.getCustomerId() != userId) {
+            throw new ApplicationException(Message.Ride.RIDE_NOT_BELONG_TO_THIS_CUSTOMER);
+        }
+        if (isDriver && ride.getDriverId() != userId) {
+            throw new ApplicationException(Message.Ride.RIDE_NOT_BELONG_TO_THIS_DRIVER);
+        }
+        if (ride.getRideStatus() == RideStatus.CANCELLED || ride.getRideStatus() == RideStatus.COMPLETED) {
+            throw new ApplicationException(Message.Ride.RIDE_CANNOT_BE_CANCELLED + ride.getRideStatus().getStatus());
+        }
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime pickupDateTime = LocalDateTime.of(ride.getRideDate(), ride.getPickUpTime());
+        long minutesLeft = Duration.between(now, pickupDateTime).toMinutes();
+        double cancellationCharge = 0.0;
+        double driverEarning = 0.0;
+        double systemEarning = 0.0;
+        double driverPenalty = 0.0;
+        if (isDriver) {
+            if (now.isAfter(pickupDateTime)) {
+                throw new ApplicationException(Message.Ride.RIDE_ALREADY_STARTED_CANNOT_CANCEL);
+            }
+            driverPenalty = 120.0;
+        } else {
+            if (minutesLeft < 40) {
+                cancellationCharge = ride.getTotalCost() * 0.11;
+                driverEarning = cancellationCharge * 0.45;
+                systemEarning = cancellationCharge * 0.55;
+            }
+        }
+        String rideStatus = null;
+        if (isDriver) {
+            rideStatus = RideStatus.REJECTED.getStatus();
+        } else {
+            rideStatus = RideStatus.CANCELLED.getStatus();
+        }
+        RideCancellationDetails cancellationDetails = new RideCancellationDetails.RideCancellationDetailsBuilder()
+                .setRideId(rideId)
+                .setRideStatus(rideStatus)
+                .setCancellationCharge(cancellationCharge)
+                .setDriverEarning(driverEarning)
+                .setSystemEarning(systemEarning)
+                .setDriverPenalty(driverPenalty)
+                .build();
+        rideDAO.updateRideCancellation(cancellationDetails);
+    }
+
+    public List<RideDTO> getAllRides(int userId, boolean isDriver) throws DBException {
+        List<Ride> rideList = rideDAO.getAllRideByUserId(userId);
+        List<RideDTO> rideDTOList = new ArrayList<>();
+        for (Ride ride : rideList) {
+            try {
+                String customerName = userDAO.getUserFullNameById(ride.getCustomerId());
+                String driverName = userDAO.getUserFullNameById(ride.getDriverId());
+                RideDTO.RideDTOBuilder builder = new RideDTO.RideDTOBuilder()
+                        .setRideId(ride.getRideId())
+                        .setRideStatus(ride.getRideStatus())
+                        .setPickLocationId(locationDAO.getLocationNameById(ride.getPickLocationId()))
+                        .setDropOffLocationId(locationDAO.getLocationNameById(ride.getDropOffLocationId()))
+                        .setCustomerName(customerName)
+                        .setDriverName(driverName)
+                        .setRideDate(ride.getRideDate())
+                        .setPickUpTime(ride.getPickUpTime())
+                        .setDropOffTime(ride.getDropOffTime())
+                        .setDisplayId(ride.getDisplayId())
+                        .setTotalKm(ride.getTotalKm())
+                        .setTotalCost(ride.getTotalCost())
+                        .setPaymentMode(ride.getPaymentMode())
+                        .setPaymentStatus(ride.getPaymentStatus());
+                if (isDriver) {
+                    builder.setDriverEarning(ride.getDriverEarning())
+                            .setCancellationDriverEarning(ride.getCancellationDriverEarning())
+                            .setDriverPenalty(ride.getDriverPenalty());
+                } else {
+                    builder.setCancellationCharge(ride.getCancellationCharge());
+                }
+                rideDTOList.add(builder.build());
+            } catch (DBException e) {
+                throw new DBException(e.getMessage(), e);
+            }
+        }
+        return rideDTOList;
+    }
+
+    public void deleteVehicle(int userId) throws ApplicationException {
+        int driverId = driverDAO.getDriverIdFromUserId(userId);
+        if(!vehicleDAO.isDriverVehicleExist(driverId)){
+            throw new ApplicationException(Message.Vehicle.VEHICLE_NOT_EXIST);
+        }
+        vehicleDAO.deleteVehicleByUserId(userId);
     }
 }

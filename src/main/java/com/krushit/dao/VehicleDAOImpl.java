@@ -36,10 +36,10 @@ public class VehicleDAOImpl implements IVehicleDAO {
                     "JOIN Vehicles v ON bm.brand_model_id = v.brand_model_id " +
                     "JOIN Drivers d ON v.driver_id = d.driver_id " +
                     "WHERE d.is_available = TRUE";
-
     private static final String REQUEST_FOR_A_RIDE = "INSERT INTO ride_requests (ride_request_status, pick_up_location_id, drop_off_location_id, " +
             "vehicle_service_id, user_id, ride_date, pick_up_time) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
+    private static final String DELETE_DRIVER_VEHICLE = "DELETE FROM Vehicles WHERE driver_id = (SELECT driver_id FROM Drivers WHERE user_id = ?)";
+    private static final String GET_SERVICE_BY_SERVICE_ID = "SELECT * FROM Vehicle_Service WHERE service_id = ?";
 
     public boolean isVehicleServiceExists(String serviceName) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -209,9 +209,8 @@ public class VehicleDAOImpl implements IVehicleDAO {
 
     @Override
     public VehicleService getServiceById(int serviceId) throws DBException {
-        String query = "SELECT * FROM Vehicle_Service WHERE service_id = ?";
         try (Connection connection = DBConfig.INSTANCE.getConnection();
-                PreparedStatement ps = connection.prepareStatement(query)) {
+                PreparedStatement ps = connection.prepareStatement(GET_SERVICE_BY_SERVICE_ID)) {
             ps.setInt(1, serviceId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -229,5 +228,16 @@ public class VehicleDAOImpl implements IVehicleDAO {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
         }
         return null;
+    }
+
+    @Override
+    public void deleteVehicleByUserId(int userId) throws DBException {
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(DELETE_DRIVER_VEHICLE)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_DELETING_VEHICLE, e);
+        }
     }
 }

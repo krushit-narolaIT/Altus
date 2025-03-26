@@ -14,6 +14,7 @@ import com.krushit.model.User;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class CustomerService {
     private final IUserDAO userDAO = new UserDAOImpl();
@@ -35,5 +36,41 @@ public class CustomerService {
 
     public List<User> getAllCustomers() throws ApplicationException {
         return userDAO.fetchAllCustomers();
+    }
+
+    public void updateUser(UserDTO userDTO, int userId) throws ApplicationException {
+        if (userId == 0) {
+            throw new ApplicationException("User ID is required");
+        }
+        User existingUser = userDAO.getUserDetails(userId);
+        if (existingUser == null) {
+            throw new ApplicationException("User not found");
+        }
+        User updatedUser = new User.UserBuilder()
+                .setUserId(existingUser.getUserId())
+                .setFirstName(userDTO.getFirstName() != null ? userDTO.getFirstName() : existingUser.getFirstName())
+                .setLastName(userDTO.getLastName() != null ? userDTO.getLastName() : existingUser.getLastName())
+                .setPhoneNo(userDTO.getPhoneNo() != null ? userDTO.getPhoneNo() : existingUser.getPhoneNo())
+                .setEmailId(userDTO.getEmailId() != null ? userDTO.getEmailId() : existingUser.getEmailId())
+                .build();
+        userDAO.updateUser(updatedUser);
+    }
+
+    public void updatePassword(String email, String oldPassword, String newPassword) throws ApplicationException, DBException {
+        User user = userDAO.findByEmail(email);
+
+        if (user == null) {
+            throw new ApplicationException("User not found");
+        }
+
+        if (!user.getPassword().equals(oldPassword)) {
+            throw new ApplicationException("Old password is incorrect");
+        }
+
+        if (newPassword.length() < 6) {
+            throw new ApplicationException("New password must be at least 6 characters long");
+        }
+
+        userDAO.updatePassword(email, newPassword);
     }
 }

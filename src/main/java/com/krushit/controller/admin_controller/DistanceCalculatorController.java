@@ -1,4 +1,4 @@
-package com.krushit.controller;
+package com.krushit.controller.admin_controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
@@ -15,12 +15,14 @@ import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+@WebServlet(value = "/calculateDistance")
 public class DistanceCalculatorController extends HttpServlet {
     private final LocationService locationService = new LocationService();
     private final Mapper mapper = Mapper.getInstance();

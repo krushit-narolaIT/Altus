@@ -55,6 +55,7 @@ public class Mapper {
                 .setLastName(userDTO.getLastName())
                 .setPhoneNo(userDTO.getPhoneNo())
                 .setEmailId(userDTO.getEmailId())
+                .setDisplayId((userDTO.getDisplayId()))
                 .build();
     }
 

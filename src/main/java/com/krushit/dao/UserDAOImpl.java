@@ -12,19 +12,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UserDAOImpl implements IUserDAO {
-    private final String INSERT_USER_DATA = "INSERT INTO users (role_id , first_name, last_name, phone_no, email_id, password, display_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
-    private final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
-    private final String GET_USER_DETAIL = "SELECT * FROM users WHERE user_id = ?";
-    private final String CHECK_USER_EXISTENCE = "SELECT 1 FROM users WHERE email_id = ? OR phone_no = ?";
-    private final String INSERT_DRIVER_ENTRY = "INSERT INTO drivers (user_id) VALUES (?)";
-    private final String GET_ALL_USERS = "SELECT * FROM users WHERE role_id = 2";
-    private final String CHECK_USER_CREDENTIALS = "SELECT 1 FROM users WHERE email_id = ? AND password = ?";
-    private final String GET_DISPLAY_ID_FROM_USER_ID = "SELECT display_id FROM users WHERE user_id = ?";
-    private final String GET_FULL_NAME_FROM_USER_ID = "SELECT first_name, last_name FROM users WHERE user_id = ?";
-    private final String GET_PHONE_NO = "SELECT display_id FROM users WHERE user_id = ?";
+    private static final String INSERT_USER_DATA = "INSERT INTO users (role_id , first_name, last_name, phone_no, email_id, password, display_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String CREATE_DISPLAY_ID = "UPDATE users SET display_id = ? WHERE user_id = ?";
+    private static final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
+    private static final String GET_USER_DETAIL = "SELECT * FROM users WHERE user_id = ?";
+    private static final String CHECK_USER_EXISTENCE = "SELECT 1 FROM users WHERE email_id = ? OR phone_no = ?";
+    private static final String INSERT_DRIVER_ENTRY = "INSERT INTO drivers (user_id) VALUES (?)";
+    private static final String GET_ALL_USERS = "SELECT * FROM users WHERE role_id = 2";
+    private static final String CHECK_USER_CREDENTIALS = "SELECT 1 FROM users WHERE email_id = ? AND password = ?";
+    private static final String GET_DISPLAY_ID_FROM_USER_ID = "SELECT display_id FROM users WHERE user_id = ?";
+    private static final String GET_FULL_NAME_FROM_USER_ID = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+    private static final String GET_PHONE_NO = "SELECT display_id FROM users WHERE user_id = ?";
 
     public void registerUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection()) {
@@ -216,5 +217,49 @@ public class UserDAOImpl implements IUserDAO {
             throw new DBException(Message.User.ERROR_WHILE_GETTING_USER_FULL_NAME, e);
         }
         return null;
+    }
+
+    public void updateUser(User user) throws DBException {
+        String query = "UPDATE users SET first_name = ?, last_name = ?, phone_no = ?, email_id = ? WHERE user_id = ?";
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+                PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setString(1, user.getFirstName());
+            stmt.setString(2, user.getLastName());
+            stmt.setString(3, user.getPhoneNo());
+            stmt.setString(4, user.getEmailId());
+            stmt.setInt(5, user.getUserId());
+            stmt.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException("Error updating user in database", e);
+        }
+    }
+
+    public User findByEmail(String email) throws DBException {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE email = ?")) {
+            statement.setString(1, email);
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                return new User.UserBuilder()
+                        .setUserId(rs.getInt("user_id"))
+                        .setEmailId(rs.getString("email"))
+                        .setPassword(rs.getString("password"))
+                        .build();
+            }
+            return null;
+        } catch (Exception e) {
+            throw new DBException("Database error while fetching user", e);
+        }
+    }
+
+    public void updatePassword(String email, String newPassword) throws DBException {
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement("UPDATE users SET password = ? WHERE email = ?")) {
+            statement.setString(1, newPassword);
+            statement.setString(2, email);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            throw new DBException("Database error while updating password", e);
+        }
     }
 }

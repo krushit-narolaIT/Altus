@@ -3,16 +3,19 @@ package com.krushit.controller.validator;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ValidationException;
 import com.krushit.model.Driver;
+import jakarta.servlet.http.Part;
+import okhttp3.MultipartBody;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class DriverDocumentValidator {
-    public static void validateDriver(Driver driver) throws ValidationException {
+    public static void validateDriver(Driver driver, Part licencePhoto) throws ValidationException {
         if (driver.getUserId() <= 0) {
             throw new ValidationException(Message.Driver.INVALID_DRIVER_ID);
         }
         validateLicenceNumber(driver.getLicenceNumber());
-        validateLicencePhotoPath(driver.getLicencePhoto());
+        validateLicencePhoto(licencePhoto);
     }
 
     public static void validateLicenceNumber(String licenceNumber) throws ValidationException {
@@ -27,13 +30,17 @@ public class DriverDocumentValidator {
         }
     }
 
-    public static void validateLicencePhotoPath(String licencePhotoPath) throws ValidationException {
-        if (licencePhotoPath == null || licencePhotoPath.isEmpty()) {
-            throw new ValidationException(Message.Driver.LICENCE_NUMBER_IS_REQUIRED);
+    public static void validateLicencePhoto(Part licencePhoto) throws ValidationException {
+        if (licencePhoto == null || licencePhoto.getSize() == 0) {
+            throw new ValidationException(Message.Driver.LICENCE_PHOTO_PATH_IS_REQUIRD);
         }
-        File file = new File(licencePhotoPath);
-        if (!file.exists()) {
-            throw new ValidationException(Message.Driver.UPLOAD_VALID_LICENCE_PHOTO + licencePhotoPath);
+        String fileName = licencePhoto.getSubmittedFileName();
+        if (fileName == null || fileName.isEmpty()) {
+            throw new ValidationException(Message.Driver.UPLOAD_VALID_LICENCE_PHOTO);
+        }
+        String fileExtension = fileName.substring(fileName.lastIndexOf(".") + 1).toLowerCase();
+        if (!fileExtension.matches("jpg|jpeg|png")) {
+            throw new ValidationException(Message.Driver.INVALID_FILE_TYPE);
         }
     }
 }

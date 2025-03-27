@@ -285,4 +285,8 @@ public class VehicleRideService {
         }
         vehicleDAO.deleteVehicleByUserId(userId);
     }
+
+    public String fetchRideStatus(int rideId) throws DBException {
+        return rideDAO.getRideStatus(rideId);
+    }
 }

@@ -14,4 +14,5 @@ public interface IRideDAO {
     Ride getRideById(int rideId) throws DBException;
     void updateRideCancellation(RideCancellationDetails cancellationDetails) throws DBException;
     List<Ride> getAllRideByUserId(int userId) throws DBException;
+    String getRideStatus(int rideId) throws DBException;
 }

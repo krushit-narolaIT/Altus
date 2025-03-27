@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.krushit.common.enums.PaymentMode;
 import com.krushit.common.enums.PaymentStatus;
 import com.krushit.common.enums.RideStatus;
-import com.krushit.model.Ride;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

@@ -32,8 +32,9 @@ public class RideDAOImpl implements IRideDAO {
     private static String INSERT_RIDE = "INSERT INTO rides (ride_status, pick_location_id, drop_off_location_id, customer_id, driver_id, " +
             "ride_date, pick_up_time, display_id, total_km, total_cost, payment_mode, payment_status, " +
             "commission_percentage, driver_earning, system_earning) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static String UPDATE_RIDE_STATUS = "UPDATE rides SET ride_status = ?, cancellation_charge = ?, cancellation_driver_earning = ?, cancellation_system_earning = ?, driver_penalty = ? WHERE ride_id = ?";
+    private static String UPDATE_RIDE_STATUS = "UPDATE rides SET ride_status = ?, cancellation_charge = ?, cancellation_driver_earning = ?, cancellation_system_earning = ?, driver_penalty = ?, driver_earning =?, system_earning = ? WHERE ride_id = ?";
     private static String GET_RIDE_BY_USER_ID = "SELECT * FROM rides WHERE customer_id = ? OR driver_id = ? ORDER BY ride_date DESC";
+    private static String GET_RIDE_STATUS = "SELECT ride_status FROM rides WHERE ride_id = ?";
 
     public List<RideRequest> getAllMatchingRideRequests(int driverId) throws DBException {
         List<RideRequest> rideRequests = new ArrayList<>();
@@ -143,7 +144,13 @@ public class RideDAOImpl implements IRideDAO {
             stmt.setDouble(3, cancellationDetails.getDriverEarning());
             stmt.setDouble(4, cancellationDetails.getSystemEarning());
             stmt.setDouble(5, cancellationDetails.getDriverPenalty());
-            stmt.setInt(6, cancellationDetails.getRideId());
+            stmt.setDouble(6, 0.0);
+            if(cancellationDetails.getDriverPenalty() != 0.0){
+                stmt.setDouble(7, 120);
+            } else {
+                stmt.setDouble(7, 0.0);
+            }
+            stmt.setInt(8, cancellationDetails.getRideId());
             stmt.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Ride.ERROR_WHILE_RIDE_CANCELLATION, e);
@@ -184,5 +191,22 @@ public class RideDAOImpl implements IRideDAO {
             throw new DBException(Message.Ride.ERROR_WHILE_GETTING_ALL_RIDES, e);
         }
         return rideList;
+    }
+
+    @Override
+    public String getRideStatus(int rideId) throws DBException {
+        String rideStatus = null;
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(GET_RIDE_STATUS)) {
+            preparedStatement.setInt(1, rideId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    rideStatus = resultSet.getString("ride_status");
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Ride.ERROR_WHILE_FETCHING_RIDE_STATUS, e);
+        }
+        return rideStatus;
     }
 }

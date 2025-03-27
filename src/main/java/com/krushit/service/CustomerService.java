@@ -56,21 +56,15 @@ public class CustomerService {
         userDAO.updateUser(updatedUser);
     }
 
-    public void updatePassword(String email, String oldPassword, String newPassword) throws ApplicationException, DBException {
-        User user = userDAO.findByEmail(email);
-
-        if (user == null) {
-            throw new ApplicationException("User not found");
+    public void updatePassword(String email, String oldPassword, String newPassword) throws ApplicationException {
+        Optional<User> userOpt = userDAO.findByEmail(email);
+        if (!userOpt.isPresent()) {
+            throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
-
+        User user = userOpt.get();
         if (!user.getPassword().equals(oldPassword)) {
-            throw new ApplicationException("Old password is incorrect");
+            throw new ApplicationException(Message.User.PASSWORD_MISMATCHED);
         }
-
-        if (newPassword.length() < 6) {
-            throw new ApplicationException("New password must be at least 6 characters long");
-        }
-
         userDAO.updatePassword(email, newPassword);
     }
 }

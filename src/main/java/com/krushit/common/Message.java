@@ -22,6 +22,14 @@ public final class Message {
     private Message() {
     }
 
+    public static final class FeedBack {
+        public static final String FEEDBACK_SUBMITTED = "Feedback submitted successfully";
+        public static final String FEEDBACK_ALREADY_SUBMITTED = "Feedback is already submitted";
+
+        private FeedBack(){
+
+        }
+    }
     public static final class Ride {
         public static final String LOCATION_IS_REQUIRE = "Please enter source & destination location";
         public static final String RIDE_SERVICES_FETCHED_SUCCESSFULLY = "Available ride services fetched successfully.";
@@ -53,6 +61,9 @@ public final class Message {
         public static final String RIDE_ALREADY_STARTED_CANNOT_CANCEL = "Ongoing ride can not be cancelled";
         public static final String RIDES_FETCHED_SUCCESSFULLY = "Ride fetched successfully";
         public static final String ERROR_WHILE_GETTING_ALL_RIDES = "Error occur while getting all rides";
+        public static final String ERROR_WHILE_FETCHING_RIDE_STATUS = "Error occur while fetching ride service";
+        public static final String PLEASE_ENTER_FEEDBACK_AFTER_RIDE_COMPLETED = "Please submit feedback after ride is completed";
+        public static final String PLEASE_ENTER_VALID_RATING = "Please enter valid rating";
 
         private Ride() {
         }
@@ -85,6 +96,10 @@ public final class Message {
         public static final String EMAIL_AND_PASS_REQUIRED = "Email & Password are Required";
         public static final String INVALID_EMAIL_AND_PASS = "Invalid Email & Password";
         public static final String LOGIN_SUCCESSFUL = "Login Successful";
+        public static final String PASSWORD_MISMATCHED = "Incorrect old password";
+        public static final String PASSWORD_CHANGED_SUCCESSFULLY = "Password changed successfully";
+        public static final String INVALID_USER_ID = "Invalid user id";
+
         private User() {
         }
     }

@@ -1,10 +1,10 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.common.exception.DBException;
-import com.krushit.common.enums.Role;
-import com.krushit.model.User;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.enums.Role;
+import com.krushit.common.exception.DBException;
+import com.krushit.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +26,8 @@ public class UserDAOImpl implements IUserDAO {
     private static final String GET_DISPLAY_ID_FROM_USER_ID = "SELECT display_id FROM users WHERE user_id = ?";
     private static final String GET_FULL_NAME_FROM_USER_ID = "SELECT first_name, last_name FROM users WHERE user_id = ?";
     private static final String GET_PHONE_NO = "SELECT display_id FROM users WHERE user_id = ?";
+    private static final String GET_USER_BY_EMAIL = "SELECT * FROM users WHERE email_id = ?";
+    private static final String UPDATE_PASSWORD = "UPDATE users SET password = ? WHERE email_id = ?";
 
     public void registerUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection()) {
@@ -222,7 +224,7 @@ public class UserDAOImpl implements IUserDAO {
     public void updateUser(User user) throws DBException {
         String query = "UPDATE users SET first_name = ?, last_name = ?, phone_no = ?, email_id = ? WHERE user_id = ?";
         try (Connection connection = DBConfig.INSTANCE.getConnection();
-                PreparedStatement stmt = connection.prepareStatement(query)) {
+             PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, user.getFirstName());
             stmt.setString(2, user.getLastName());
             stmt.setString(3, user.getPhoneNo());
@@ -234,32 +236,47 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
-    public User findByEmail(String email) throws DBException {
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE email = ?")) {
+    public Optional<User> findByEmail(String email) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_USER_BY_EMAIL)) {
             statement.setString(1, email);
             ResultSet rs = statement.executeQuery();
             if (rs.next()) {
-                return new User.UserBuilder()
+                User user = new User.UserBuilder()
                         .setUserId(rs.getInt("user_id"))
-                        .setEmailId(rs.getString("email"))
+                        .setEmailId(rs.getString("email_id"))
                         .setPassword(rs.getString("password"))
                         .build();
+                return Optional.of(user);
             }
-            return null;
-        } catch (Exception e) {
-            throw new DBException("Database error while fetching user", e);
+            return Optional.empty();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException("Error fetching user from database", e);
         }
     }
 
     public void updatePassword(String email, String newPassword) throws DBException {
-        try (Connection connection = DatabaseConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement("UPDATE users SET password = ? WHERE email = ?")) {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(UPDATE_PASSWORD)) {
             statement.setString(1, newPassword);
             statement.setString(2, email);
             statement.executeUpdate();
-        } catch (Exception e) {
-            throw new DBException("Database error while updating password", e);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException("Error updating user in database", e);
+        }
+    }
+
+    public void updateUserRating(int userId, int rating, Connection connection) throws DBException {
+        String sql = "UPDATE users " +
+                "SET total_ratings = ((total_ratings * rating_count) + ?) / (rating_count + 1), " +
+                "rating_count = rating_count + 1 " +
+                "WHERE user_id = ?;";
+        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+            prepareStatement.setInt(1, rating);
+            prepareStatement.setInt(2, userId);
+            prepareStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DBException("Error updating user in database", e);
         }
     }
 }

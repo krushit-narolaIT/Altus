@@ -34,9 +34,10 @@ public class GiveUserFeedbackController extends HttpServlet {
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
             //AuthValidator.validateUser(user, Role.ROLE_CUSTOMER.getRoleName());
+            int rideId = Integer.parseInt(request.getParameter("rideId"));
             FeedbackDTO feedbackDTO = ObjectMapperUtils.toObject(request.getReader(), FeedbackDTO.class);
-            int toUserId = feedbackService.getToUserId(feedbackDTO.getRideId(), user.getRole().getRoleName());
-            feedbackService.submitFeedback(user.getUserId(), toUserId, feedbackDTO);
+            int toUserId = feedbackService.getToUserId(rideId, user.getRole().getRoleName());
+            feedbackService.submitFeedback(user.getUserId(), toUserId, feedbackDTO, rideId);
             sendResponse(response, HttpServletResponse.SC_OK, Message.FeedBack.FEEDBACK_SUBMITTED, null);
         } catch (DBException e) {
             sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);

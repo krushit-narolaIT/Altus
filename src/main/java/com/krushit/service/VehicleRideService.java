@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class VehicleRideService {
     private final IVehicleDAO vehicleDAO = new VehicleDAOImpl();
@@ -158,14 +159,22 @@ public class VehicleRideService {
     }*/
 
     public void acceptRide(int driverId, int rideRequestId) throws Exception {
-        RideRequest rideRequest = rideDAO.getRideRequestById(rideRequestId);
+        Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequestById(rideRequestId);
+        if(!rideRequestOpt.isPresent()){
+            throw new ApplicationException(Message.Ride.RIDE_REQUEST_NOT_EXIST);
+        }
+        RideRequest rideRequest = rideRequestOpt.get();
         if (rideRequest == null || !rideRequest.getRideRequestStatus().equals(RideRequestStatus.PENDING)) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }
         String userIdPart = String.format("%04d", rideRequest.getUserId() % 10000);
         String driverIdPart = String.format("%04d", driverId % 10000);
         String displayId = "R" + userIdPart + "I" + driverIdPart;
-        VehicleService service = vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
+        Optional<VehicleService> vehicleService =  vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
+        if(!vehicleService.isPresent()){
+            throw new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST);
+        }
+        VehicleService service = vehicleService.get();
         double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
         double commissionPercentage = locationDAO.getCommissionByDistance(distance);
         double totalCost = service.getBaseFare() + (service.getPerKmRate() * distance);
@@ -192,10 +201,11 @@ public class VehicleRideService {
     }
 
     public void cancelRide(int rideId, int userId, boolean isDriver) throws ApplicationException {
-        Ride ride = rideDAO.getRideById(rideId);
-        if (ride == null) {
+        Optional<Ride> rideOpt = rideDAO.getRideById(rideId);
+        if (!rideOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_NOT_FOUND_FOR_CANCELLATION);
         }
+        Ride ride = rideOpt.get();
         if (!isDriver && ride.getCustomerId() != userId) {
             throw new ApplicationException(Message.Ride.RIDE_NOT_BELONG_TO_THIS_CUSTOMER);
         }

@@ -8,6 +8,7 @@ import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
 import com.krushit.dto.DriverVerificationRequest;
+import com.krushit.dto.MonthlyIncomeDTO;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 import jakarta.servlet.http.Part;
@@ -19,8 +20,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public class DriverService {
     private static final String STORAGE_PATH = "D:\\Project\\AltusDriverLicences";
@@ -32,10 +36,11 @@ public class DriverService {
         if (driverDAO.isLicenseNumberExists(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
-        User user = userDAO.getUserDetails(driver.getUserId());
-        if (user == null) {
+        Optional<User> userOpt = userDAO.getUserDetails(driver.getUserId());
+        if (!userOpt.isPresent()) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
+        User user = userOpt.get();
         Driver updatedDriver = (Driver) new Driver.DriverBuilder()
                 .setLicenceNumber(driver.getLicenceNumber())
                 .setLicencePhoto(driver.getLicencePhoto())
@@ -106,5 +111,9 @@ public class DriverService {
 
     public List<Driver> getAllDrivers() throws ApplicationException {
         return driverDAO.fetchAllDrivers();
+    }
+
+    public MonthlyIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
+        return driverDAO.getRideDetailsByDateRange(driverId, startDate, endDate);
     }
 }

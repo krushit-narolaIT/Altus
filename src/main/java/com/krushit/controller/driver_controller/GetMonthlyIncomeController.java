@@ -1,4 +1,4 @@
-package com.krushit.controller.admin_controller;
+package com.krushit.controller.driver_controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.enums.Role;
@@ -9,9 +9,7 @@ import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponse;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
-import com.krushit.service.CustomerService;
-import com.krushit.service.LocationService;
-import com.krushit.utils.ApplicationUtils;
+import com.krushit.service.DriverService;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,22 +18,45 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
-@WebServlet(value = "/blockUser")
-public class BlockUserController extends HttpServlet {
-    private final CustomerService customerService = new CustomerService();
+@WebServlet(value = "/getMonthlyIncome")
+public class GetMonthlyIncomeController extends HttpServlet {
+    private final DriverService driverService = new DriverService();
     private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
+            // Validate session and get user info
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
-            int userId = Integer.parseInt(request.getParameter("userId"));
-            customerService.blockUser(userId);
-            createResponse(response, Message.Location.USER_BLOCKED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
+            AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
+
+            // Get startDate and endDate parameters
+            String startDateStr = request.getParameter("startDate");
+            String endDateStr = request.getParameter("endDate");
+
+            // Validate input dates
+            if (startDateStr == null || endDateStr == null || startDateStr.trim().isEmpty() || endDateStr.trim().isEmpty()) {
+                throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_DATE_RANGE);
+            }
+
+            LocalDate startDate;
+            LocalDate endDate;
+            try {
+                startDate = LocalDate.parse(startDateStr);
+                endDate = LocalDate.parse(endDateStr);
+            } catch (DateTimeParseException e) {
+                throw new ApplicationException(Message.Ride.INVALID_DATE_FORMAT);
+            }
+
+            // Fetch ride details for the given date range
+            var monthlyIncome = driverService.getRideDetailsByDateRange(user.getUserId(), startDate, endDate);
+            createResponse(response, Message.Vehicle.VEHICLE_REGISTERED_SUCCESSFULLY, monthlyIncome, HttpServletResponse.SC_OK);
+
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -43,7 +64,7 @@ public class BlockUserController extends HttpServlet {
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -5,18 +5,12 @@ import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 
 @JsonDeserialize(builder = FeedbackDTO.FeedbackDTOBuilder.class)
 public class FeedbackDTO {
-    private final int rideId;
     private final int rating;
     private final String comment;
 
     private FeedbackDTO(FeedbackDTOBuilder builder) {
-        this.rideId = builder.rideId;
         this.rating = builder.rating;
         this.comment = builder.comment;
-    }
-
-    public int getRideId() {
-        return rideId;
     }
 
     public int getRating() {

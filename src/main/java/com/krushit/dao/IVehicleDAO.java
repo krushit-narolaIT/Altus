@@ -10,6 +10,7 @@ import com.krushit.model.BrandModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface IVehicleDAO {
     boolean isVehicleServiceExists(String serviceName) throws DBException;
@@ -23,6 +24,6 @@ public interface IVehicleDAO {
     Integer getMinYearForBrandModel(int brandModelId) throws DBException;
     List<VehicleService> getAllAvailableVehicleServices() throws DBException;
     void bookRide(RideRequest rideRequest) throws DBException;
-    VehicleService getServiceById(int vehicleServiceId) throws DBException;
+    Optional<VehicleService> getServiceById(int vehicleServiceId) throws DBException;
     void deleteVehicleByUserId(int userId) throws DBException;
 }

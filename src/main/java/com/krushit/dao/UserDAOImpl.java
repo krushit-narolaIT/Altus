@@ -20,6 +20,7 @@ public class UserDAOImpl implements IUserDAO {
     private static final String USER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
     private static final String GET_USER_DETAIL = "SELECT * FROM users WHERE user_id = ?";
     private static final String CHECK_USER_EXISTENCE = "SELECT 1 FROM users WHERE email_id = ? OR phone_no = ?";
+    private static final String CHECK_USER_EXISTENCE_BY_ID = "SELECT 1 FROM users WHERE user_id = ?";
     private static final String INSERT_DRIVER_ENTRY = "INSERT INTO drivers (user_id) VALUES (?)";
     private static final String GET_ALL_USERS = "SELECT * FROM users WHERE role_id = 2";
     private static final String CHECK_USER_CREDENTIALS = "SELECT 1 FROM users WHERE email_id = ? AND password = ?";
@@ -28,6 +29,8 @@ public class UserDAOImpl implements IUserDAO {
     private static final String GET_PHONE_NO = "SELECT display_id FROM users WHERE user_id = ?";
     private static final String GET_USER_BY_EMAIL = "SELECT * FROM users WHERE email_id = ?";
     private static final String UPDATE_PASSWORD = "UPDATE users SET password = ? WHERE email_id = ?";
+    private static final String BLOCK_USER = "UPDATE users SET is_blocked = TRUE WHERE user_id = ?";
+    private static final String IS_USER_BLOCKED = "SELECT is_blocked FROM users WHERE user_id = ?";
 
     public void registerUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection()) {
@@ -130,6 +133,18 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    public boolean isUserExist(int userId) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(CHECK_USER_EXISTENCE_BY_ID)) {
+            statement.setInt(1, userId);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_CHECKING_USER_EXISTENCE, e);
+        }
+    }
+
     private String generateCustomerDisplayId(int userId) {
         String timestampPart = String.valueOf(System.currentTimeMillis() % 1000);
         String userIdPart = String.format("%04d", userId % 10000);
@@ -142,14 +157,13 @@ public class UserDAOImpl implements IUserDAO {
         return "DR" + userIdPart + "V" + timestampPart;
     }
 
-    public User getUserDetails(int userId) throws DBException {
-        User user = null;
+    public Optional<User> getUserDetails(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
             preparedStatement.setInt(1, userId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                user = new User.UserBuilder()
+                return Optional.of(new User.UserBuilder()
                         .setUserId(resultSet.getInt("user_id"))
                         .setRole(Role.getRole(resultSet.getInt("role_id")))
                         .setFirstName(resultSet.getString("first_name"))
@@ -161,12 +175,12 @@ public class UserDAOImpl implements IUserDAO {
                         .setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime())
                         .setCreatedBy(resultSet.getString("created_by"))
                         .setUpdatedBy(resultSet.getString("updated_by"))
-                        .build();
+                        .build());
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.User.ERROR_WHILE_GET_USER_DETAILS, e);
         }
-        return user;
+        return Optional.empty();
     }
 
     public List<User> fetchAllCustomers() throws DBException {
@@ -278,5 +292,30 @@ public class UserDAOImpl implements IUserDAO {
         } catch (SQLException e) {
             throw new DBException("Error updating user in database", e);
         }
+    }
+
+    @Override
+    public void blockUser(int userId) throws DBException {
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(BLOCK_USER)) {
+            stmt.setInt(1, userId);
+            stmt.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_BLOCKING_USER, e);
+        }
+    }
+
+    public boolean isUserBlocked(int userId) throws DBException {
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(IS_USER_BLOCKED)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("is_blocked");
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_CHECK_IS_USER_BLOCKED, e);
+        }
+        return false;
     }
 }

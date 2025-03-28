@@ -12,7 +12,8 @@ public interface IUserDAO {
     User userLogin(String emailId, String password) throws DBException ;
     boolean isUserExist(String emailID, String phoneNo) throws DBException;
     boolean isValidUser(String emailID, String password) throws DBException;
-    User getUserDetails(int userId) throws DBException;
+    boolean isUserExist(int userId) throws DBException;
+    Optional<User> getUserDetails(int userId) throws DBException;
     List<User> fetchAllCustomers() throws DBException;
     String getUserDisplayIdById(int userId) throws DBException;
     String getUserFullNameById(int userId) throws DBException;
@@ -20,4 +21,6 @@ public interface IUserDAO {
     Optional<User> findByEmail(String email) throws DBException;
     void updatePassword(String email, String newPassword) throws DBException;
     void updateUserRating(int toUserId, int rating, Connection connection) throws DBException;
+    void blockUser(int userId) throws DBException;
+    boolean isUserBlocked(int userId) throws DBException;
 }

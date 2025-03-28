@@ -14,6 +14,7 @@ import com.krushit.model.RideRequest;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RideDAOImpl implements IRideDAO {
     private static final String GET_PENDING_RIDES_FOR_AVAILABLE_DRIVERS =
@@ -61,14 +62,13 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public RideRequest getRideRequestById(int rideRequestId) throws DBException {
-        RideRequest rideRequest = null;
+    public Optional<RideRequest> getRideRequestById(int rideRequestId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(GET_RIDE_REQUEST_BY_ID)) {
             pstmt.setInt(1, rideRequestId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                rideRequest = new RideRequest.RideRequestBuilder()
+                Optional.of(new RideRequest.RideRequestBuilder()
                         .setRideRequestId(rs.getInt("ride_request_id"))
                         .setRideRequestStatus(RideRequestStatus.fromString(rs.getString("ride_request_status")))
                         .setPickUpLocationId(rs.getInt("pick_up_location_id"))
@@ -78,12 +78,12 @@ public class RideDAOImpl implements IRideDAO {
                         .setRideDate(rs.getDate("ride_date").toLocalDate())
                         .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                         .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
-                        .build();
+                        .build());
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Ride.ERROR_WHILE_GETTING_RIDE_REQUEST_BY_ID, e);
         }
-        return rideRequest;
+        return Optional.empty();
     }
 
     @Override
@@ -111,14 +111,13 @@ public class RideDAOImpl implements IRideDAO {
         }
     }
 
-    public Ride getRideById(int rideId) throws DBException {
-        Ride ride = null;
+    public Optional<Ride> getRideById(int rideId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(GET_RIDE_BY_ID);
             stmt.setInt(1, rideId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                ride = new Ride.RideBuilder()
+                Optional.of(new Ride.RideBuilder()
                         .setRideId(rs.getInt("ride_id"))
                         .setCustomerId(rs.getInt("customer_id"))
                         .setDriverId(rs.getInt("driver_id"))
@@ -128,12 +127,12 @@ public class RideDAOImpl implements IRideDAO {
                         .setDisplayId(rs.getString("display_id"))
                         .setTotalCost(rs.getDouble("total_cost"))
                         .setCommissionPercentage(rs.getDouble("commission_percentage"))
-                        .build();
+                        .build());
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Ride.ERROR_WHILE_CREATING_RIDE, e);
         }
-        return ride;
+        return Optional.empty();
     }
 
     public void updateRideCancellation(RideCancellationDetails cancellationDetails) throws DBException {

@@ -1,21 +1,27 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.common.exception.ApplicationException;
-import com.krushit.common.exception.DBException;
-import com.krushit.model.Driver;
-import com.krushit.model.User;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.enums.RideStatus;
+import com.krushit.common.exception.DBException;
+import com.krushit.dto.MonthlyIncomeDTO;
+import com.krushit.model.Driver;
+import com.krushit.model.Ride;
+import com.krushit.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
-    private final String DRIVER_LOGIN = "SELECT * FROM users WHERE email_id = ? AND password = ?";
+    private static final String GET_RIDES_BY_DATE_RANGE = """
+                SELECT ride_id, ride_status, pick_location_id, drop_off_location_id, 
+                       ride_date, pick_up_time, drop_off_time, total_km, total_cost, 
+                       payment_mode, payment_status, driver_earning, system_earning
+                FROM rides 
+                WHERE driver_id = ? AND ride_date BETWEEN ? AND ?
+            """;
     private final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ? WHERE user_id = ?";
     private final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE AND licence_number IS NOT NULL";
     private final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ? WHERE driver_id = ?";
@@ -26,7 +32,6 @@ public class DriverDAOImpl implements IDriverDAO {
     private final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
     private final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
     private final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Drivers SET is_available = TRUE WHERE driver_id = ?";
-
     private final UserDAOImpl userDAO = new UserDAOImpl();
 
     public boolean isDriverExist(String emailID) throws DBException {
@@ -61,7 +66,7 @@ public class DriverDAOImpl implements IDriverDAO {
              PreparedStatement statement = connection.prepareStatement(GET_PENDING_VERIFICATION_DRIVERS);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                User user = userDAO.getUserDetails(resultSet.getInt("user_id"));
+                User user = userDAO.getUserDetails(resultSet.getInt("user_id")).get();
                 Driver driver = (Driver) new Driver.DriverBuilder()
                         .setLicenceNumber(resultSet.getString("licence_number"))
                         .setLicencePhoto(resultSet.getString("licence_photo"))
@@ -116,7 +121,7 @@ public class DriverDAOImpl implements IDriverDAO {
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 int userId = resultSet.getInt("user_id");
-                User userDrive = userDAO.getUserDetails(userId);
+                User userDrive = userDAO.getUserDetails(userId).get();
                 Driver driver = (Driver) new Driver.DriverBuilder()
                         .setDriverId(resultSet.getInt("driver_id"))
                         .setLicenceNumber(resultSet.getString("licence_number"))
@@ -203,5 +208,43 @@ public class DriverDAOImpl implements IDriverDAO {
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Driver.ERROR_WHILE_UPDATING_DRIVER_AVAILABILITY, e);
         }
+    }
+
+    @Override
+    public MonthlyIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
+        List<Ride> rideList = new ArrayList<>();
+        double totalEarning = 0;
+        int totalRides = 0;
+
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+                PreparedStatement ps = conn.prepareStatement(GET_RIDES_BY_DATE_RANGE)) {
+            ps.setInt(1, driverId);
+            ps.setDate(2, Date.valueOf(startDate));
+            ps.setDate(3, Date.valueOf(endDate));
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Ride ride = new Ride.RideBuilder()
+                            .setRideId(rs.getInt("ride_id"))
+                            .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
+                            .setPickLocationId(rs.getInt("pick_location_id"))
+                            .setDropOffLocationId(rs.getInt("drop_off_location_id"))
+                            .setRideDate(rs.getDate("ride_date").toLocalDate())
+                            .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
+                            .setDropOffTime(rs.getTime("drop_off_time").toLocalTime())
+                            .setTotalKm(rs.getDouble("total_km"))
+                            .setTotalCost(rs.getDouble("total_cost"))
+                            .build();
+
+                    rideList.add(ride);
+                    totalEarning += ride.getDriverEarning();
+                    totalRides++;
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return new MonthlyIncomeDTO(totalRides, totalEarning, rideList);
     }
 }

@@ -19,6 +19,11 @@ import java.util.Optional;
 public class CustomerService {
     private final IUserDAO userDAO = new UserDAOImpl();
 
+    public void userBlocked(int userId) throws ApplicationException {
+        if(userDAO.isUserBlocked(userId)){
+            throw new ApplicationException(Message.User.YOUR_ACCOUNT_IS_SUSPENDED_PLEASE_CONTACT_SUPPORT);
+        }
+    }
     public void registerUser(User user) throws ApplicationException {
         if (userDAO.isUserExist(user.getEmailId(), user.getPhoneNo())) {
             throw new ApplicationException(Message.USER_ALREADY_EXIST);
@@ -42,10 +47,11 @@ public class CustomerService {
         if (userId == 0) {
             throw new ApplicationException("User ID is required");
         }
-        User existingUser = userDAO.getUserDetails(userId);
-        if (existingUser == null) {
-            throw new ApplicationException("User not found");
+        Optional<User> userOpt = userDAO.getUserDetails(userId);
+        if (!userOpt.isPresent()) {
+            throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
+        User existingUser = userOpt.get();
         User updatedUser = new User.UserBuilder()
                 .setUserId(existingUser.getUserId())
                 .setFirstName(userDTO.getFirstName() != null ? userDTO.getFirstName() : existingUser.getFirstName())
@@ -66,5 +72,12 @@ public class CustomerService {
             throw new ApplicationException(Message.User.PASSWORD_MISMATCHED);
         }
         userDAO.updatePassword(email, newPassword);
+    }
+
+    public void blockUser(int userId) throws ApplicationException{
+        if(!userDAO.isUserExist(userId)){
+            throw new ApplicationException(Message.User.USER_NOT_FOUND);
+        }
+        userDAO.blockUser(userId);
     }
 }

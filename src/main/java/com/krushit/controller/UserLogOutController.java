@@ -18,7 +18,7 @@ import java.io.IOException;
 @WebServlet(value = "/userLogout")
 public class UserLogOutController extends HttpServlet {
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             HttpSession session = request.getSession();
             UserDTO userDTO = (UserDTO) session.getAttribute("user");

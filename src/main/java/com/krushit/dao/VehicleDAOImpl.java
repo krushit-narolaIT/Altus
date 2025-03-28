@@ -10,10 +10,8 @@ import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 
 public class VehicleDAOImpl implements IVehicleDAO {
     private static final String INSERT_VEHICLE_SERVICE = "INSERT INTO Vehicle_Service (service_name, base_fare, per_km_rate, vehicle_type, max_passengers, commission_percentage) " +
@@ -208,13 +206,13 @@ public class VehicleDAOImpl implements IVehicleDAO {
     }
 
     @Override
-    public VehicleService getServiceById(int serviceId) throws DBException {
+    public Optional<VehicleService> getServiceById(int serviceId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
                 PreparedStatement ps = connection.prepareStatement(GET_SERVICE_BY_SERVICE_ID)) {
             ps.setInt(1, serviceId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new VehicleService(
+                Optional.of(new VehicleService(
                         rs.getInt("service_id"),
                         rs.getString("service_name"),
                         rs.getDouble("base_fare"),
@@ -222,12 +220,12 @@ public class VehicleDAOImpl implements IVehicleDAO {
                         rs.getString("vehicle_type"),
                         rs.getInt("max_passengers"),
                         rs.getDouble("commission_percentage")
-                );
+                ));
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

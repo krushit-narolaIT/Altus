@@ -64,6 +64,7 @@ public final class Message {
         public static final String ERROR_WHILE_FETCHING_RIDE_STATUS = "Error occur while fetching ride service";
         public static final String PLEASE_ENTER_FEEDBACK_AFTER_RIDE_COMPLETED = "Please submit feedback after ride is completed";
         public static final String PLEASE_ENTER_VALID_RATING = "Please enter valid rating";
+        public static final String RIDE_REQUEST_NOT_EXIST = "Sorry, this ride request is not valid";
 
         private Ride() {
         }
@@ -99,6 +100,9 @@ public final class Message {
         public static final String PASSWORD_MISMATCHED = "Incorrect old password";
         public static final String PASSWORD_CHANGED_SUCCESSFULLY = "Password changed successfully";
         public static final String INVALID_USER_ID = "Invalid user id";
+        public static final String ERROR_WHILE_BLOCKING_USER = "Error occur while blocking user";
+        public static final String ERROR_WHILE_CHECK_IS_USER_BLOCKED = "Error occur while checking user is blocked or not";
+        public static final String YOUR_ACCOUNT_IS_SUSPENDED_PLEASE_CONTACT_SUPPORT = "Your account is suspended please contact support";
 
         private User() {
         }
@@ -219,6 +223,7 @@ public final class Message {
         public static final String PLEASE_ENTER_VALID_VEHICLE_SERVICE = "Please enter valid vehicle service";
         public static final String ERROR_OCCUR_WHILE_DELETING_VEHICLE = "Error occur while deleting vehicle";
         public static final String VEHICLE_NOT_EXIST = "Driver vehicle not exist";
+        public static final String VEHICLE_SERVICE_NOT_EXIST = "Vehicle service not exist";
 
         private Vehicle() {
         }
@@ -241,6 +246,7 @@ public final class Message {
         public static final String SUCCESSFULLY_RETRIEVED_ALL_LOCATIONS = "Successfully retrieved locations";
         public static final String LOCATION_NOT_FOUND = "Location not found for deletion";
         public static final String LOCATION_DELETED_SUCCESSFULLY = "Location deleted successfully";
+        public static final String USER_BLOCKED_SUCCESSFULLY = "User blocked successfully";
 
         private Location() {
         }

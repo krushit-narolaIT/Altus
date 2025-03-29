@@ -2,26 +2,18 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
-import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.MonthlyIncomeDTO;
 import com.krushit.model.Driver;
-import com.krushit.model.Ride;
 import com.krushit.model.User;
 
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
-    private static final String GET_RIDES_BY_DATE_RANGE = """
-                SELECT ride_id, ride_status, pick_location_id, drop_off_location_id, 
-                       ride_date, pick_up_time, drop_off_time, total_km, total_cost, 
-                       payment_mode, payment_status, driver_earning, system_earning
-                FROM rides 
-                WHERE driver_id = ? AND ride_date BETWEEN ? AND ?
-            """;
     private final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ? WHERE user_id = ?";
     private final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE AND licence_number IS NOT NULL";
     private final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ? WHERE driver_id = ?";
@@ -210,18 +202,16 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
-    @Override
-    public MonthlyIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
+    /*@Override
+    public DateRangeIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
         List<Ride> rideList = new ArrayList<>();
         double totalEarning = 0;
         int totalRides = 0;
-
         try (Connection conn = DBConfig.INSTANCE.getConnection();
                 PreparedStatement ps = conn.prepareStatement(GET_RIDES_BY_DATE_RANGE)) {
             ps.setInt(1, driverId);
             ps.setDate(2, Date.valueOf(startDate));
             ps.setDate(3, Date.valueOf(endDate));
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     Ride ride = new Ride.RideBuilder()
@@ -244,7 +234,6 @@ public class DriverDAOImpl implements IDriverDAO {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-        return new MonthlyIncomeDTO(totalRides, totalEarning, rideList);
-    }
+        return new DateRangeIncomeDTO(totalRides, totalEarning, rideList);
+    }*/
 }

@@ -8,7 +8,7 @@ import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
 import com.krushit.dto.DriverVerificationRequest;
-import com.krushit.dto.MonthlyIncomeDTO;
+import com.krushit.dto.DateRangeIncomeDTO;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 import jakarta.servlet.http.Part;
@@ -20,8 +20,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -113,7 +111,7 @@ public class DriverService {
         return driverDAO.fetchAllDrivers();
     }
 
-    public MonthlyIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
+/*    public DateRangeIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
         return driverDAO.getRideDetailsByDateRange(driverId, startDate, endDate);
-    }
+    }*/
 }

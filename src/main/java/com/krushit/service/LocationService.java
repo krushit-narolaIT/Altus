@@ -127,7 +127,11 @@ public class LocationService {
         //return Double.parseDouble(distanceValue) / 1000;
     }
 
-    public void addLocation(String location) throws DBException {
+    public void addLocation(String location) throws ApplicationException {
         locationDAO.addLocation(location);
+    }
+
+    public String getLocationNameById(int pickLocationId) throws ApplicationException{
+        return locationDAO.getLocationNameById(pickLocationId);
     }
 }

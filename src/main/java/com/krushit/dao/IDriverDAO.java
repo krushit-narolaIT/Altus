@@ -1,13 +1,9 @@
 package com.krushit.dao;
 
-import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.MonthlyIncomeDTO;
+import com.krushit.dto.DateRangeIncomeDTO;
 import com.krushit.model.Driver;
-import com.krushit.model.User;
 
-import java.sql.Date;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,5 +18,5 @@ public interface IDriverDAO {
     boolean isDriverDocumentUploaded(int driverId) throws DBException;
     boolean isLicenseNumberExists(String licenseNumber) throws DBException;
     void updateDriverAvailability(int driverId) throws DBException;
-    MonthlyIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate);
+    //DateRangeIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate);
 }

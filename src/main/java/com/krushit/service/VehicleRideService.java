@@ -8,23 +8,23 @@ import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
-import com.krushit.dto.RideCancellationDetails;
-import com.krushit.dto.RideDTO;
-import com.krushit.dto.RideResponseDTO;
-import com.krushit.dto.RideServiceDTO;
+import com.krushit.dto.*;
 import com.krushit.model.*;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class VehicleRideService {
     private final IVehicleDAO vehicleDAO = new VehicleDAOImpl();
     private final IDriverDAO driverDAO = new DriverDAOImpl();
     private final IUserDAO userDAO = new UserDAOImpl();
+    private final CustomerService customerService = new CustomerService();
     private final ILocationDAO locationDAO = new LocationDAOImpl();
     private final LocationService locationService = new LocationService();
     private final IRideDAO rideDAO = new RideDAOImpl();
@@ -160,7 +160,7 @@ public class VehicleRideService {
 
     public void acceptRide(int driverId, int rideRequestId) throws Exception {
         Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequestById(rideRequestId);
-        if(!rideRequestOpt.isPresent()){
+        if (!rideRequestOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_REQUEST_NOT_EXIST);
         }
         RideRequest rideRequest = rideRequestOpt.get();
@@ -170,8 +170,8 @@ public class VehicleRideService {
         String userIdPart = String.format("%04d", rideRequest.getUserId() % 10000);
         String driverIdPart = String.format("%04d", driverId % 10000);
         String displayId = "R" + userIdPart + "I" + driverIdPart;
-        Optional<VehicleService> vehicleService =  vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
-        if(!vehicleService.isPresent()){
+        Optional<VehicleService> vehicleService = vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
+        if (!vehicleService.isPresent()) {
             throw new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST);
         }
         VehicleService service = vehicleService.get();
@@ -290,7 +290,7 @@ public class VehicleRideService {
 
     public void deleteVehicle(int userId) throws ApplicationException {
         int driverId = driverDAO.getDriverIdFromUserId(userId);
-        if(!vehicleDAO.isDriverVehicleExist(driverId)){
+        if (!vehicleDAO.isDriverVehicleExist(driverId)) {
             throw new ApplicationException(Message.Vehicle.VEHICLE_NOT_EXIST);
         }
         vehicleDAO.deleteVehicleByUserId(userId);
@@ -298,5 +298,47 @@ public class VehicleRideService {
 
     public String fetchRideStatus(int rideId) throws DBException {
         return rideDAO.getRideStatus(rideId);
+    }
+
+    public DateRangeIncomeDTO getIncomeByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws ApplicationException {
+        List<Ride> rideDetails = rideDAO.getRideDetailsByDateRange(driverId, startDate, endDate);
+        int totalRides = rideDAO.getTotalRides(driverId, startDate, endDate);
+        double totalEarning = rideDAO.getTotalEarnings(driverId, startDate, endDate);
+        List<RideDTO> rideDTOS = toRideDTOList(rideDetails);
+        return new DateRangeIncomeDTO(totalRides, totalEarning, rideDTOS);
+    }
+
+    public List<RideDTO> toRideDTOList(List<Ride> rideList) {
+        return rideList.stream()
+                .map(ride -> {
+                    try {
+                        return toRideDTO(ride);
+                    } catch (ApplicationException e) {
+                        throw new RuntimeException(Message.Ride.ERROR_WHILE_CONVERTING_RIDE_TO_RIDEDTO, e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    public RideDTO toRideDTO(Ride ride) throws ApplicationException {
+        return new RideDTO.RideDTOBuilder()
+                .setRideId(ride.getRideId())
+                .setRideStatus(ride.getRideStatus())
+                .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
+                .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
+                .setCustomerName(customerService.getUserNameById(ride.getCustomerId()))
+                .setDriverName(customerService.getUserNameById(ride.getDriverId()))
+                .setRideDate(ride.getRideDate())
+                .setPickUpTime(ride.getPickUpTime())
+                .setDisplayId(ride.getDisplayId())
+                .setTotalKm(ride.getTotalKm())
+                .setTotalCost(ride.getTotalCost())
+                .setPaymentMode(ride.getPaymentMode())
+                .setPaymentStatus(ride.getPaymentStatus())
+                .setDriverEarning(ride.getDriverEarning())
+                .setCancellationDriverEarning(ride.getCancellationDriverEarning())
+                .setDriverPenalty(ride.getDriverPenalty())
+                .build();
     }
 }

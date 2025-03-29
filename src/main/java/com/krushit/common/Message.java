@@ -65,6 +65,14 @@ public final class Message {
         public static final String PLEASE_ENTER_FEEDBACK_AFTER_RIDE_COMPLETED = "Please submit feedback after ride is completed";
         public static final String PLEASE_ENTER_VALID_RATING = "Please enter valid rating";
         public static final String RIDE_REQUEST_NOT_EXIST = "Sorry, this ride request is not valid";
+        public static final String INVALID_DATE_FORMAT = "Invalid date format";
+        public static final String PLEASE_ENTER_VALID_DATE_RANGE = "Please enter valid date range";
+        public static final String DATE_CANNOT_BE_IN_FUTURE = "Please enter valid date";
+        public static final String PLEASE_ENTER_VALID_DATE = "Please enter date";
+        public static final String ERROR_WHILE_CONVERTING_RIDE_TO_RIDEDTO = "Error occur while converting ride to ridedto";
+        public static final String ERROR_WHILE_FETCHING_RIDE_DETAILS_BY_RANGE = "Error occur while getting ride details by range";
+        public static final String ERROR_WHILE_FETCHING_TOTAL_RIDES = "Error while fetching total rides";
+        public static final String ERROR_WHILE_CALCULATING_DRIVER_TOTAL_EARNING = "error while calculation total driver earning";
 
         private Ride() {
         }

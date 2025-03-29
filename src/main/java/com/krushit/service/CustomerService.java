@@ -80,4 +80,8 @@ public class CustomerService {
         }
         userDAO.blockUser(userId);
     }
+
+    public String getUserNameById(int userId) throws ApplicationException{
+        return userDAO.getUserFullNameById(userId);
+    }
 }

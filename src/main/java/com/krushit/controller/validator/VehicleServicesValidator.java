@@ -3,7 +3,7 @@ package com.krushit.controller.validator;
 import com.krushit.common.Message;
 import com.krushit.common.enums.FuelType;
 import com.krushit.common.enums.VehicleType;
-import com.krushit.common.exception.Transmission;
+import com.krushit.common.enums.Transmission;
 import com.krushit.common.exception.ValidationException;
 import com.krushit.model.*;
 
@@ -70,10 +70,6 @@ public class VehicleServicesValidator {
     public static void validateVehicleDetails(Vehicle vehicle) throws ValidationException {
         if (vehicle == null) {
             throw new ValidationException(Message.Vehicle.VEHICLE_DATA_MISSING);
-        }
-
-        if (isNullOrEmpty(vehicle.getDriverId()) || vehicle.getDriverId() <= 0) {
-            throw new ValidationException(Message.Vehicle.DRIVER_ID_INVALID);
         }
 
         if (isNullOrEmpty(vehicle.getBrandModelId()) || vehicle.getBrandModelId() <= 0) {

@@ -3,7 +3,7 @@ package com.krushit.controller.admin_controller;
 import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.DriverVerificationRequest;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.dto.UserDTO;
@@ -14,7 +14,6 @@ import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.DriverServicesValidator;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,9 +33,10 @@ public class VerifyDriverDocumentController extends HttpServlet {
             AuthValidator.userLoggedIn(userDTO);
             User user = mapper.convertToEntityUserDTO(userDTO);
             AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
+            int driverId = Integer.parseInt(request.getParameter("driverId"));
             DriverVerificationRequest verificationRequest = ObjectMapperUtils.toObject(request.getReader(), DriverVerificationRequest.class);
             DriverServicesValidator.validateDriverApprovalRequest(verificationRequest);
-            driverService.verifyDriver(verificationRequest);
+            driverService.verifyDriver(verificationRequest, driverId);
             createResponse(response, Message.Driver.VERIFICATION_DONE_SUCCESSFUL, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
@@ -51,7 +51,7 @@ public class VerifyDriverDocumentController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse =  new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO =  new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

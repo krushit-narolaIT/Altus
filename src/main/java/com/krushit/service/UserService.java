@@ -1,29 +1,25 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
+import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.dao.DriverDAOImpl;
-import com.krushit.dao.IDriverDAO;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
-import com.krushit.common.exception.ApplicationException;
-import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.Driver;
 import com.krushit.model.User;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
-public class CustomerService {
+public class UserService {
     private final IUserDAO userDAO = new UserDAOImpl();
 
     public void userBlocked(int userId) throws ApplicationException {
-        if(userDAO.isUserBlocked(userId)){
+        if (userDAO.isUserBlocked(userId)) {
             throw new ApplicationException(Message.User.YOUR_ACCOUNT_IS_SUSPENDED_PLEASE_CONTACT_SUPPORT);
         }
     }
+
     public void registerUser(User user) throws ApplicationException {
         if (userDAO.isUserExist(user.getEmailId(), user.getPhoneNo())) {
             throw new ApplicationException(Message.USER_ALREADY_EXIST);
@@ -32,7 +28,7 @@ public class CustomerService {
     }
 
     public UserDTO userLogin(String email, String password) throws ApplicationException {
-        if(!userDAO.isValidUser(email, password)){
+        if (!userDAO.isValidUser(email, password)) {
             throw new ApplicationException(Message.User.PLEASE_ENTER_VALID_EMAIL_OR_PASS);
         }
         Mapper mapper = Mapper.getInstance();
@@ -74,14 +70,26 @@ public class CustomerService {
         userDAO.updatePassword(email, newPassword);
     }
 
-    public void blockUser(int userId) throws ApplicationException{
-        if(!userDAO.isUserExist(userId)){
+    public void blockUser(int userId) throws ApplicationException {
+        if (!userDAO.isUserExist(userId)) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
         userDAO.blockUser(userId);
     }
 
-    public String getUserNameById(int userId) throws ApplicationException{
+    public String getUserNameById(int userId) throws ApplicationException {
         return userDAO.getUserFullNameById(userId);
+    }
+
+    public String getUserDisplayIdById(int userId) throws ApplicationException{
+        return userDAO.getUserFullNameById(userId);
+    }
+
+    public String getUserFullNameById(int userId) throws ApplicationException{
+        return userDAO.getUserFullNameById(userId);
+    }
+
+    public Optional<User> getUserDetails(int fromUserId) throws ApplicationException{
+        return userDAO.getUserDetails(fromUserId);
     }
 }

@@ -27,9 +27,26 @@ public class RideDTO {
     private final double totalCost;
     private final PaymentMode paymentMode;
     private final PaymentStatus paymentStatus;
-    private final double cancellationCharge;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private final double commissionPercentage;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private final Double driverEarning;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private final Double systemEarning;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private final double cancellationCharge;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private final Double cancellationDriverEarning;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    private final Double cancellationSystemEarning;
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
     private final Double driverPenalty;
 
     private RideDTO(RideDTOBuilder builder) {
@@ -47,9 +64,12 @@ public class RideDTO {
         this.totalCost = builder.totalCost;
         this.paymentMode = builder.paymentMode;
         this.paymentStatus = builder.paymentStatus;
-        this.cancellationCharge = builder.cancellationCharge;
+        this.commissionPercentage = builder.commissionPercentage;
         this.driverEarning = builder.driverEarning;
+        this.systemEarning = builder.systemEarning;
+        this.cancellationCharge = builder.cancellationCharge;
         this.cancellationDriverEarning = builder.cancellationDriverEarning;
+        this.cancellationSystemEarning = builder.cancellationSystemEarning;
         this.driverPenalty = builder.driverPenalty;
     }
 
@@ -69,9 +89,12 @@ public class RideDTO {
         private double totalCost;
         private PaymentMode paymentMode;
         private PaymentStatus paymentStatus;
-        private double cancellationCharge;
+        private double commissionPercentage;
         private Double driverEarning;
+        private Double systemEarning;
+        private double cancellationCharge;
         private Double cancellationDriverEarning;
+        private Double cancellationSystemEarning;
         private Double driverPenalty;
 
         public RideDTOBuilder setRideId(int rideId) {
@@ -144,8 +167,8 @@ public class RideDTO {
             return this;
         }
 
-        public RideDTOBuilder setCancellationCharge(double cancellationCharge) {
-            this.cancellationCharge = cancellationCharge;
+        public RideDTOBuilder setCommissionPercentage(double commissionPercentage) {
+            this.commissionPercentage = commissionPercentage;
             return this;
         }
 
@@ -154,8 +177,23 @@ public class RideDTO {
             return this;
         }
 
+        public RideDTOBuilder setSystemEarning(Double systemEarning) {
+            this.systemEarning = systemEarning;
+            return this;
+        }
+
+        public RideDTOBuilder setCancellationCharge(double cancellationCharge) {
+            this.cancellationCharge = cancellationCharge;
+            return this;
+        }
+
         public RideDTOBuilder setCancellationDriverEarning(Double cancellationDriverEarning) {
             this.cancellationDriverEarning = cancellationDriverEarning;
+            return this;
+        }
+
+        public RideDTOBuilder setCancellationSystemEarning(Double cancellationSystemEarning) {
+            this.cancellationSystemEarning = cancellationSystemEarning;
             return this;
         }
 
@@ -169,7 +207,6 @@ public class RideDTO {
         }
     }
 
-    // Getters
     public int getRideId() {
         return rideId;
     }
@@ -226,16 +263,28 @@ public class RideDTO {
         return paymentStatus;
     }
 
-    public double getCancellationCharge() {
-        return cancellationCharge;
+    public double getCommissionPercentage() {
+        return commissionPercentage;
     }
 
     public Double getDriverEarning() {
         return driverEarning;
     }
 
+    public Double getSystemEarning() {
+        return systemEarning;
+    }
+
+    public double getCancellationCharge() {
+        return cancellationCharge;
+    }
+
     public Double getCancellationDriverEarning() {
         return cancellationDriverEarning;
+    }
+
+    public Double getCancellationSystemEarning() {
+        return cancellationSystemEarning;
     }
 
     public Double getDriverPenalty() {

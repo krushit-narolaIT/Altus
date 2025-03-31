@@ -1,6 +1,6 @@
 package com.krushit.dto;
 
-public class RideCancellationDetails {
+public class RideCancellationDetailsDTO {
     private final int rideId;
     private final String rideStatus;
     private final double cancellationCharge;
@@ -8,7 +8,7 @@ public class RideCancellationDetails {
     private final double systemEarning;
     private final double driverPenalty;
 
-    private RideCancellationDetails(RideCancellationDetailsBuilder builder) {
+    private RideCancellationDetailsDTO(RideCancellationDetailsBuilder builder) {
         this.rideId = builder.rideId;
         this.rideStatus = builder.rideStatus;
         this.cancellationCharge = builder.cancellationCharge;
@@ -79,8 +79,8 @@ public class RideCancellationDetails {
             return this;
         }
 
-        public RideCancellationDetails build() {
-            return new RideCancellationDetails(this);
+        public RideCancellationDetailsDTO build() {
+            return new RideCancellationDetailsDTO(this);
         }
     }
 }

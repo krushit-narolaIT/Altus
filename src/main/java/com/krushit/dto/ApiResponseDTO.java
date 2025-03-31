@@ -3,23 +3,23 @@ package com.krushit.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse {
+public class ApiResponseDTO {
     private String message;
     private String technicalMessage;
     private Object data;
 
-    public ApiResponse(String message, Object data) {
+    public ApiResponseDTO(String message, Object data) {
         this.message = message;
         this.data = data;
     }
 
-    public ApiResponse(String message, String technicalMessage, Object data) {
+    public ApiResponseDTO(String message, String technicalMessage, Object data) {
         this.message = message;
         this.technicalMessage = technicalMessage;
         this.data = data;
     }
 
-    public ApiResponse(String message) {
+    public ApiResponseDTO(String message) {
         this.message = message;
     }
 

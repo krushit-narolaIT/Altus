@@ -134,4 +134,8 @@ public class LocationService {
     public String getLocationNameById(int pickLocationId) throws ApplicationException{
         return locationDAO.getLocationNameById(pickLocationId);
     }
+
+    public double getCommissionByDistance(double distance) throws ApplicationException{
+        return locationDAO.getCommissionByDistance(distance);
+    }
 }

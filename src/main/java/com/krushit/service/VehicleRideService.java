@@ -21,12 +21,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class VehicleRideService {
-    private final IVehicleDAO vehicleDAO = new VehicleDAOImpl();
-    private final IDriverDAO driverDAO = new DriverDAOImpl();
-    private final IUserDAO userDAO = new UserDAOImpl();
-    private final CustomerService customerService = new CustomerService();
-    private final ILocationDAO locationDAO = new LocationDAOImpl();
+    private final DriverService driverService = new DriverService();
+    private final UserService userService = new UserService();
     private final LocationService locationService = new LocationService();
+    private final IVehicleDAO vehicleDAO = new VehicleDAOImpl();
     private final IRideDAO rideDAO = new RideDAOImpl();
 
     public void addVehicleService(VehicleService vehicleService) throws ApplicationException {
@@ -43,36 +41,13 @@ public class VehicleRideService {
         vehicleDAO.addBrandModel(brandModel);
     }
 
-    public void addVehicle(Vehicle vehicle, int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverIdFromUserId(userId);
-        if (!driverDAO.isDriverDocumentUploaded(driverId)) {
-            throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
-        }
-        if (!driverDAO.isDriverDocumentVerified(driverId)) {
-            throw new ApplicationException(Message.Driver.DOCUMENT_NOT_VERIFIED);
-        }
-        if (vehicleDAO.isDriverVehicleExist(driverId)) {
-            throw new ApplicationException(Message.Vehicle.DRIVER_VEHICLE_ALREADY_EXIST);
-        }
-        if (vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
-            throw new ApplicationException(Message.Vehicle.BRAND_MODEL_NOT_SUPPORTED);
-        }
-        Integer minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModelId());
-        if (vehicle.getYear() < minYear) {
-            throw new ApplicationException(Message.Vehicle.BRAND_MODEL_YEAR_NOT_SUPPORTED);
-        }
-        vehicle.setDriverId(driverId);
-        driverDAO.updateDriverAvailability(driverId);
-        vehicleDAO.addVehicle(vehicle);
-    }
-
     public Map<String, List<String>> getAllBrandModels() throws ApplicationException {
         return vehicleDAO.getAllBrandModels();
     }
 
     public List<RideServiceDTO> getAvailableRides(int fromId, int toId) throws Exception {
-        String fromLocation = locationDAO.getLocationNameById(fromId);
-        String toLocation = locationDAO.getLocationNameById(toId);
+        String fromLocation = locationService.getLocationNameById(fromId);
+        String toLocation = locationService.getLocationNameById(toId);
         double distance = locationService.calculateDistance(fromId, toId);
         List<VehicleService> availableServices = vehicleDAO.getAllAvailableVehicleServices();
         List<RideServiceDTO> rideOptions = new ArrayList<>();
@@ -99,23 +74,23 @@ public class VehicleRideService {
         if (!isServiceAvailable) {
             throw new ApplicationException(Message.Ride.REQUESTED_SERVICE_IS_NOT_AVAILABLE);
         }
-        if (locationDAO.getLocationNameById(rideRequest.getPickUpLocationId()).isEmpty()
-                || locationDAO.getLocationNameById(rideRequest.getDropOffLocationId()).isEmpty()) {
+        if (locationService.getLocationNameById(rideRequest.getPickUpLocationId()).isEmpty()
+                || locationService.getLocationNameById(rideRequest.getDropOffLocationId()).isEmpty()) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }
         vehicleDAO.bookRide(rideRequest);
     }
 
     public List<RideResponseDTO> getAllRequest(int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverIdFromUserId(userId);
+        int driverId = driverService.getDriverIdFromUserId(userId);
         List<RideRequest> rideRequests = rideDAO.getAllMatchingRideRequests(driverId);
         List<RideResponseDTO> responseList = new ArrayList<>();
         for (RideRequest rideRequest : rideRequests) {
             try {
-                String pickUpLocation = locationDAO.getLocationNameById(rideRequest.getPickUpLocationId());
-                String dropOffLocation = locationDAO.getLocationNameById(rideRequest.getDropOffLocationId());
-                String userDisplayId = userDAO.getUserDisplayIdById(rideRequest.getUserId());
-                String userFullName = userDAO.getUserFullNameById(rideRequest.getUserId());
+                String pickUpLocation = locationService.getLocationNameById(rideRequest.getPickUpLocationId());
+                String dropOffLocation = locationService.getLocationNameById(rideRequest.getDropOffLocationId());
+                String userDisplayId = userService.getUserDisplayIdById(rideRequest.getUserId());
+                String userFullName = userService.getUserFullNameById(rideRequest.getUserId());
                 RideResponseDTO responseDTO = new RideResponseDTO.RideResponseDTOBuilder()
                         .setRideRequestId(rideRequest.getRideRequestId())
                         .setPickUpLocation(pickUpLocation)
@@ -133,33 +108,10 @@ public class VehicleRideService {
         return responseList;
     }
 
-    /*public List<RideResponseDTO> getAllRequest(int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverIdFromUserId(userId);
-        List<RideRequest> rideRequests = rideDAO.getAllMatchingRideRequests(driverId);
-        return rideRequests.stream()
-                .map(rideRequest -> {
-                    try {
-                        String pickUpLocation = locationDAO.getLocationNameById(rideRequest.getPickUpLocationId());
-                        String dropOffLocation = locationDAO.getLocationNameById(rideRequest.getDropOffLocationId());
-                        String userDisplayId = userDAO.getUserDisplayIdById(rideRequest.getUserId());
-
-                        return new RideResponseDTO.RideResponseDTOBuilder()
-                                .setRideRequestId(rideRequest.getRideRequestId())
-                                .setPickUpLocation(pickUpLocation)
-                                .setDropOffLocation(dropOffLocation)
-                                .setRideDate(rideRequest.getRideDate())
-                                .setPickUpTime(rideRequest.getPickUpTime())
-                                .setUserDisplayId(userDisplayId)
-                                .build();
-                    } catch (DBException e) {
-                        throw new DBException("Error fetching ride details", e);
-                    }
-                })
-                .collect(Collectors.toList());
-    }*/
-
     public void acceptRide(int driverId, int rideRequestId) throws Exception {
+        System.out.println("RIDE REQUEST ID :: " + rideRequestId);
         Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequestById(rideRequestId);
+        System.out.println("OPT ::" + rideRequestOpt);
         if (!rideRequestOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_REQUEST_NOT_EXIST);
         }
@@ -176,7 +128,7 @@ public class VehicleRideService {
         }
         VehicleService service = vehicleService.get();
         double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
-        double commissionPercentage = locationDAO.getCommissionByDistance(distance);
+        double commissionPercentage = locationService.getCommissionByDistance(distance);
         double totalCost = service.getBaseFare() + (service.getPerKmRate() * distance);
         double systemEarning = (totalCost * commissionPercentage) / 100;
         double driverEarning = totalCost - systemEarning;
@@ -240,7 +192,7 @@ public class VehicleRideService {
         } else {
             rideStatus = RideStatus.CANCELLED.getStatus();
         }
-        RideCancellationDetails cancellationDetails = new RideCancellationDetails.RideCancellationDetailsBuilder()
+        RideCancellationDetailsDTO cancellationDetails = new RideCancellationDetailsDTO.RideCancellationDetailsBuilder()
                 .setRideId(rideId)
                 .setRideStatus(rideStatus)
                 .setCancellationCharge(cancellationCharge)
@@ -251,18 +203,18 @@ public class VehicleRideService {
         rideDAO.updateRideCancellation(cancellationDetails);
     }
 
-    public List<RideDTO> getAllRides(int userId, boolean isDriver) throws DBException {
+    public List<RideDTO> getAllRides(int userId, boolean isDriver) throws ApplicationException {
         List<Ride> rideList = rideDAO.getAllRideByUserId(userId);
         List<RideDTO> rideDTOList = new ArrayList<>();
         for (Ride ride : rideList) {
             try {
-                String customerName = userDAO.getUserFullNameById(ride.getCustomerId());
-                String driverName = userDAO.getUserFullNameById(ride.getDriverId());
+                String customerName = userService.getUserFullNameById(ride.getCustomerId());
+                String driverName = userService.getUserFullNameById(ride.getDriverId());
                 RideDTO.RideDTOBuilder builder = new RideDTO.RideDTOBuilder()
                         .setRideId(ride.getRideId())
                         .setRideStatus(ride.getRideStatus())
-                        .setPickLocationId(locationDAO.getLocationNameById(ride.getPickLocationId()))
-                        .setDropOffLocationId(locationDAO.getLocationNameById(ride.getDropOffLocationId()))
+                        .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
+                        .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
                         .setCustomerName(customerName)
                         .setDriverName(driverName)
                         .setRideDate(ride.getRideDate())
@@ -288,24 +240,16 @@ public class VehicleRideService {
         return rideDTOList;
     }
 
-    public void deleteVehicle(int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverIdFromUserId(userId);
-        if (!vehicleDAO.isDriverVehicleExist(driverId)) {
-            throw new ApplicationException(Message.Vehicle.VEHICLE_NOT_EXIST);
-        }
-        vehicleDAO.deleteVehicleByUserId(userId);
-    }
-
     public String fetchRideStatus(int rideId) throws DBException {
         return rideDAO.getRideStatus(rideId);
     }
 
-    public DateRangeIncomeDTO getIncomeByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws ApplicationException {
+    public DateRangeIncomeResponseDTO getIncomeByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws ApplicationException {
         List<Ride> rideDetails = rideDAO.getRideDetailsByDateRange(driverId, startDate, endDate);
         int totalRides = rideDAO.getTotalRides(driverId, startDate, endDate);
         double totalEarning = rideDAO.getTotalEarnings(driverId, startDate, endDate);
         List<RideDTO> rideDTOS = toRideDTOList(rideDetails);
-        return new DateRangeIncomeDTO(totalRides, totalEarning, rideDTOS);
+        return new DateRangeIncomeResponseDTO(totalRides, totalEarning, rideDTOS);
     }
 
     public List<RideDTO> toRideDTOList(List<Ride> rideList) {
@@ -327,14 +271,16 @@ public class VehicleRideService {
                 .setRideStatus(ride.getRideStatus())
                 .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
                 .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
-                .setCustomerName(customerService.getUserNameById(ride.getCustomerId()))
-                .setDriverName(customerService.getUserNameById(ride.getDriverId()))
+                .setCustomerName(userService.getUserNameById(ride.getCustomerId()))
+                .setDriverName(userService.getUserNameById(ride.getDriverId()))
                 .setRideDate(ride.getRideDate())
                 .setPickUpTime(ride.getPickUpTime())
                 .setDisplayId(ride.getDisplayId())
                 .setTotalKm(ride.getTotalKm())
                 .setTotalCost(ride.getTotalCost())
                 .setPaymentMode(ride.getPaymentMode())
+                .setSystemEarning(ride.getSystemEarning())
+                .setCancellationSystemEarning(ride.getCancellationSystemEarning())
                 .setPaymentStatus(ride.getPaymentStatus())
                 .setDriverEarning(ride.getDriverEarning())
                 .setCancellationDriverEarning(ride.getCancellationDriverEarning())

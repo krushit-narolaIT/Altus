@@ -212,7 +212,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
             ps.setInt(1, serviceId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                Optional.of(new VehicleService(
+                return Optional.of(new VehicleService(
                         rs.getInt("service_id"),
                         rs.getString("service_name"),
                         rs.getDouble("base_fare"),

@@ -6,13 +6,12 @@ import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.DriverDocumentValidator;
-import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -48,7 +47,7 @@ public class AddDriverDetailsController extends HttpServlet {
                     .setLicencePhoto(storedPhotoPath)
                     .setUserId(userDTO.getUserId())
                     .build();
-            DriverDocumentValidator.validateDriver(driver, licencePhoto);
+            DriverDocumentValidator.validateDriverDocuments(driver, licencePhoto);
             driverService.storeDriverDetails(driver);
             createResponse(response, Message.Driver.DOCUMENT_STORED_SUCCESSFULLY, null, HttpServletResponse.SC_CREATED);
         } catch (DBException e) {
@@ -64,7 +63,7 @@ public class AddDriverDetailsController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse =  new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO =  new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

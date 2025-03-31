@@ -12,9 +12,9 @@ import com.krushit.model.User;
 import java.util.Optional;
 
 public class FeedbackService {
-    private final FeedbackDAOImpl feedbackDAO = new FeedbackDAOImpl();
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final IUserDAO userDAO = new UserDAOImpl();
+    private final UserService userService = new UserService();
+    private final FeedbackDAOImpl feedbackDAO = new FeedbackDAOImpl();
 
     public void submitFeedback(int fromUserId, int toUserId, FeedbackDTO feedbackDTO, int rideId) throws ApplicationException {
         if(vehicleRideService.fetchRideStatus(rideId) == null){
@@ -25,8 +25,8 @@ public class FeedbackService {
         if (rating < 1 || rating > 5) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_RATING);
         }
-        Optional<User> fromUserOpt = userDAO.getUserDetails(fromUserId);
-        Optional<User> toUserOpt = userDAO.getUserDetails(fromUserId);
+        Optional<User> fromUserOpt = userService.getUserDetails(fromUserId);
+        Optional<User> toUserOpt = userService.getUserDetails(fromUserId);
         if (!fromUserOpt.isPresent() || !toUserOpt.isPresent()) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }

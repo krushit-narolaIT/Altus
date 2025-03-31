@@ -4,7 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.model.Location;
 import com.krushit.service.LocationService;
 import com.krushit.utils.ObjectMapperUtils;
@@ -47,7 +47,7 @@ public class GetAllLocationsController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

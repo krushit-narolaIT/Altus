@@ -6,7 +6,7 @@ import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
@@ -55,7 +55,7 @@ public class GetAllPendingDriverVerificationController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

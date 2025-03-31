@@ -2,7 +2,7 @@ package com.krushit.controller.admin_controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
@@ -49,7 +49,7 @@ public class AddLocationsController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = (data == null) ? new ApiResponse(message) : new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = (data == null) ? new ApiResponseDTO(message) : new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

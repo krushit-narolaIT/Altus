@@ -4,13 +4,9 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ValidationException;
 import com.krushit.model.Driver;
 import jakarta.servlet.http.Part;
-import okhttp3.MultipartBody;
-
-import java.io.File;
-import java.nio.file.Path;
 
 public class DriverDocumentValidator {
-    public static void validateDriver(Driver driver, Part licencePhoto) throws ValidationException {
+    public static void validateDriverDocuments(Driver driver, Part licencePhoto) throws ValidationException {
         if (driver.getUserId() <= 0) {
             throw new ValidationException(Message.Driver.INVALID_DRIVER_ID);
         }

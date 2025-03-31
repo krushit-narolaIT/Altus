@@ -1,12 +1,10 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.controller.validator.AuthValidator;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.FeedbackDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
@@ -50,7 +48,7 @@ public class GiveUserFeedbackController extends HttpServlet {
 
     private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

@@ -1,5 +1,6 @@
 package com.krushit.dao;
 
+import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Location;
 import com.krushit.common.config.DBConfig;
@@ -25,7 +26,7 @@ public class LocationDAOImpl implements ILocationDAO{
                 statement.setString(1, location);
                 statement.executeUpdate();
         } catch (SQLException | ClassNotFoundException e){
-            throw new DBException(e.getMessage(), e);
+            throw new DBException(Message.Location.ERROR_WHILE_ADDING_LOCATION, e);
         }
     }
 
@@ -40,7 +41,7 @@ public class LocationDAOImpl implements ILocationDAO{
                 locationName = rs.getString("name");
             }
         } catch (SQLException | ClassNotFoundException e){
-            throw new DBException(e.getMessage(), e);
+            throw new DBException(Message.Location.ERROR_WHILE_GETTING_LOCATION_BY_NAME, e);
         }
         return locationName;
     }
@@ -55,7 +56,7 @@ public class LocationDAOImpl implements ILocationDAO{
                 locations.add(new Location(rs.getInt("location_id"), rs.getString("name")));
             }
         } catch (SQLException | ClassNotFoundException e){
-            throw new DBException(e.getMessage(), e);
+            throw new DBException(Message.Location.ERROR_WHILE_GETTING_ALL_LOCATION, e);
         }
         return locations;
     }
@@ -67,7 +68,7 @@ public class LocationDAOImpl implements ILocationDAO{
             stmt.setInt(1, locationId);
             return stmt.executeUpdate() > 0;
         } catch (SQLException | ClassNotFoundException e){
-            throw new DBException(e.getMessage(), e);
+            throw new DBException(Message.Location.ERROR_WHILE_DELETING_LOCATION, e);
         }
     }
 
@@ -82,7 +83,7 @@ public class LocationDAOImpl implements ILocationDAO{
                 commissionPercentage = rs.getDouble("commission_percentage");
             }
         } catch (SQLException | ClassNotFoundException e){
-            throw new DBException(e.getMessage(), e);
+            throw new DBException(Message.Location.ERROR_WHILE_GET_COMMISSION_BY_DISTANCE, e);
         }
         return commissionPercentage;
     }

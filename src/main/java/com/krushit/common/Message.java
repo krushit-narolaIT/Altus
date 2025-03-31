@@ -6,19 +6,9 @@ public final class Message {
     public static final String GENERIC_ERROR = "Oops something went wong. please try after sometime or contact our support team.";
     public static final String USER_ALREADY_EXIST = "User Already Exist";
     public static final String INTERNAL_SERVER_ERROR = "Internal Server Error";
-    public static final String REGISTRATION_SUCCESSFUL = "Registration Successful";
-    public static final String CHOOSE_STRONG_PASSWORD = "CHOOSE STRONG PASSWORD";
-    public static final String DRIVER_REGISTERED_SUCCESSFULLY = "Driver Registration Successful";
-    public static final String DRIVER_ALREADY_EXIST = "Driver Already Exist";
     public static final String DATABASE_ERROR = "Database Error";
-    public static final String DATABASE_CONNECTION_ESTABLISHED = "Database Connection Successful";
-    public static final String DATABASE_CONNECTION_FAILED = "Database Connection Failed";
-    public static final String USER_REGISTRATION_FAILED = "User registration failed.";
     public static final String APPLICATION_JSON = "application/json";
     public static final String UTF_8 = "UTF-8";
-    public static final String EMPTY_PASSWORD = "Please fill the Password";
-    public static final String EMPTY_EMAIL = "Please enter email";
-    public static final String UNAUTHORIZED = "You don't have valid privilege to perform this operation";
     private Message() {
     }
 
@@ -66,7 +56,6 @@ public final class Message {
         public static final String PLEASE_ENTER_VALID_RATING = "Please enter valid rating";
         public static final String RIDE_REQUEST_NOT_EXIST = "Sorry, this ride request is not valid";
         public static final String INVALID_DATE_FORMAT = "Invalid date format";
-        public static final String PLEASE_ENTER_VALID_DATE_RANGE = "Please enter valid date range";
         public static final String DATE_CANNOT_BE_IN_FUTURE = "Please enter valid date";
         public static final String PLEASE_ENTER_VALID_DATE = "Please enter date";
         public static final String ERROR_WHILE_CONVERTING_RIDE_TO_RIDEDTO = "Error occur while converting ride to ridedto";
@@ -95,7 +84,6 @@ public final class Message {
         public static final String PLEASE_ENTER_EMAIL = "Please Enter Email";
         public static final String PLEASE_ENTER_FIRST_NAME = "Please Enter First Name";
         public static final String PLEASE_ENTER_LASE_NAME = "Please Enter Last Name";
-        public static final String INVALID_USER_ROLE = "Please register with valid user roles";
         public static final String USER_NOT_FOUND = "User not exist";
         public static final String ENTER_VALID_USER_DATA = "Please Enter Valid User Data";
         public static final String PLEASE_ENTER_VALID_PASSWORD = "Password must contain at least one uppercase letter, one special character, and one digit.";
@@ -103,7 +91,6 @@ public final class Message {
         public static final String PLEASE_ENTER_VALID_EMAIL = "Please enter a valid email.";
         public static final String USER_REGISTERED_SUCCESSFULLY = "User Registration Successful";
         public static final String EMAIL_AND_PASS_REQUIRED = "Email & Password are Required";
-        public static final String INVALID_EMAIL_AND_PASS = "Invalid Email & Password";
         public static final String LOGIN_SUCCESSFUL = "Login Successful";
         public static final String PASSWORD_MISMATCHED = "Incorrect old password";
         public static final String PASSWORD_CHANGED_SUCCESSFULLY = "Password changed successfully";
@@ -138,28 +125,21 @@ public final class Message {
         public static final String ERROR_WHILE_INSERT_DRIVER_DETAILS = "Error while inserting driver details";
         public static final String LICENCE_NUMBER_IS_REQUIRED = "Please enter licence number";
         public static final String ENTER_VALID_LICENCE_NUMBER = "Please enter valid licence number";
-        public static final String LICENCE_PHOTO_IS_REQUIRD = "Licence photo is required";
         public static final String UPLOAD_VALID_LICENCE_PHOTO = "Licence photo file does not exist";
         public static final String LICENCE_NUMBER_IS_ALREADY_EXIST = "Driver already registered with this licence number";
         public static final String LICENCE_PHOTO_PATH_IS_REQUIRD = "Licence photo not exist at : ";
         public static final String FAILED_TO_STORE_DOCUMENT = "Failed to store licence photo: ";
         public static final String DOCUMENT_NOT_VERIFIED = "Driver document not verified";
         public static final String INVALID_DRIVER_ID = "Please enter valid driver id";
-        public static final String DOCUMENT_UPLOADING_FAILED = "Failed to upload driver document";
-        public static final String DRIVER_NOT_EXIST = "Driver Not Exist";
-        public static final String DRIVER_PATH = "/DriverSignUp";
         public static final String NO_DRIVERS_FOUND = "No drivers found in system";
-        public static final String FAILED_TO_RETRIEVE_DRIVERS = "Failed to retrieve driver";
         public static final String SUCCESSFULLY_RETRIEVED_DRIVERS = "Successfully Retrieved Driver";
         public static final String VERIFICATION_DONE_SUCCESSFUL = "Driver verification updated successfully!";
-        public static final String REGISTERED_SUCCESSFUL = "Driver Registered Successful";
         public static final String DOCUMENT_STORED_SUCCESSFULLY = "Document Stored Successfully and Under Review, it may take 24-48 Hours to verify";
         public static final String DOCUMENT_NOT_UPLOADED = "Driver document not uploaded";
-        public static final String FAILED_TO_INSERT_DRIVER_DETAIL = "Failed to insert driver detail";
         public static final String NO_PENDING_VERIFICATION = "No pending driver verifications.";
-        public static final String FAILED_TO_RETRIEVE_DRIVER = "Error retrieving driver verifications.";
         public static final String SUCCESSFULLY_RETRIEVE_DRIVERS = "Pending driver verifications retrieved successfully.";
         public static final String INVALID_FILE_TYPE = "Invalid content type JPG, JPEG, PNG are allowed";
+        public static final String DOCUMENT_IS_UNDER_REVIEW = "Your document is under review please wait for approval.";
 
         private Driver() {
         }
@@ -168,14 +148,7 @@ public final class Message {
     public static final class Customer {
         public static final String CUSTOMER_PATH = "/userSignUp";
         public static final String NO_CUSTOMER_FOUND = "No users found in system";
-        public static final String FAILED_TO_RETRIEVE_CUSTOMER = "Failed to retrieve customers";
         public static final String SUCCESSFULLY_RETRIEVED_CUSTOMER = "Successfully Retrieved Customers";
-        public static final String REGISTERED_SUCCESSFUL = "Driver Registered Successful";
-        public static final String DOCUMENT_STORED_SUCCESSFULLY = "Document Stored Successfully";
-        public static final String FAILED_TO_INSERT_DRIVER_DETAIL = "Failed to insert driver detail";
-        public static final String NO_PENDING_VERIFICATION = "No pending driver verifications.";
-        public static final String FAILED_TO_RETRIEVE_DRIVER = "Error retrieving driver verifications.";
-        public static final String SUCCESSFULLY_RETRIEVE_DRIVERS = "Pending driver verifications retrieved successfully.";
         private Customer() {
         }
     }
@@ -193,7 +166,6 @@ public final class Message {
         public static final String BRAND_MODEL_YEAR_NOT_SUPPORTED = "Sorry, this brand model registration year is not supported";
         public static final String NO_REQUEST_FOUND = "No request found";
         public static final String FETCHING_ALL_REQUEST_SUCCESSFULLY = "Successfully fetched all requests";
-        public static final String VERIFICATION_PENDING = "Vehicle Verification is Pending";
         public static final String ERROR_OCCUR_WHILE_ADDING_VEHICLE = "Error Occur While Adding Vehicle";
         public static final String PLEASE_ENTER_VALID_BASE_FARE = "Please Enter Valid Base Fare";
         public static final String PLEASE_ENTER_VALID_PER_KM_RATE = "Please enter valid per km rate";
@@ -205,11 +177,9 @@ public final class Message {
         public static final String BRAND_MODEL_ADDED_SUCCESSFULLY = "Brand Model Added Successfully";
         public static final String VEHICLE_REGISTERED_SUCCESSFULLY = "Vehicle Registered Successfully";
         public static final String PLEASE_ENTER_VALID_VERIFICATION_REQUEST = "Please enter valid verification request";
-        public static final String PLEASE_ENTER_VALID_DRIVER_ID = "Please enter valid driver id";
         public static final String PLEASE_ENTER_VALID_VERIFICATION_STATUS = "Please enter valid verification status, Allowed : ACCEPT, REJECT";
         public static final String PLEASE_ENTER_REJECTION_MESSAGE = "Please rejection message";
         public static final String VEHICLE_DATA_MISSING = "Invalid request! Vehicle data is missing.";
-        public static final String DRIVER_ID_INVALID = "Please enter valid driver id";
         public static final String BRAND_MODEL_ID_INVALID = "Please enter valid brand model id";
         public static final String REGISTRATION_NUMBER_REQUIRED = "Registration number is required.";
         public static final String REGISTRATION_NUMBER_INVALID = "Please enter valid registration number, example: GJ12AB1234.";
@@ -232,6 +202,7 @@ public final class Message {
         public static final String ERROR_OCCUR_WHILE_DELETING_VEHICLE = "Error occur while deleting vehicle";
         public static final String VEHICLE_NOT_EXIST = "Driver vehicle not exist";
         public static final String VEHICLE_SERVICE_NOT_EXIST = "Vehicle service not exist";
+        public static final String RIDE_ACCEPTED = "Ride Accepted..!!";
 
         private Vehicle() {
         }
@@ -241,8 +212,6 @@ public final class Message {
         public static final String FLYWAY_SUCCESSFUL = "Flyway set up successful";
         public static final String FLYWAY_FAILED = "Failed to set up flyway";
         public static final String DRIVER_NOT_FOUND = "Driver not found";
-        public static final String DATABASE_ERROR = "Database error occurred while logging in.";
-        public static final String INTERNAL_DB_ERROR = "Internal Database Error";
         public static final String CONNECTION_SUCCESSFUL = "Database connection successful";
         private Database() {
         }
@@ -255,6 +224,11 @@ public final class Message {
         public static final String LOCATION_NOT_FOUND = "Location not found for deletion";
         public static final String LOCATION_DELETED_SUCCESSFULLY = "Location deleted successfully";
         public static final String USER_BLOCKED_SUCCESSFULLY = "User blocked successfully";
+        public static final String ERROR_WHILE_ADDING_LOCATION = "Error while adding location";
+        public static final String ERROR_WHILE_GETTING_LOCATION_BY_NAME = "Error while getting location by name";
+        public static final String ERROR_WHILE_GETTING_ALL_LOCATION = "Error while getting all location";
+        public static final String ERROR_WHILE_DELETING_LOCATION = "Error while deleting location";
+        public static final String ERROR_WHILE_GET_COMMISSION_BY_DISTANCE = "Error while get commission by distance";
 
         private Location() {
         }

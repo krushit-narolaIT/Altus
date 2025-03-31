@@ -3,12 +3,11 @@ package com.krushit.controller;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.exception.ValidationException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
-import com.krushit.dto.ApiResponse;
-import com.krushit.service.CustomerService;
+import com.krushit.dto.ApiResponseDTO;
+import com.krushit.service.UserService;
 import com.krushit.controller.validator.LoginValidator;
 import com.krushit.utils.ObjectMapperUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,7 +20,7 @@ import java.io.IOException;
 
 @WebServlet(value = "/userLogin")
 public class UserLoginController extends HttpServlet {
-    private final CustomerService userService = new CustomerService();
+    private final UserService userService = new UserService();
     private final Mapper mapper = Mapper.getInstance();
 
     @Override
@@ -49,7 +48,7 @@ public class UserLoginController extends HttpServlet {
 
     private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

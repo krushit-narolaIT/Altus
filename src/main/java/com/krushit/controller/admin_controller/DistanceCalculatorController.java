@@ -5,7 +5,7 @@ import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.RideValidator;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.DistanceCalculatorDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.common.enums.Role;
@@ -39,15 +39,15 @@ public class DistanceCalculatorController extends HttpServlet {
             RideValidator.validateLocation(distanceRequest);
             double distance = locationService.calculateDistance(distanceRequest.getFrom(), distanceRequest.getTo());
             response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write(ObjectMapperUtils.toString(new ApiResponse("Success", distance + " km")));
+            response.getWriter().write(ObjectMapperUtils.toString(new ApiResponseDTO("Success", distance + " km")));
         } catch (DBException e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(ObjectMapperUtils.toString(new ApiResponse(Message.GENERIC_ERROR, null)));
+            response.getWriter().write(ObjectMapperUtils.toString(new ApiResponseDTO(Message.GENERIC_ERROR, null)));
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write(ObjectMapperUtils.toString(new ApiResponse("Error calculating distance", null)));
+            response.getWriter().write(ObjectMapperUtils.toString(new ApiResponseDTO("Error calculating distance", null)));
         }
     }
 }

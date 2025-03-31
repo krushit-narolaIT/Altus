@@ -7,8 +7,8 @@ import com.krushit.dto.UserSignUpDTO;
 import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.dto.ApiResponse;
-import com.krushit.service.CustomerService;
+import com.krushit.dto.ApiResponseDTO;
+import com.krushit.service.UserService;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.controller.validator.SignupValidator;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,7 +20,7 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/userSignUp", "/driverSignUp"})
 public class UserSignUpController extends HttpServlet {
-    private final CustomerService userService = new CustomerService();
+    private final UserService userService = new UserService();
     private final Mapper mapper = Mapper.getInstance();
 
     @Override
@@ -50,7 +50,7 @@ public class UserSignUpController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

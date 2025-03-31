@@ -2,12 +2,12 @@ package com.krushit.dto;
 
 import java.util.List;
 
-public class DateRangeIncomeDTO {
+public class DateRangeIncomeResponseDTO {
     private int totalRides;
     private double totalEarning;
     private List<RideDTO> ridesDTO;
 
-    public DateRangeIncomeDTO(int totalRides, double totalEarning, List<RideDTO> rides) {
+    public DateRangeIncomeResponseDTO(int totalRides, double totalEarning, List<RideDTO> rides) {
         this.totalRides = totalRides;
         this.totalEarning = totalEarning;
         this.ridesDTO = rides;

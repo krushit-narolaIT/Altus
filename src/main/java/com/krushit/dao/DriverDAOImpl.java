@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
+    private final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = ?";
     private final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ? WHERE user_id = ?";
     private final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE AND licence_number IS NOT NULL";
     private final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ? WHERE driver_id = ?";
@@ -25,20 +26,6 @@ public class DriverDAOImpl implements IDriverDAO {
     private final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
     private final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Drivers SET is_available = TRUE WHERE driver_id = ?";
     private final UserDAOImpl userDAO = new UserDAOImpl();
-
-    public boolean isDriverExist(String emailID) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement checkStmt = connection.prepareStatement(CHECK_DRIVER_EXISTENCE)) {
-            checkStmt.setString(1, emailID);
-            ResultSet resultSet = checkStmt.executeQuery();
-            if (resultSet.next() && resultSet.getInt(1) > 0) {
-                return true;
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_DRIVER_EXISTENCE, e);
-        }
-        return false;
-    }
 
     public void insertDriverDetails(Driver driver) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -192,6 +179,19 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
+    @Override
+    public String isDocumentUnderReview(int driverId) throws DBException {
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(IS_DOCUMENT_UNDER_REVIEW)) {
+            stmt.setInt(1, driverId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.getString("verification_status");
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_LICENCE_NUMBER, e);
+        }
+    }
+
     public void updateDriverAvailability(int driverId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_DRIVER_AVAILABILITY)) {
@@ -201,39 +201,4 @@ public class DriverDAOImpl implements IDriverDAO {
             throw new DBException(Message.Driver.ERROR_WHILE_UPDATING_DRIVER_AVAILABILITY, e);
         }
     }
-
-    /*@Override
-    public DateRangeIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) {
-        List<Ride> rideList = new ArrayList<>();
-        double totalEarning = 0;
-        int totalRides = 0;
-        try (Connection conn = DBConfig.INSTANCE.getConnection();
-                PreparedStatement ps = conn.prepareStatement(GET_RIDES_BY_DATE_RANGE)) {
-            ps.setInt(1, driverId);
-            ps.setDate(2, Date.valueOf(startDate));
-            ps.setDate(3, Date.valueOf(endDate));
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Ride ride = new Ride.RideBuilder()
-                            .setRideId(rs.getInt("ride_id"))
-                            .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
-                            .setPickLocationId(rs.getInt("pick_location_id"))
-                            .setDropOffLocationId(rs.getInt("drop_off_location_id"))
-                            .setRideDate(rs.getDate("ride_date").toLocalDate())
-                            .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
-                            .setDropOffTime(rs.getTime("drop_off_time").toLocalTime())
-                            .setTotalKm(rs.getDouble("total_km"))
-                            .setTotalCost(rs.getDouble("total_cost"))
-                            .build();
-
-                    rideList.add(ride);
-                    totalEarning += ride.getDriverEarning();
-                    totalRides++;
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-        return new DateRangeIncomeDTO(totalRides, totalEarning, rideList);
-    }*/
 }

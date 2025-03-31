@@ -5,14 +5,11 @@ import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.AuthValidator;
-import com.krushit.controller.validator.RideValidator;
-import com.krushit.dto.ApiResponse;
+import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.RideRequest;
 import com.krushit.model.User;
 import com.krushit.service.VehicleRideService;
-import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -47,8 +44,8 @@ public class CancelRideController extends HttpServlet {
 
     private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
         response.setStatus(statusCode);
-        ApiResponse apiResponse = new ApiResponse(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponse));
+        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
+        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 
     private RideRequestDTO setUserId(RideRequestDTO rideRequestDTO, int userId){

@@ -1,10 +1,8 @@
 package com.krushit.dao;
 
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.DateRangeIncomeDTO;
 import com.krushit.model.Driver;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface IDriverDAO {
@@ -17,6 +15,6 @@ public interface IDriverDAO {
     boolean isDriverDocumentVerified(int driverId) throws DBException;
     boolean isDriverDocumentUploaded(int driverId) throws DBException;
     boolean isLicenseNumberExists(String licenseNumber) throws DBException;
+    String isDocumentUnderReview(int driverId) throws DBException;
     void updateDriverAvailability(int driverId) throws DBException;
-    //DateRangeIncomeDTO getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate);
 }

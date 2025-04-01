@@ -1,5 +1,7 @@
 package com.krushit.common.enums;
 
+import com.krushit.common.Message;
+
 public enum DriverDocumentVerificationStatus {
     PENDING("Pending"),
     ACCEPTED("Accepted"),
@@ -20,12 +22,16 @@ public enum DriverDocumentVerificationStatus {
         return status;
     }
 
-    public static DriverDocumentVerificationStatus fromString(String status) {
+    public static DriverDocumentVerificationStatus getType(String status) {
         for (DriverDocumentVerificationStatus r : DriverDocumentVerificationStatus.values()) {
             if (r.status.equalsIgnoreCase(status)) {
                 return r;
             }
         }
-        throw new IllegalArgumentException("Invalid RideRequestStatus: " + status);
+        throw new IllegalArgumentException(Message.INVALID_DRIVER_VERIFICATION_STATUS + status);
+    }
+
+    public boolean isRejected(){
+        return  true;
     }
 }

@@ -1,4 +1,4 @@
-package com.krushit.controller.customer_controller;
+package com.krushit.controller.customer;
 
 import com.krushit.common.Message;
 import com.krushit.common.enums.Role;
@@ -6,10 +6,10 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponseDTO;
-import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.service.VehicleRideService;
+import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -30,7 +30,7 @@ public class CancelRideController extends HttpServlet {
         try {
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_CUSTOMER.getRoleName());
+            AuthUtils.validateCustomerRole(user);
             int rideId = Integer.parseInt(request.getParameter("rideId"));
             vehicleRideService.cancelRide(rideId, user.getUserId(), false);
             createResponse(response, Message.Ride.RIDE_CANCELLED, null, HttpServletResponse.SC_OK);
@@ -46,16 +46,5 @@ public class CancelRideController extends HttpServlet {
         response.setStatus(statusCode);
         ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
         response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
-    }
-
-    private RideRequestDTO setUserId(RideRequestDTO rideRequestDTO, int userId){
-        return new RideRequestDTO.RideRequestDTOBuilder()
-                .setPickUpLocationId(rideRequestDTO.getPickUpLocationId())
-                .setDropOffLocationId(rideRequestDTO.getDropOffLocationId())
-                .setVehicleServiceId(rideRequestDTO.getVehicleServiceId())
-                .setRideDate(rideRequestDTO.getRideDate())
-                .setPickUpTime(rideRequestDTO.getPickUpTime())
-                .setUserId(userId)
-                .build();
     }
 }

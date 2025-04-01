@@ -1,13 +1,13 @@
 package com.krushit.dao;
 
-import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.RideRequestDTO;
 import com.krushit.model.RideRequest;
 import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;
 import com.krushit.model.BrandModel;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

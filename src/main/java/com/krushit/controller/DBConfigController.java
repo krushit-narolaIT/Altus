@@ -25,7 +25,7 @@ public class DBConfigController extends HttpServlet {
             }
             DBConfig.INSTANCE = DBConfig.getInstance(dbUrl, dbUsername, dbPassword, dbDriver);
             System.out.println(Message.Database.CONNECTION_SUCCESSFUL);
-        } catch (SQLException | ClassNotFoundException | ApplicationException e) {
+        } catch (ApplicationException e) {
             e.printStackTrace();
             System.exit(0);
         }

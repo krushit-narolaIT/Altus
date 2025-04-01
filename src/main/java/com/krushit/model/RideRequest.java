@@ -18,7 +18,6 @@ public class RideRequest {
     private final int dropOffLocationId;
     private final int vehicleServiceId;
     private final int userId;
-    private final double price;
     private final LocalDate rideDate;
     private final LocalTime pickUpTime;
     private final LocalDateTime createdAt;
@@ -31,7 +30,6 @@ public class RideRequest {
         this.dropOffLocationId = builder.dropOffLocationId;
         this.vehicleServiceId = builder.vehicleServiceId;
         this.userId = builder.userId;
-        this.price = builder.price;
         this.rideDate = builder.rideDate;
         this.pickUpTime = builder.pickUpTime;
         this.createdAt = builder.createdAt;
@@ -46,7 +44,6 @@ public class RideRequest {
         private int dropOffLocationId;
         private int vehicleServiceId;
         private int userId;
-        private double price;
         private LocalDate rideDate;
         private LocalTime pickUpTime;
         private LocalDateTime createdAt;
@@ -79,11 +76,6 @@ public class RideRequest {
 
         public RideRequestBuilder setUserId(int userId) {
             this.userId = userId;
-            return this;
-        }
-
-        public RideRequestBuilder setPrice(double price) {
-            this.price = price;
             return this;
         }
 

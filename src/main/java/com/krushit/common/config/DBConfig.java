@@ -2,8 +2,8 @@ package com.krushit.common.config;
 
 import java.sql.*;
 
-public class DBConfig {
-    public static DBConfig INSTANCE = null;
+public final class DBConfig {
+    public static DBConfig INSTANCE;
 
     private final String dbUrl;
     private final String dbUsername;
@@ -11,15 +11,15 @@ public class DBConfig {
     private final String dbDriver;
 
     private DBConfig(String url, String username, String password, String driver) {
-        dbUrl = url;
-        dbUsername = username;
-        dbPassword = password;
-        dbDriver = driver;
+        this.dbUrl = url;
+        this.dbUsername = username;
+        this.dbPassword = password;
+        this.dbDriver = driver;
     }
 
-    public static DBConfig getInstance(String url, String username, String password, String driver) throws SQLException, ClassNotFoundException {
+    public static DBConfig getInstance(String url, String username, String password, String driver) {
         if (INSTANCE == null) {
-            INSTANCE = new DBConfig(url,username,password,driver);
+            INSTANCE = new DBConfig(url, username, password, driver);
         }
         return INSTANCE;
     }

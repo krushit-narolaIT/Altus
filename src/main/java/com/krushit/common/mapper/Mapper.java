@@ -1,11 +1,9 @@
 package com.krushit.common.mapper;
 
 import com.krushit.common.enums.Role;
-import com.krushit.dto.RideDTO;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.dto.UserSignUpDTO;
-import com.krushit.model.Ride;
 import com.krushit.model.RideRequest;
 import com.krushit.model.User;
 

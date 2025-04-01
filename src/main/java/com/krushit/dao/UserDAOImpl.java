@@ -26,11 +26,15 @@ public class UserDAOImpl implements IUserDAO {
     private static final String CHECK_USER_CREDENTIALS = "SELECT 1 FROM users WHERE email_id = ? AND password = ?";
     private static final String GET_DISPLAY_ID_FROM_USER_ID = "SELECT display_id FROM users WHERE user_id = ?";
     private static final String GET_FULL_NAME_FROM_USER_ID = "SELECT first_name, last_name FROM users WHERE user_id = ?";
-    private static final String GET_PHONE_NO = "SELECT display_id FROM users WHERE user_id = ?";
     private static final String GET_USER_BY_EMAIL = "SELECT * FROM users WHERE email_id = ?";
     private static final String UPDATE_PASSWORD = "UPDATE users SET password = ? WHERE email_id = ?";
     private static final String BLOCK_USER = "UPDATE users SET is_blocked = TRUE WHERE user_id = ?";
     private static final String IS_USER_BLOCKED = "SELECT is_blocked FROM users WHERE user_id = ?";
+    private static final String UPDATE_USER_DETAILS = "UPDATE users SET first_name = ?, last_name = ?, phone_no = ?, email_id = ?, updated_by = ? WHERE user_id = ?";
+    private static final String UPDATE_USER_RATING = "UPDATE users " +
+            "SET total_ratings = ((total_ratings * rating_count) + ?) / (rating_count + 1), " +
+            "rating_count = rating_count + 1 " +
+            "WHERE user_id = ?;";
 
     public void registerUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection()) {
@@ -61,6 +65,7 @@ public class UserDAOImpl implements IUserDAO {
                     updateStmt.setInt(2, userId);
                     updateStmt.executeUpdate();
                 }
+                //TODO : Use Enum
                 if (user.getRole().getRoleName().equalsIgnoreCase("Driver")) {
                     try (PreparedStatement driverStmt = connection.prepareStatement(INSERT_DRIVER_ENTRY)) {
                         driverStmt.setInt(1, userId);
@@ -77,7 +82,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
-    public User userLogin(String emailId, String password) throws DBException {
+    public User getUser(String emailId, String password) throws DBException {
         User user = null;
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(USER_LOGIN)) {
@@ -87,7 +92,7 @@ public class UserDAOImpl implements IUserDAO {
             if (resultSet.next()) {
                 user = new User.UserBuilder()
                         .setUserId(resultSet.getInt("user_id"))
-                        .setRole(Role.getRole(resultSet.getInt("role_id")))
+                        .setRole(Role.getType(resultSet.getInt("role_id")))
                         .setFirstName(resultSet.getString("first_name"))
                         .setLastName(resultSet.getString("last_name"))
                         .setPhoneNo(resultSet.getString("phone_no"))
@@ -165,7 +170,7 @@ public class UserDAOImpl implements IUserDAO {
             if (resultSet.next()) {
                 return Optional.of(new User.UserBuilder()
                         .setUserId(resultSet.getInt("user_id"))
-                        .setRole(Role.getRole(resultSet.getInt("role_id")))
+                        .setRole(Role.getType(resultSet.getInt("role_id")))
                         .setFirstName(resultSet.getString("first_name"))
                         .setLastName(resultSet.getString("last_name"))
                         .setPhoneNo(resultSet.getString("phone_no"))
@@ -236,17 +241,17 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     public void updateUser(User user) throws DBException {
-        String query = "UPDATE users SET first_name = ?, last_name = ?, phone_no = ?, email_id = ? WHERE user_id = ?";
         try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(query)) {
+             PreparedStatement stmt = connection.prepareStatement(UPDATE_USER_DETAILS)) {
             stmt.setString(1, user.getFirstName());
             stmt.setString(2, user.getLastName());
             stmt.setString(3, user.getPhoneNo());
             stmt.setString(4, user.getEmailId());
-            stmt.setInt(5, user.getUserId());
+            stmt.setString(5, Role.ROLE_CUSTOMER.getRoleName());
+            stmt.setInt(6, user.getUserId());
             stmt.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException("Error updating user in database", e);
+            throw new DBException(Message.User.ERROR_WHILE_UPDATING_USER_DETAILS, e);
         }
     }
 
@@ -265,7 +270,7 @@ public class UserDAOImpl implements IUserDAO {
             }
             return Optional.empty();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException("Error fetching user from database", e);
+            throw new DBException(Message.User.ERROR_WHILE_GET_USER_DETAILS, e);
         }
     }
 
@@ -276,21 +281,18 @@ public class UserDAOImpl implements IUserDAO {
             statement.setString(2, email);
             statement.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException("Error updating user in database", e);
+            throw new DBException(Message.User.ERROR_WHILE_UPDATING_PASSWORD, e);
         }
     }
 
+    //TODO : remove connection from argument
     public void updateUserRating(int userId, int rating, Connection connection) throws DBException {
-        String sql = "UPDATE users " +
-                "SET total_ratings = ((total_ratings * rating_count) + ?) / (rating_count + 1), " +
-                "rating_count = rating_count + 1 " +
-                "WHERE user_id = ?;";
-        try (PreparedStatement prepareStatement = connection.prepareStatement(sql)) {
+        try (PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_USER_RATING)) {
             prepareStatement.setInt(1, rating);
             prepareStatement.setInt(2, userId);
             prepareStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new DBException("Error updating user in database", e);
+            throw new DBException(Message.User.ERROR_WHILE_UPDATE_DRIVER_RATING, e);
         }
     }
 

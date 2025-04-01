@@ -1,37 +1,34 @@
 package com.krushit.utils;
 
 import com.krushit.common.Message;
-import com.krushit.common.exception.AuthException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.UserDTO;
 import com.krushit.common.enums.Role;
+import com.krushit.common.exception.AuthException;
+import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
-import jakarta.servlet.http.HttpSession;
 
 public class AuthUtils {
-    private static final Mapper mapper = Mapper.getInstance();
 
-    public static User getAuthenticatedUser(HttpSession session, Role requiredRole) throws AuthException {
-        UserDTO userDTO = (UserDTO) session.getAttribute("user");
-        userLoggedIn(userDTO);
-        User user = mapper.convertToEntityUserDTO(userDTO);
-        validateUser(user, requiredRole.getRoleName());
-        return user;
+    private AuthUtils() {
     }
 
-    public static void validateUser(User user, String requiredRole) throws AuthException {
+    public static void validateAdminRole(User user) throws AuthException {
+        validateUser(user, Role.ROLE_SUPER_ADMIN);
+    }
+
+    public static void validateCustomerRole(User user) throws AuthException {
+        validateUser(user, Role.ROLE_CUSTOMER);
+    }
+
+    public static void validateDriverRole(User user) throws AuthException {
+        validateUser(user, Role.ROLE_DRIVER);
+    }
+
+    public static void validateUser(User user, Role role) throws AuthException {
         if (user == null || user.getRole() == null) {
             throw new AuthException(Message.Auth.PLEASE_LOGIN_FIRST);
         }
-        if (!user.getRole().getRoleName().equalsIgnoreCase(requiredRole)) {
+        if (user.getRole() != role) {
             throw new AuthException(Message.Auth.UNAUTHORIZED);
         }
     }
-
-    public static void userLoggedIn(UserDTO userDTO) throws AuthException {
-        if (userDTO == null || userDTO.getRole() == null) {
-            throw new AuthException(Message.Auth.PLEASE_LOGIN_FIRST);
-        }
-    }
-
 }

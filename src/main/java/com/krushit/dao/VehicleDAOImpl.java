@@ -26,7 +26,6 @@ public class VehicleDAOImpl implements IVehicleDAO {
     private static final String CHECK_VEHICLE_SERVICE_EXIST = "SELECT 1 FROM Vehicle_Service WHERE LOWER(service_name) = ?";
     private static final String GET_ALL_BRAND_MODELS = "SELECT brand_model_id, brand_name, model FROM brand_models";
     private static final String GET_MINIMUM_VEHICLE_YEAR = "SELECT min_year FROM brand_models WHERE brand_model_id = ?";
-    private static final String IS_BRAND_MODEL_EXIST = "SELECT 1 FROM brand_models WHERE brand_model_id = ?";
     private static final String GET_AVAILABLE_SERVICES =
             "SELECT vs.service_id, vs.service_name, vs.base_fare, vs.per_km_rate, vs.vehicle_type, vs.max_passengers " +
                     "FROM Vehicle_Service vs " +
@@ -135,6 +134,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    //TODO : Use  class design as return type
     public Map<String, List<String>> getAllBrandModels() throws DBException {
         Map<String, List<String>> brandModelMap = new HashMap<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -151,6 +151,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         return brandModelMap;
     }
 
+    //TODO : Use primitive datatype as return type
     public Integer getMinYearForBrandModel(int brandModelId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(GET_MINIMUM_VEHICLE_YEAR)) {

@@ -1,4 +1,4 @@
-package com.krushit.controller.admin_controller;
+package com.krushit.controller.admin;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
@@ -12,6 +12,7 @@ import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.LocationService;
 import com.krushit.utils.ApplicationUtils;
+import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.ServletException;
@@ -34,7 +35,7 @@ public class DistanceCalculatorController extends HttpServlet {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
+            AuthUtils.validateAdminRole(user);
             DistanceCalculatorDTO distanceRequest = ObjectMapperUtils.toObject(request.getReader(), DistanceCalculatorDTO.class);
             RideValidator.validateLocation(distanceRequest);
             double distance = locationService.calculateDistance(distanceRequest.getFrom(), distanceRequest.getTo());

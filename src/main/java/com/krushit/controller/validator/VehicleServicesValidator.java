@@ -80,7 +80,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.REGISTRATION_NUMBER_REQUIRED);
         }
 
-        if (!vehicle.getRegistrationNumber().matches("^[A-Z]{2}[0-9]{2}[A-Z]{2}[0-9]{4}$")) {
+        if (!vehicle.getRegistrationNumber().matches("^[A-Z]{2}\\d{2}[A-Z]{2}\\d{4}$")) {
             throw new ValidationException(Message.Vehicle.REGISTRATION_NUMBER_INVALID);
         }
 

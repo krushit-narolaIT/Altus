@@ -2,7 +2,7 @@ package com.krushit.dto;
 
 public class RideCancellationDetailsDTO {
     private final int rideId;
-    private final String rideStatus;
+    private final String rideStatus; //TODO : Use Enum
     private final double cancellationCharge;
     private final double driverEarning;
     private final double systemEarning;

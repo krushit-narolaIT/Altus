@@ -31,7 +31,7 @@ public class LocationDAOImpl implements ILocationDAO{
     }
 
     @Override
-    public String getLocationNameById(int locationId) throws DBException {
+    public String getLocationName(int locationId) throws DBException {
         String locationName = null;
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement prepareStatement = conn.prepareStatement(GET_LOCATION)) {
@@ -61,6 +61,7 @@ public class LocationDAOImpl implements ILocationDAO{
         return locations;
     }
 
+    //TODO : Use void return type
     @Override
     public boolean deleteLocation(int locationId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();

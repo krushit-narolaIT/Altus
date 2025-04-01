@@ -1,5 +1,7 @@
 package com.krushit.common.enums;
 
+import com.krushit.common.Message;
+
 public enum FuelType {
     PETROL("Petrol"),
     DIESEL("Diesel"),
@@ -23,7 +25,7 @@ public enum FuelType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Invalid Fuel Type: " + fuelName);
+        throw new IllegalArgumentException(Message.INVALID_FUEL_TYPE + fuelName);
     }
 
     public static boolean isValidFuelType(String fuelName) {

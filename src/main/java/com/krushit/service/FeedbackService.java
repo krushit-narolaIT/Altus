@@ -1,11 +1,9 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
+import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.common.exception.DBException;
 import com.krushit.dao.FeedbackDAOImpl;
-import com.krushit.dao.IUserDAO;
-import com.krushit.dao.UserDAOImpl;
 import com.krushit.dto.FeedbackDTO;
 import com.krushit.model.User;
 
@@ -41,7 +39,7 @@ public class FeedbackService {
         feedbackDAO.saveFeedback(fromUserId, toUserId, rideId, rating, comment);
     }
 
-    public int getToUserId(int rideId, String userRole) throws ApplicationException {
+    public int getToUserId(int rideId, Role userRole) throws ApplicationException {
         int toUserId = feedbackDAO.findToUserIdByRide(rideId, userRole);
         if (toUserId == 0) {
             throw new ApplicationException(Message.User.INVALID_USER_ID);

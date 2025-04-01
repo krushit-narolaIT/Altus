@@ -38,34 +38,30 @@ public class RideDAOImpl implements IRideDAO {
                     "WHERE driver_id = ? AND ride_date BETWEEN ? AND ?";
     private static final String GET_RIDES_BY_DATE_RANGE =
             "SELECT * FROM rides WHERE ride_date BETWEEN ? AND ?";
-
     private static final String GET_TOTAL_DRIVER_RIDES =
             "SELECT COUNT(*) AS total_rides " +
                     "FROM rides " +
                     "WHERE driver_id = ? AND ride_date BETWEEN ? AND ?";
-
     private static final String GET_TOTAL_RIDES =
             "SELECT COUNT(*) AS total_rides " +
                     "FROM rides " +
                     "WHERE ride_date BETWEEN ? AND ?";
-
     private static final String GET_TOTAL_DRIVER_EARNING =
             "SELECT SUM(driver_earning + cancellation_driver_earning - driver_penalty) AS total_earning " +
                     "FROM rides " +
                     "WHERE driver_id = ? AND ride_date BETWEEN ? AND ?";
-
     private static final String GET_TOTAL_EARNINGS =
             "SELECT SUM(system_earning + cancellation_system_earning) AS total_earning " +
                     "FROM rides " +
                     "WHERE ride_date BETWEEN ? AND ?";
-
-    private static String GET_RIDE_REQUEST_BY_ID = "SELECT * FROM ride_requests WHERE ride_request_id = ?";
-    private static String INSERT_RIDE = "INSERT INTO rides (ride_status, pick_location_id, drop_off_location_id, customer_id, driver_id, " +
+    private static final String GET_RIDE_REQUEST_BY_ID = "SELECT * FROM ride_requests WHERE ride_request_id = ?";
+    private static final String INSERT_RIDE = "INSERT INTO rides (ride_status, pick_location_id, drop_off_location_id, customer_id, driver_id, " +
             "ride_date, pick_up_time, display_id, total_km, total_cost, payment_mode, payment_status, " +
             "commission_percentage, driver_earning, system_earning) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static String UPDATE_RIDE_STATUS = "UPDATE rides SET ride_status = ?, cancellation_charge = ?, cancellation_driver_earning = ?, cancellation_system_earning = ?, driver_penalty = ?, driver_earning =?, system_earning = ? WHERE ride_id = ?";
-    private static String GET_RIDE_BY_USER_ID = "SELECT * FROM rides WHERE customer_id = ? OR driver_id = ? ORDER BY ride_date DESC";
-    private static String GET_RIDE_STATUS = "SELECT ride_status FROM rides WHERE ride_id = ?";
+    private static final String UPDATE_RIDE_STATUS = "UPDATE rides SET ride_status = ?, cancellation_charge = ?, cancellation_driver_earning = ?, cancellation_system_earning = ?, driver_penalty = ?, driver_earning =?, system_earning = ? WHERE ride_id = ?";
+    private static final String GET_RIDE_BY_USER_ID = "SELECT * FROM rides WHERE customer_id = ? OR driver_id = ? ORDER BY ride_date DESC";
+    private static final String GET_RIDE_STATUS = "SELECT ride_status FROM rides WHERE ride_id = ?";
+    private static final String UPDATE_RIDE_REQUEST_STATUS = "UPDATE Ride_requests SET ride_request_status = ? WHERE ride_request_id = ?";
 
     public List<RideRequest> getAllMatchingRideRequests(int driverId) throws DBException {
         List<RideRequest> rideRequests = new ArrayList<>();
@@ -100,7 +96,7 @@ public class RideDAOImpl implements IRideDAO {
             if (rs.next()) {
                 return Optional.of(new RideRequest.RideRequestBuilder()
                         .setRideRequestId(rs.getInt("ride_request_id"))
-                        .setRideRequestStatus(RideRequestStatus.fromString(rs.getString("ride_request_status")))
+                        .setRideRequestStatus(RideRequestStatus.getType(rs.getString("ride_request_status")))
                         .setPickUpLocationId(rs.getInt("pick_up_location_id"))
                         .setDropOffLocationId(rs.getInt("drop_off_location_id"))
                         .setVehicleServiceId(rs.getInt("vehicle_service_id"))
@@ -136,14 +132,17 @@ public class RideDAOImpl implements IRideDAO {
             pstmt.setDouble(14, ride.getDriverEarning());
             pstmt.setDouble(15, ride.getSystemEarning());
             pstmt.executeUpdate();
+
+            updateRideRequestStatus(RideRequestStatus.ACCEPTED.getStatus(), conn);
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Ride.ERROR_WHILE_CREATING_RIDE, e);
         }
     }
 
+
     public Optional<Ride> getRideById(int rideId) throws DBException {
-        try (Connection conn = DBConfig.INSTANCE.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(GET_RIDE_BY_ID);
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(GET_RIDE_BY_ID)) {
             stmt.setInt(1, rideId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -151,7 +150,7 @@ public class RideDAOImpl implements IRideDAO {
                         .setRideId(rs.getInt("ride_id"))
                         .setCustomerId(rs.getInt("customer_id"))
                         .setDriverId(rs.getInt("driver_id"))
-                        .setRideStatus(RideStatus.fromString(rs.getString("ride_status")))
+                        .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
                         .setRideDate(rs.getDate("ride_date").toLocalDate())
                         .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                         .setDisplayId(rs.getString("display_id"))
@@ -163,6 +162,18 @@ public class RideDAOImpl implements IRideDAO {
             throw new DBException(Message.Ride.ERROR_WHILE_CREATING_RIDE, e);
         }
         return Optional.empty();
+    }
+
+
+    //TODO : Use status enum
+    @Override
+    public void updateRideRequestStatus(String status, Connection connection) throws DBException {
+        try (PreparedStatement stmt = connection.prepareStatement(UPDATE_RIDE_REQUEST_STATUS)) {
+            stmt.setString(1, status);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS, e);
+        }
     }
 
     public void updateRideCancellation(RideCancellationDetailsDTO cancellationDetails) throws DBException {
@@ -197,7 +208,7 @@ public class RideDAOImpl implements IRideDAO {
             while (rs.next()) {
                 Ride ride = new Ride.RideBuilder()
                         .setRideId(rs.getInt("ride_id"))
-                        .setRideStatus(RideStatus.fromString(rs.getString("ride_status")))
+                        .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
                         .setPickLocationId(rs.getInt("pick_location_id"))
                         .setDropOffLocationId(rs.getInt("drop_off_location_id"))
                         .setCustomerId(rs.getInt("customer_id"))
@@ -207,8 +218,8 @@ public class RideDAOImpl implements IRideDAO {
                         .setDisplayId(rs.getString("display_id"))
                         .setTotalKm(rs.getDouble("total_km"))
                         .setTotalCost(rs.getDouble("total_cost"))
-                        .setPaymentMode(PaymentMode.fromString(rs.getString("payment_mode")))
-                        .setPaymentStatus(PaymentStatus.fromString(rs.getString("payment_status")))
+                        .setPaymentMode(PaymentMode.getType(rs.getString("payment_mode")))
+                        .setPaymentStatus(PaymentStatus.getType(rs.getString("payment_status")))
                         .setCancellationCharge(rs.getDouble("cancellation_charge"))
                         .setDriverEarning(rs.getDouble("driver_earning"))
                         .setCancellationDriverEarning(rs.getDouble("cancellation_driver_earning"))
@@ -222,6 +233,7 @@ public class RideDAOImpl implements IRideDAO {
         return rideList;
     }
 
+    //TODO : Use Enum as return type
     @Override
     public String getRideStatus(int rideId) throws DBException {
         String rideStatus = null;
@@ -242,7 +254,7 @@ public class RideDAOImpl implements IRideDAO {
     public List<Ride> getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         List<Ride> rideList = new ArrayList<>();
         String GET_RIDES = GET_DRIVER_RIDES_BY_DATE_RANGE;
-        if(driverId == 0){
+        if (driverId == 0) {
             GET_RIDES = GET_RIDES_BY_DATE_RANGE;
         }
         try (Connection conn = DBConfig.INSTANCE.getConnection();
@@ -253,7 +265,7 @@ public class RideDAOImpl implements IRideDAO {
                     Ride.RideBuilder builder = new Ride.RideBuilder()
                             .setRideId(rs.getInt("ride_id"))
                             .setDisplayId(rs.getString("display_id"))
-                            .setRideStatus(RideStatus.fromString(rs.getString("ride_status")))
+                            .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
                             .setPickLocationId(rs.getInt("pick_location_id"))
                             .setDropOffLocationId(rs.getInt("drop_off_location_id"))
                             .setCustomerId(rs.getInt("customer_id"))
@@ -261,8 +273,8 @@ public class RideDAOImpl implements IRideDAO {
                             .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                             .setTotalKm(rs.getDouble("total_km"))
                             .setTotalCost(rs.getDouble("total_cost"))
-                            .setPaymentMode(PaymentMode.fromString(rs.getString("payment_mode")))
-                            .setPaymentStatus(PaymentStatus.fromString(rs.getString("payment_status")))
+                            .setPaymentMode(PaymentMode.getType(rs.getString("payment_mode")))
+                            .setPaymentStatus(PaymentStatus.getType(rs.getString("payment_status")))
                             .setDriverEarning(rs.getDouble("driver_earning"))
                             .setCancellationDriverEarning(rs.getDouble("cancellation_driver_earning"))
                             .setDriverPenalty(rs.getDouble("driver_penalty"));
@@ -281,7 +293,7 @@ public class RideDAOImpl implements IRideDAO {
 
     public int getTotalRides(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         String GET_RIDES = GET_TOTAL_DRIVER_RIDES;
-        if(driverId == 0){
+        if (driverId == 0) {
             GET_RIDES = GET_TOTAL_RIDES;
         }
         try (Connection conn = DBConfig.INSTANCE.getConnection();
@@ -300,7 +312,7 @@ public class RideDAOImpl implements IRideDAO {
 
     public double getTotalEarnings(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         String GET_RIDES = GET_TOTAL_DRIVER_EARNING;
-        if(driverId == 0){
+        if (driverId == 0) {
             GET_RIDES = GET_TOTAL_EARNINGS;
         }
         try (Connection conn = DBConfig.INSTANCE.getConnection();
@@ -311,7 +323,7 @@ public class RideDAOImpl implements IRideDAO {
                     return rs.getDouble("total_earning");
                 }
             }
-        }  catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Ride.ERROR_WHILE_CALCULATING_DRIVER_TOTAL_EARNING, e);
         }
         return 0.0;

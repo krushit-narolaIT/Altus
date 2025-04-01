@@ -32,7 +32,7 @@ public class UserUpdateController extends HttpServlet {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_CUSTOMER.getRoleName());
+            AuthValidator.validateUser(user, Role.ROLE_CUSTOMER);
             UserDTO updatedUser = ObjectMapperUtils.toObject(request.getReader(), UserDTO.class);
             userService.updateUser(updatedUser, user.getUserId());
             sendResponse(response, HttpServletResponse.SC_OK, "User updated successfully", null);

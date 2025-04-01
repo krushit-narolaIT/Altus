@@ -1,4 +1,4 @@
-package com.krushit.controller.driver_controller;
+package com.krushit.controller.driver;
 
 import com.krushit.common.Message;
 import com.krushit.common.enums.Role;
@@ -11,6 +11,7 @@ import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
 import com.krushit.service.UserService;
+import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -32,7 +33,7 @@ public class DeleteVehicleController extends HttpServlet {
         try {
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
+            AuthUtils.validateDriverRole(user);
             userService.userBlocked(user.getUserId());
             driverService.deleteVehicle(user.getUserId());
             createResponse(response, Message.Vehicle.VEHICLE_REGISTERED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);

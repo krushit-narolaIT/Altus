@@ -20,7 +20,7 @@ public class Driver extends User {
     private final LocalDateTime updatedAt;
     private final String createdBy;
     private final String updatedBy;
-    
+
     private Driver(DriverBuilder builder) {
         super(builder);
         this.driverId = builder.driverId;
@@ -34,6 +34,67 @@ public class Driver extends User {
         this.updatedAt = builder.updatedAt;
         this.createdBy = builder.createdBy;
         this.updatedBy = builder.updatedBy;
+    }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
+
+    public boolean isDocumentVerified() {
+        return isDocumentVerified;
+    }
+
+    public String getLicencePhoto() {
+        return licencePhoto;
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    public String getVerificationStatus() {
+        return verificationStatus;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public String getUpdatedBy() {
+        return updatedBy;
+    }
+
+    @Override
+    public String toString() {
+        return "Driver{" +
+                "driverId=" + driverId +
+                ", licenceNumber='" + licenceNumber + '\'' +
+                ", isDocumentVerified=" + isDocumentVerified +
+                ", licencePhoto='" + licencePhoto + '\'' +
+                ", isAvailable=" + isAvailable +
+                ", verificationStatus='" + verificationStatus + '\'' +
+                ", comment='" + comment + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", createdBy='" + createdBy + '\'' +
+                ", updatedBy='" + updatedBy + '\'' +
+                '}';
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
@@ -109,66 +170,5 @@ public class Driver extends User {
         public Driver build() {
             return new Driver(this);
         }
-    }
-
-    public int getDriverId() {
-        return driverId;
-    }
-
-    public String getLicenceNumber() {
-        return licenceNumber;
-    }
-
-    public boolean isDocumentVerified() {
-        return isDocumentVerified;
-    }
-
-    public String getLicencePhoto() {
-        return licencePhoto;
-    }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
-    public String getVerificationStatus() {
-        return verificationStatus;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    @Override
-    public String toString() {
-        return "Driver{" +
-                "driverId=" + driverId +
-                ", licenceNumber='" + licenceNumber + '\'' +
-                ", isDocumentVerified=" + isDocumentVerified +
-                ", licencePhoto='" + licencePhoto + '\'' +
-                ", isAvailable=" + isAvailable +
-                ", verificationStatus='" + verificationStatus + '\'' +
-                ", comment='" + comment + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", createdBy='" + createdBy + '\'' +
-                ", updatedBy='" + updatedBy + '\'' +
-                '}';
     }
 }

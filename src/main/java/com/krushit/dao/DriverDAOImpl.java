@@ -2,6 +2,7 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
@@ -14,32 +15,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
-    private final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = ?";
-    private final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ? WHERE user_id = ?";
-    private final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE AND licence_number IS NOT NULL";
-    private final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ? WHERE driver_id = ?";
-    private final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
-    private final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
-    private final String GET_ALL_DRIVERS = "SELECT * FROM drivers";
-    private final String GET_DRIVER_ID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
-    private final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
-    private final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
-    private final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Drivers SET is_available = TRUE WHERE driver_id = ?";
-    private final UserDAOImpl userDAO = new UserDAOImpl();
+    private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = ?";
+    private static final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ?, updated_by = ? WHERE user_id = ?";
+    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE AND licence_number IS NOT NULL";
+    private static final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ?, updated_by = ? WHERE driver_id = ?";
+    private static final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
+    private static final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
+    private static final String GET_ALL_DRIVERS = "SELECT * FROM drivers";
+    private static final String GET_DRIVER_ID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
+    private static final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
+    private static final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
+    private static final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Drivers SET is_available = TRUE WHERE driver_id = ?";
+    private static final UserDAOImpl userDAO = new UserDAOImpl();
 
+    @Override
     public void insertDriverDetails(Driver driver) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_DRIVER_DETAILS)) {
             statement.setString(1, driver.getLicenceNumber());
             statement.setString(2, driver.getLicencePhoto());
-            statement.setInt(3, driver.getUserId());
+            statement.setString(3, Role.ROLE_DRIVER.getRoleName());
+            statement.setInt(4, driver.getUserId());
             statement.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
         }
     }
 
-    public List<Driver> getPendingVerificationDrivers() throws DBException {
+    //TODO : Use join query to fetch data in single query
+    @Override
+    public List<Driver> getDriversWithPendingVerification() throws DBException {
         List<Driver> pendingDrivers = new ArrayList<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_PENDING_VERIFICATION_DRIVERS);
@@ -68,7 +73,9 @@ public class DriverDAOImpl implements IDriverDAO {
         return pendingDrivers;
     }
 
-    public boolean isDriverExist(Integer driverId) throws DBException {
+    //TODO : Use primitive datatype
+    @Override
+    public boolean isDriverExist(int driverId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(CHECK_DRIVER_EXISTENCE)) {
             preparedStatement.setInt(1, driverId);
@@ -80,11 +87,14 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
-    public void verifyDriver(Integer driverId, boolean isVerified, String rejectionMessage) throws DBException {
+    //TODO :  Method name can be "updateDriveVerificationDetail"
+    // Method argument Use primitive datatype, Use DriverDocumentVerificationStatus enum
+    @Override
+    public void verifyDriver(int driverId, boolean isVerified, String rejectionMessage) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DRIVER_VERIFICATION_STATUS)) {
             preparedStatement.setString(1, isVerified ? "ACCEPTED" : "REJECTED");
-            preparedStatement.setString(2, isVerified ? null : rejectionMessage);
+            preparedStatement.setString(2, isVerified ? null : rejectionMessage); //TODO : Use direct variable value. because column is nullable
             preparedStatement.setBoolean(3, isVerified);
             preparedStatement.setInt(4, driverId);
             preparedStatement.executeUpdate();
@@ -93,6 +103,7 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
+    @Override
     public List<Driver> fetchAllDrivers() throws DBException {
         List<Driver> drivers = new ArrayList<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -122,7 +133,9 @@ public class DriverDAOImpl implements IDriverDAO {
     }
 
 
-    public Integer getDriverIdFromUserId(int userId) throws DBException {
+    //TODO : Return type : use primitive type
+    @Override
+    public int getDriverId(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_DRIVER_ID_FROM_USERID)) {
             preparedStatement.setInt(1, userId);
@@ -133,10 +146,11 @@ public class DriverDAOImpl implements IDriverDAO {
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Driver.ERROR_FOR_GETTING_DRIVER_ID_FROM_USER_ID, e);
         }
-        return null;
+        return 0;
     }
 
-    public boolean isDriverDocumentVerified(int driverId) throws DBException {
+    @Override
+    public boolean isDocumentVerified(int driverId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_DOCUMENT_VERIFIED)) {
             stmt.setInt(1, driverId);
@@ -151,7 +165,8 @@ public class DriverDAOImpl implements IDriverDAO {
         return false;
     }
 
-    public boolean isDriverDocumentUploaded(int driverId) throws DBException {
+    @Override
+    public boolean isDocumentExist(int driverId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(CHECK_DRIVER_DOCUMENTS)) {
             stmt.setInt(1, driverId);
@@ -167,7 +182,8 @@ public class DriverDAOImpl implements IDriverDAO {
         return false;
     }
 
-    public boolean isLicenseNumberExists(String licenseNumber) throws DBException {
+    @Override
+    public boolean isLicenseNumberExist(String licenseNumber) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_LICENCE_EXIST)) {
             stmt.setString(1, licenseNumber);
@@ -192,6 +208,7 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
+    @Override
     public void updateDriverAvailability(int driverId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement ps = conn.prepareStatement(UPDATE_DRIVER_AVAILABILITY)) {

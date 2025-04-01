@@ -1,5 +1,7 @@
 package com.krushit.common.enums;
 
+import com.krushit.common.Message;
+
 public enum PaymentMode {
     CASH("Cash"),
     CARD("Card"),
@@ -20,12 +22,12 @@ public enum PaymentMode {
         return mode;
     }
 
-    public static PaymentMode fromString(String mode) {
+    public static PaymentMode getType(String mode) {
         for (PaymentMode p : PaymentMode.values()) {
             if (p.mode.equalsIgnoreCase(mode)) {
                 return p;
             }
         }
-        throw new IllegalArgumentException("Invalid PaymentMode: " + mode);
+        throw new IllegalArgumentException(Message.INVALID_PAYMENT_MODE + mode);
     }
 }

@@ -32,7 +32,7 @@ public class UserService {
             throw new ApplicationException(Message.User.PLEASE_ENTER_VALID_EMAIL_OR_PASS);
         }
         Mapper mapper = Mapper.getInstance();
-        return mapper.convertToDTO(userDAO.userLogin(email, password));
+        return mapper.convertToDTO(userDAO.getUser(email, password));
     }
 
     public List<User> getAllCustomers() throws ApplicationException {

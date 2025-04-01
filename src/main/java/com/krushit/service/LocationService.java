@@ -2,7 +2,6 @@ package com.krushit.service;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.common.exception.DBException;
 import com.krushit.dao.ILocationDAO;
 import com.krushit.dao.LocationDAOImpl;
 import com.krushit.model.Location;
@@ -91,8 +90,8 @@ public class LocationService {
     }*/
 
     public double calculateDistance(int fromId, int toId) throws Exception {
-        String fromLocation = locationDAO.getLocationNameById(fromId);
-        String toLocation = locationDAO.getLocationNameById(toId);
+        String fromLocation = locationDAO.getLocationName(fromId);
+        String toLocation = locationDAO.getLocationName(toId);
         if (fromLocation == null || toLocation == null) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }
@@ -132,7 +131,7 @@ public class LocationService {
     }
 
     public String getLocationNameById(int pickLocationId) throws ApplicationException{
-        return locationDAO.getLocationNameById(pickLocationId);
+        return locationDAO.getLocationName(pickLocationId);
     }
 
     public double getCommissionByDistance(double distance) throws ApplicationException{

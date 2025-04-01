@@ -5,6 +5,7 @@ import com.krushit.dto.RideCancellationDetailsDTO;
 import com.krushit.model.Ride;
 import com.krushit.model.RideRequest;
 
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ public interface IRideDAO {
     Optional<RideRequest> getRideRequestById(int rideRequestId) throws DBException;
     void createRide(Ride ride) throws DBException;
     Optional<Ride> getRideById(int rideId) throws DBException;
+    void updateRideRequestStatus(String status, Connection connection) throws DBException;
     void updateRideCancellation(RideCancellationDetailsDTO cancellationDetails) throws DBException;
     List<Ride> getAllRideByUserId(int userId) throws DBException;
     String getRideStatus(int rideId) throws DBException;

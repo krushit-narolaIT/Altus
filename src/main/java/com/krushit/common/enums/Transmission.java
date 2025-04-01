@@ -1,5 +1,7 @@
 package com.krushit.common.enums;
 
+import com.krushit.common.Message;
+
 public enum Transmission {
     MANUAL("Manual"),
     AUTOMATIC("Automatic");
@@ -20,7 +22,7 @@ public enum Transmission {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Invalid Transmission Type: " + transmissionType);
+        throw new IllegalArgumentException(Message.Vehicle.INVALID_TRANSMISSION_TYPE + transmissionType);
     }
 
     public static boolean isValidTransmission(String transmissionType) {

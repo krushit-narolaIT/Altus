@@ -23,14 +23,8 @@ public class FeedbackDTO {
 
     @JsonPOJOBuilder(withPrefix = "set")
     public static class FeedbackDTOBuilder {
-        private int rideId;
         private int rating;
         private String comment;
-
-        public FeedbackDTOBuilder setRideId(int rideId) {
-            this.rideId = rideId;
-            return this;
-        }
 
         public FeedbackDTOBuilder setRating(int rating) {
             this.rating = rating;

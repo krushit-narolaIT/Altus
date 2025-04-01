@@ -1,13 +1,19 @@
-package com.krushit.controller.admin_controller;
+package com.krushit.controller.admin;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
+import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponseDTO;
-import com.krushit.model.Location;
-import com.krushit.service.LocationService;
+import com.krushit.dto.UserDTO;
+import com.krushit.common.enums.Role;
+import com.krushit.model.User;
+import com.krushit.service.VehicleRideService;
+import com.krushit.utils.ApplicationUtils;
+import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,25 +21,23 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-@WebServlet(value = "/getAllLocations")
-public class GetAllLocationsController extends HttpServlet {
-    private final LocationService locationService = new LocationService();
+@WebServlet(value = "/getAllModels")
+public class GetAllModelsController extends HttpServlet {
+    private final VehicleRideService vehicleRideService = new VehicleRideService();
     private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.setContentType(Message.APPLICATION_JSON);
         try {
-//            ApplicationUtils.validateJsonRequest(request.getContentType());
-//            UserDTO userDTO = SessionUtil.validateSession(request);
-//            User user = mapper.convertToEntityUserDTO(userDTO);
-//            AuthValidator.validateUser(user, Role.ROLE_SUPER_ADMIN.getRoleName());
-            List<Location> locations = locationService.getAllLocations();
-            createResponse(response, Message.Location.SUCCESSFULLY_RETRIEVED_ALL_LOCATIONS, locations, HttpServletResponse.SC_OK);
+            ApplicationUtils.validateJsonRequest(request.getContentType());
+            UserDTO userDTO = SessionUtils.validateSession(request);
+            User user = mapper.convertToEntityUserDTO(userDTO);
+            AuthUtils.validateAdminRole(user);
+            Map<String, List<String>> brandModelMap = vehicleRideService.getAllBrandModels();
+            createResponse(response, Message.Vehicle.SUCCESSFULLY_RETRIVED_ALL_BRAND_MODELS, brandModelMap, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

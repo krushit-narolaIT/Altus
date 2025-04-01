@@ -9,12 +9,21 @@ public final class Message {
     public static final String DATABASE_ERROR = "Database Error";
     public static final String APPLICATION_JSON = "application/json";
     public static final String UTF_8 = "UTF-8";
+    public static final String INVALID_ROLE ="Invalid Rode";
+    public static final String INVALID_PAYMENT_STATUS = "Invalid Payment Status";
+    public static final String INVALID_PAYMENT_MODE = "Invalid Payment Mode";
+    public static final String INVALID_FUEL_TYPE = "Invalid Fuel Type";
+    public static final String INVALID_DRIVER_VERIFICATION_STATUS = "Invalid Driver Verification Status";
+
     private Message() {
     }
 
     public static final class FeedBack {
         public static final String FEEDBACK_SUBMITTED = "Feedback submitted successfully";
         public static final String FEEDBACK_ALREADY_SUBMITTED = "Feedback is already submitted";
+        public static final String ERROR_WHILE_ADDING_FEEDBACK = "Error while giving feedback";
+        public static final String ERROR_WHILE_FETCHING_TO_FEEDBACK = "Error while fetching to user details";
+        public static final String ERROR_WHILE_CHECKING_IS_FEEDBACK_GIVEN = "Error while checking is feedback is given or not";
 
         private FeedBack(){
 
@@ -62,6 +71,8 @@ public final class Message {
         public static final String ERROR_WHILE_FETCHING_RIDE_DETAILS_BY_RANGE = "Error occur while getting ride details by range";
         public static final String ERROR_WHILE_FETCHING_TOTAL_RIDES = "Error while fetching total rides";
         public static final String ERROR_WHILE_CALCULATING_DRIVER_TOTAL_EARNING = "error while calculation total driver earning";
+        public static final String INVALID_RIDE_STATUS = "Invalid Ride Status";
+        public static final String BOOK_RIDE_IN_ONLY_FIFTEEN_DAYS_IN_ADVANCE = "You can book ride in 15 days is advance";
 
         private Ride() {
         }
@@ -98,6 +109,9 @@ public final class Message {
         public static final String ERROR_WHILE_BLOCKING_USER = "Error occur while blocking user";
         public static final String ERROR_WHILE_CHECK_IS_USER_BLOCKED = "Error occur while checking user is blocked or not";
         public static final String YOUR_ACCOUNT_IS_SUSPENDED_PLEASE_CONTACT_SUPPORT = "Your account is suspended please contact support";
+        public static final String ERROR_WHILE_UPDATING_USER_DETAILS = "Error while updating user details";
+        public static final String ERROR_WHILE_UPDATING_PASSWORD = "Error while updating password";
+        public static final String ERROR_WHILE_UPDATE_DRIVER_RATING = "Error while updating driver rating";
 
         private User() {
         }
@@ -203,6 +217,8 @@ public final class Message {
         public static final String VEHICLE_NOT_EXIST = "Driver vehicle not exist";
         public static final String VEHICLE_SERVICE_NOT_EXIST = "Vehicle service not exist";
         public static final String RIDE_ACCEPTED = "Ride Accepted..!!";
+        public static final String INVALID_TRANSMISSION_TYPE = "Invalid Transmission Type";
+        public static final String ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS = "Update ride request status";
 
         private Vehicle() {
         }

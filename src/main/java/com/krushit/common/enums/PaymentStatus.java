@@ -1,5 +1,7 @@
 package com.krushit.common.enums;
 
+import com.krushit.common.Message;
+
 public enum PaymentStatus {
     PENDING("Pending"),
     PAID("Paid"),
@@ -20,12 +22,12 @@ public enum PaymentStatus {
         return status;
     }
 
-    public static PaymentStatus fromString(String status) {
+    public static PaymentStatus getType(String status) {
         for (PaymentStatus p : PaymentStatus.values()) {
             if (p.status.equalsIgnoreCase(status)) {
                 return p;
             }
         }
-        throw new IllegalArgumentException("Invalid PaymentStatus: " + status);
+        throw new IllegalArgumentException(Message.INVALID_PAYMENT_STATUS + status);
     }
 }

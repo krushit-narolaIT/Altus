@@ -7,9 +7,15 @@ import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.dao.*;
+import com.krushit.dao.IRideDAO;
+import com.krushit.dao.IVehicleDAO;
+import com.krushit.dao.RideDAOImpl;
+import com.krushit.dao.VehicleDAOImpl;
 import com.krushit.dto.*;
-import com.krushit.model.*;
+import com.krushit.model.BrandModel;
+import com.krushit.model.Ride;
+import com.krushit.model.RideRequest;
+import com.krushit.model.VehicleService;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -109,9 +115,7 @@ public class VehicleRideService {
     }
 
     public void acceptRide(int driverId, int rideRequestId) throws Exception {
-        System.out.println("RIDE REQUEST ID :: " + rideRequestId);
         Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequestById(rideRequestId);
-        System.out.println("OPT ::" + rideRequestOpt);
         if (!rideRequestOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_REQUEST_NOT_EXIST);
         }
@@ -123,10 +127,9 @@ public class VehicleRideService {
         String driverIdPart = String.format("%04d", driverId % 10000);
         String displayId = "R" + userIdPart + "I" + driverIdPart;
         Optional<VehicleService> vehicleService = vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
-        if (!vehicleService.isPresent()) {
-            throw new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST);
-        }
-        VehicleService service = vehicleService.get();
+
+        VehicleService service = vehicleService.orElseThrow(() -> new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST));
+
         double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
         double commissionPercentage = locationService.getCommissionByDistance(distance);
         double totalCost = service.getBaseFare() + (service.getPerKmRate() * distance);

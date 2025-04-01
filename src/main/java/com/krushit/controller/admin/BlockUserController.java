@@ -1,4 +1,4 @@
-package com.krushit.controller.driver_controller;
+package com.krushit.controller.admin;
 
 import com.krushit.common.Message;
 import com.krushit.common.enums.Role;
@@ -10,7 +10,7 @@ import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.service.UserService;
-import com.krushit.service.VehicleRideService;
+import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,9 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(value = "/acceptRide")
-public class AcceptRideRequests extends HttpServlet {
-    private final VehicleRideService vehicleRideService = new VehicleRideService();
+@WebServlet(value = "/blockUser")
+public class BlockUserController extends HttpServlet {
     private final UserService userService = new UserService();
     private final Mapper mapper = Mapper.getInstance();
 
@@ -32,14 +31,10 @@ public class AcceptRideRequests extends HttpServlet {
         try {
             UserDTO userDTO = SessionUtils.validateSession(request);
             User user = mapper.convertToEntityUserDTO(userDTO);
-            AuthValidator.validateUser(user, Role.ROLE_DRIVER.getRoleName());
-            userService.userBlocked(user.getUserId());
-            int rideRequestId = Integer.parseInt(request.getParameter("rideRequestId"));
-            if (String.valueOf(rideRequestId).trim().isEmpty() || !String.valueOf(rideRequestId).matches("\\d+")) {
-                throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_RIDE_ID);
-            }
-            vehicleRideService.acceptRide(user.getUserId(), rideRequestId);
-            createResponse(response, Message.Vehicle.RIDE_ACCEPTED, null, HttpServletResponse.SC_OK);
+            AuthUtils.validateAdminRole(user);
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            userService.blockUser(userId);
+            createResponse(response, Message.Location.USER_BLOCKED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -47,7 +42,7 @@ public class AcceptRideRequests extends HttpServlet {
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

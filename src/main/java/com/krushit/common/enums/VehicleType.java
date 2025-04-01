@@ -1,5 +1,7 @@
 package com.krushit.common.enums;
 
+import com.krushit.common.Message;
+
 public enum VehicleType {
     TWO_WHEELER("2W"),
     THREE_WHEELER("3W"),
@@ -21,7 +23,7 @@ public enum VehicleType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Invalid Vehicle Type: " + typeName);
+        throw new IllegalArgumentException(Message.Vehicle.INVALID_VEHICLE_TYPE + typeName);
     }
 
     public static boolean isValidVehicleType(String vehicleType){

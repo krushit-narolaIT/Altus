@@ -16,11 +16,8 @@ CREATE TABLE feedback
     created_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (from_user_id) REFERENCES users (user_id),
     FOREIGN KEY (to_user_id) REFERENCES users (user_id),
-    FOREIGN KEY (ride_id) REFERENCES rides (ride_id) ON DELETE CASCADE,
-    CHECK (rating BETWEEN 0 AND 5)
+    FOREIGN KEY (ride_id) REFERENCES rides (ride_id) ON DELETE CASCADE
 );
-
-ALTER TABLE feedback DROP CHECK rating;
 
 ALTER TABLE feedback ADD CONSTRAINT chk_rating CHECK (rating BETWEEN 1 AND 5);
 

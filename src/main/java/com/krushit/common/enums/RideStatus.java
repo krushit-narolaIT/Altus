@@ -13,6 +13,15 @@ public enum RideStatus {
         this.status = status;
     }
 
+    public static RideStatus getType(String status) {
+        for (RideStatus r : RideStatus.values()) {
+            if (r.status.equalsIgnoreCase(status)) {
+                return r;
+            }
+        }
+        return null;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -20,14 +29,5 @@ public enum RideStatus {
     @Override
     public String toString() {
         return status;
-    }
-
-    public static RideStatus fromString(String status) {
-        for (RideStatus r : RideStatus.values()) {
-            if (r.status.equalsIgnoreCase(status)) {
-                return r;
-            }
-        }
-        throw new IllegalArgumentException("Invalid RideStatus: " + status);
     }
 }

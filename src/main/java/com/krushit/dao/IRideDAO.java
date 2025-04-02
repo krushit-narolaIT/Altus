@@ -1,5 +1,7 @@
 package com.krushit.dao;
 
+import com.krushit.common.enums.RideRequestStatus;
+import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.RideCancellationDetailsDTO;
 import com.krushit.model.Ride;
@@ -15,10 +17,10 @@ public interface IRideDAO {
     Optional<RideRequest> getRideRequestById(int rideRequestId) throws DBException;
     void createRide(Ride ride) throws DBException;
     Optional<Ride> getRideById(int rideId) throws DBException;
-    void updateRideRequestStatus(String status, Connection connection) throws DBException;
+    void updateRideRequestStatus(RideRequestStatus status, Connection connection) throws DBException;
     void updateRideCancellation(RideCancellationDetailsDTO cancellationDetails) throws DBException;
     List<Ride> getAllRideByUserId(int userId) throws DBException;
-    String getRideStatus(int rideId) throws DBException;
+    RideStatus getRideStatus(int rideId) throws DBException;
     List<Ride> getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws DBException;
     int getTotalRides(int driverId, LocalDate startDate, LocalDate endDate) throws DBException;
     double getTotalEarnings(int driverId, LocalDate startDate, LocalDate endDate) throws DBException;

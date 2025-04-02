@@ -1,11 +1,9 @@
 package com.krushit.controller.admin;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
@@ -23,18 +21,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Optional;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/getUserById")
 public class GetUserByIdController extends HttpServlet {
     private final UserService userService = new UserService();
-    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
             int userId = Integer.parseInt(request.getParameter("userId"));
             Optional<User> userOpt = userService.getUserDetails(userId);
@@ -52,11 +50,5 @@ public class GetUserByIdController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

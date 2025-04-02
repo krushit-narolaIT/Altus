@@ -14,15 +14,6 @@ public enum RideRequestStatus {
         this.status = status;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    @Override
-    public String toString() {
-        return status;
-    }
-
     public static RideRequestStatus getType(String status) {
         for (RideRequestStatus r : RideRequestStatus.values()) {
             if (r.status.equalsIgnoreCase(status)) {
@@ -30,5 +21,14 @@ public enum RideRequestStatus {
             }
         }
         throw new IllegalArgumentException(Message.Ride.INVALID_RIDE_STATUS + status);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public String toString() {
+        return status;
     }
 }

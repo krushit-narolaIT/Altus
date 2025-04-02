@@ -116,30 +116,38 @@ public class RideDAOImpl implements IRideDAO {
     public void createRide(Ride ride) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(INSERT_RIDE)) {
-            pstmt.setString(1, ride.getRideStatus().getStatus());
-            pstmt.setInt(2, ride.getPickLocationId());
-            pstmt.setInt(3, ride.getDropOffLocationId());
-            pstmt.setInt(4, ride.getCustomerId());
-            pstmt.setInt(5, ride.getDriverId());
-            pstmt.setDate(6, Date.valueOf(ride.getRideDate()));
-            pstmt.setTime(7, Time.valueOf(ride.getPickUpTime()));
-            pstmt.setString(8, ride.getDisplayId());
-            pstmt.setDouble(9, ride.getTotalKm());
-            pstmt.setDouble(10, ride.getTotalCost());
-            pstmt.setString(11, ride.getPaymentMode().getMode());
-            pstmt.setString(12, ride.getPaymentStatus().getStatus());
-            pstmt.setDouble(13, ride.getCommissionPercentage());
-            pstmt.setDouble(14, ride.getDriverEarning());
-            pstmt.setDouble(15, ride.getSystemEarning());
-            pstmt.executeUpdate();
-
-            updateRideRequestStatus(RideRequestStatus.ACCEPTED.getStatus(), conn);
+            try {
+                conn.setAutoCommit(false);
+                pstmt.setString(1, ride.getRideStatus().getStatus());
+                pstmt.setInt(2, ride.getPickLocationId());
+                pstmt.setInt(3, ride.getDropOffLocationId());
+                pstmt.setInt(4, ride.getCustomerId());
+                pstmt.setInt(5, ride.getDriverId());
+                pstmt.setDate(6, Date.valueOf(ride.getRideDate()));
+                pstmt.setTime(7, Time.valueOf(ride.getPickUpTime()));
+                pstmt.setString(8, ride.getDisplayId());
+                pstmt.setDouble(9, ride.getTotalKm());
+                pstmt.setDouble(10, ride.getTotalCost());
+                pstmt.setString(11, ride.getPaymentMode().getMode());
+                pstmt.setString(12, ride.getPaymentStatus().getStatus());
+                pstmt.setDouble(13, ride.getCommissionPercentage());
+                pstmt.setDouble(14, ride.getDriverEarning());
+                pstmt.setDouble(15, ride.getSystemEarning());
+                pstmt.executeUpdate();
+                updateRideRequestStatus(RideRequestStatus.ACCEPTED, conn);
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw new DBException(Message.Ride.ERROR_WHILE_CREATING_RIDE, e);
+            } finally {
+                conn.setAutoCommit(true);
+            }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Ride.ERROR_WHILE_CREATING_RIDE, e);
         }
     }
 
-
+    @Override
     public Optional<Ride> getRideById(int rideId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_RIDE_BY_ID)) {
@@ -164,18 +172,17 @@ public class RideDAOImpl implements IRideDAO {
         return Optional.empty();
     }
 
-
-    //TODO : Use status enum
     @Override
-    public void updateRideRequestStatus(String status, Connection connection) throws DBException {
+    public void updateRideRequestStatus(RideRequestStatus status, Connection connection) throws DBException {
         try (PreparedStatement stmt = connection.prepareStatement(UPDATE_RIDE_REQUEST_STATUS)) {
-            stmt.setString(1, status);
+            stmt.setString(1, status.getStatus());
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS, e);
         }
     }
 
+    @Override
     public void updateRideCancellation(RideCancellationDetailsDTO cancellationDetails) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_RIDE_STATUS);) {
@@ -233,16 +240,15 @@ public class RideDAOImpl implements IRideDAO {
         return rideList;
     }
 
-    //TODO : Use Enum as return type
     @Override
-    public String getRideStatus(int rideId) throws DBException {
-        String rideStatus = null;
+    public RideStatus getRideStatus(int rideId) throws DBException {
+        RideStatus rideStatus = null;
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_RIDE_STATUS)) {
             preparedStatement.setInt(1, rideId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    rideStatus = resultSet.getString("ride_status");
+                    rideStatus = RideStatus.getType(resultSet.getString("ride_status"));
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
@@ -251,6 +257,7 @@ public class RideDAOImpl implements IRideDAO {
         return rideStatus;
     }
 
+    @Override
     public List<Ride> getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         List<Ride> rideList = new ArrayList<>();
         String GET_RIDES = GET_DRIVER_RIDES_BY_DATE_RANGE;
@@ -291,6 +298,7 @@ public class RideDAOImpl implements IRideDAO {
         return rideList;
     }
 
+    @Override
     public int getTotalRides(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         String GET_RIDES = GET_TOTAL_DRIVER_RIDES;
         if (driverId == 0) {
@@ -310,6 +318,7 @@ public class RideDAOImpl implements IRideDAO {
         return 0;
     }
 
+    @Override
     public double getTotalEarnings(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         String GET_RIDES = GET_TOTAL_DRIVER_EARNING;
         if (driverId == 0) {

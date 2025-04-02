@@ -2,6 +2,7 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.enums.DriverDocumentVerificationStatus;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Driver;
@@ -73,7 +74,6 @@ public class DriverDAOImpl implements IDriverDAO {
         return pendingDrivers;
     }
 
-    //TODO : Use primitive datatype
     @Override
     public boolean isDriverExist(int driverId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -87,14 +87,12 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
-    //TODO :  Method name can be "updateDriveVerificationDetail"
-    // Method argument Use primitive datatype, Use DriverDocumentVerificationStatus enum
     @Override
-    public void verifyDriver(int driverId, boolean isVerified, String rejectionMessage) throws DBException {
+    public void updateDriveVerificationDetail(int driverId, boolean isVerified, String rejectionMessage) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DRIVER_VERIFICATION_STATUS)) {
-            preparedStatement.setString(1, isVerified ? "ACCEPTED" : "REJECTED");
-            preparedStatement.setString(2, isVerified ? null : rejectionMessage); //TODO : Use direct variable value. because column is nullable
+            preparedStatement.setString(1, isVerified ? DriverDocumentVerificationStatus.ACCEPTED.getStatus() : DriverDocumentVerificationStatus.REJECTED.getStatus());
+            preparedStatement.setString(2, rejectionMessage);
             preparedStatement.setBoolean(3, isVerified);
             preparedStatement.setInt(4, driverId);
             preparedStatement.executeUpdate();
@@ -133,7 +131,6 @@ public class DriverDAOImpl implements IDriverDAO {
     }
 
 
-    //TODO : Return type : use primitive type
     @Override
     public int getDriverId(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();

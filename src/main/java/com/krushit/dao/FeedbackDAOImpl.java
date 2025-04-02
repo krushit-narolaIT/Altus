@@ -4,6 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
+import com.krushit.model.Feedback;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,17 +16,17 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
     private static final String SAVE_FEEDBACK = "INSERT INTO feedback (from_user_id, to_user_id, ride_id, rating, comment) VALUES (?, ?, ?, ?, ?)";
     private final IUserDAO userDAO = new UserDAOImpl();
 
-    public void saveFeedback(int fromUserId, int toUserId, int rideId, int rating, String comment) throws DBException {
+    public void saveFeedback(Feedback feedback) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(SAVE_FEEDBACK)) {
             connection.setAutoCommit(false);
-            statement.setInt(1, fromUserId);
-            statement.setInt(2, toUserId);
-            statement.setInt(3, rideId);
-            statement.setInt(4, rating);
-            statement.setString(5, comment);
+            statement.setInt(1, feedback.getFromUserId());
+            statement.setInt(2, feedback.getToUserId());
+            statement.setInt(3, feedback.getRideId());
+            statement.setInt(4, feedback.getRating());
+            statement.setString(5, feedback.getComment());
             statement.executeUpdate();
-            userDAO.updateUserRating(toUserId, rating, connection);
+            userDAO.updateUserRating(feedback.getToUserId(), feedback.getRating(), connection);
             connection.setAutoCommit(true);
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.FeedBack.ERROR_WHILE_ADDING_FEEDBACK, e);

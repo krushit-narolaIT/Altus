@@ -15,10 +15,6 @@ public enum FuelType {
         this.fuelName = fuelName;
     }
 
-    public String getFuelName() {
-        return fuelName;
-    }
-
     public static FuelType getType(String fuelName) {
         for (FuelType type : FuelType.values()) {
             if (type.getFuelName().equalsIgnoreCase(fuelName)) {
@@ -35,6 +31,10 @@ public enum FuelType {
             }
         }
         return false;
+    }
+
+    public String getFuelName() {
+        return fuelName;
     }
 
     @Override

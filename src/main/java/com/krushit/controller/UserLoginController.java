@@ -18,6 +18,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/userLogin")
 public class UserLoginController extends HttpServlet {
     private final UserService userService = new UserService();
@@ -34,21 +36,15 @@ public class UserLoginController extends HttpServlet {
             UserDTO authenticatedUser = userService.userLogin(user.getEmailId(), user.getPassword());
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
-            sendResponse(response, HttpServletResponse.SC_OK, Message.User.LOGIN_SUCCESSFUL, authenticatedUser);
+            createResponse(response, Message.User.LOGIN_SUCCESSFUL, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
-            sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
-            sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), null);
+            createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
-            sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

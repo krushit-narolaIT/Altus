@@ -12,10 +12,6 @@ public enum Transmission {
         this.transmissionType = transmissionType;
     }
 
-    public String getTransmissionType() {
-        return transmissionType;
-    }
-
     public static Transmission getType(String transmissionType) {
         for (Transmission type : Transmission.values()) {
             if (type.getTransmissionType().equalsIgnoreCase(transmissionType)) {
@@ -32,6 +28,10 @@ public enum Transmission {
             }
         }
         return false;
+    }
+
+    public String getTransmissionType() {
+        return transmissionType;
     }
 
     @Override

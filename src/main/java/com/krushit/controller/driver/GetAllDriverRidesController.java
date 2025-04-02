@@ -1,11 +1,9 @@
 package com.krushit.controller.driver;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.RideDTO;
 import com.krushit.dto.UserDTO;
@@ -22,17 +20,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/getAllDriverRides")
 public class GetAllDriverRidesController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateDriverRole(user);
             List<RideDTO> allPreviousRides = vehicleRideService.getAllRides(user.getUserId(), true);
             createResponse(response, Message.Ride.RIDES_FETCHED_SUCCESSFULLY, allPreviousRides, HttpServletResponse.SC_OK);
@@ -45,11 +43,5 @@ public class GetAllDriverRidesController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

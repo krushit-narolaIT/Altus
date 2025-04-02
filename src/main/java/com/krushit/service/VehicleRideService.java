@@ -47,7 +47,7 @@ public class VehicleRideService {
         vehicleDAO.addBrandModel(brandModel);
     }
 
-    public Map<String, List<String>> getAllBrandModels() throws ApplicationException {
+    public List<BrandModelResponseDTO> getAllBrandModels() throws ApplicationException {
         return vehicleDAO.getAllBrandModels();
     }
 
@@ -243,7 +243,7 @@ public class VehicleRideService {
         return rideDTOList;
     }
 
-    public String fetchRideStatus(int rideId) throws DBException {
+    public RideStatus fetchRideStatus(int rideId) throws DBException {
         return rideDAO.getRideStatus(rideId);
     }
 

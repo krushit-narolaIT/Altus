@@ -61,13 +61,12 @@ public class LocationDAOImpl implements ILocationDAO{
         return locations;
     }
 
-    //TODO : Use void return type
     @Override
-    public boolean deleteLocation(int locationId) throws DBException {
+    public void deleteLocation(int locationId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_LOCATION)) {
             stmt.setInt(1, locationId);
-            return stmt.executeUpdate() > 0;
+            stmt.executeUpdate();
         } catch (SQLException | ClassNotFoundException e){
             throw new DBException(Message.Location.ERROR_WHILE_DELETING_LOCATION, e);
         }

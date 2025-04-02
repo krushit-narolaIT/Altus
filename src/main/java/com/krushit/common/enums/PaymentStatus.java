@@ -13,15 +13,6 @@ public enum PaymentStatus {
         this.status = status;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    @Override
-    public String toString() {
-        return status;
-    }
-
     public static PaymentStatus getType(String status) {
         for (PaymentStatus p : PaymentStatus.values()) {
             if (p.status.equalsIgnoreCase(status)) {
@@ -29,5 +20,14 @@ public enum PaymentStatus {
             }
         }
         throw new IllegalArgumentException(Message.INVALID_PAYMENT_STATUS + status);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    @Override
+    public String toString() {
+        return status;
     }
 }

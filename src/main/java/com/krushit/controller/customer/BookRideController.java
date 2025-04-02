@@ -3,10 +3,8 @@ package com.krushit.controller.customer;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.RideValidator;
 import com.krushit.dto.*;
-import com.krushit.common.enums.Role;
 import com.krushit.model.RideRequest;
 import com.krushit.model.User;
 import com.krushit.service.UserService;
@@ -22,6 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/bookRide")
 public class BookRideController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
@@ -33,8 +33,7 @@ public class BookRideController extends HttpServlet {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateCustomerRole(user);
             userService.userBlocked(user.getUserId());
             RideRequestDTO rideRequestDTO = ObjectMapperUtils.toObject(request.getReader(), RideRequestDTO.class);
@@ -49,12 +48,6 @@ public class BookRideController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 
     private RideRequestDTO setUserId(RideRequestDTO rideRequestDTO, int userId){

@@ -7,10 +7,8 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.Location;
-import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.LocationService;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
@@ -22,6 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/addLocation")
 public class AddLocationsController extends HttpServlet {
     private final LocationService locationService = new LocationService();
@@ -31,8 +31,7 @@ public class AddLocationsController extends HttpServlet {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
             Location location = ObjectMapperUtils.toObject(request.getReader(), Location.class);
             locationService.addLocation(location.getName());
@@ -46,11 +45,5 @@ public class AddLocationsController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = (data == null) ? new ApiResponseDTO(message) : new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

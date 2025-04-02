@@ -7,10 +7,8 @@ import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.ApiResponseDTO;
-import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.controller.validator.DriverDocumentValidator;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
@@ -24,6 +22,8 @@ import jakarta.servlet.http.Part;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/addDriverDetails")
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 2,
@@ -32,13 +32,11 @@ import java.io.IOException;
 )
 public class AddDriverDetailsController extends HttpServlet {
     private final DriverService driverService = new DriverService();
-    private final Mapper mapper = Mapper.getInstance();
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateDriverRole(user);
             String licenceNumber = request.getParameter("licenceNumber");
             Part licencePhoto = request.getPart("licencePhoto");
@@ -46,7 +44,7 @@ public class AddDriverDetailsController extends HttpServlet {
             Driver driver = (Driver) new Driver.DriverBuilder()
                     .setLicenceNumber(licenceNumber)
                     .setLicencePhoto(storedPhotoPath)
-                    .setUserId(userDTO.getUserId())
+                    .setUserId(user.getUserId())
                     .build();
             DriverDocumentValidator.validateDriverDocuments(driver, licencePhoto);
             driverService.storeDriverDetails(driver);
@@ -60,11 +58,5 @@ public class AddDriverDetailsController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO =  new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

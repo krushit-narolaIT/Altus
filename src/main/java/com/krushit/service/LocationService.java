@@ -26,12 +26,10 @@ public class LocationService {
         return locationDAO.getAllLocations();
     }
 
-    public boolean deleteLocation(int locationId) throws ApplicationException {
-        boolean isDeleted = locationDAO.deleteLocation(locationId);
-        if (!isDeleted) {
+    public void deleteLocation(int locationId) throws ApplicationException {
+        if(locationDAO.getLocationName(locationId).isEmpty()){
             throw new ApplicationException(Message.Location.LOCATION_NOT_FOUND);
         }
-        return true;
     }
 
     public static String getCoordinates(String place) throws Exception {
@@ -57,37 +55,6 @@ public class LocationService {
         String lng = responseString.substring(lngIndex + 6, responseString.indexOf("}", lngIndex)).trim();
         return lat + "," + lng;
     }
-
-    /*public static String getCoordinates(String place) throws Exception {
-        OkHttpClient client = new OkHttpClient();
-        String geoUrl = GEO_BASE_URL + "?q=" + place + "&limit=1&key=" + API_KEY;
-        Request request = new Request.Builder()
-                .url(geoUrl)
-                .get()
-                .build();
-        Response response = null;
-        try {
-            response = client.newCall(request).execute();
-            if (!response.isSuccessful()) {
-                throw new Exception("Request failed with status: " + response.code());
-            }
-            if (response.body() == null) {
-                throw new Exception("Response body is null");
-            }
-            String responseString = response.body().string();
-            int latIndex = responseString.indexOf("\"lat\":");
-            int lngIndex = responseString.indexOf("\"lng\":");
-            if (latIndex == -1 || lngIndex == -1) {
-                throw new Exception("Coordinates not found for " + place);
-            }
-            String lat = responseString.substring(latIndex + 6, responseString.indexOf(",", latIndex)).trim();
-            String lng = responseString.substring(lngIndex + 6, responseString.indexOf("}", lngIndex)).trim();
-            return lat + "," + lng;
-        } catch (Exception e) {
-            System.err.println("Error fetching coordinates: " + e.getMessage());
-            throw e;
-        }
-    }*/
 
     public double calculateDistance(int fromId, int toId) throws Exception {
         String fromLocation = locationDAO.getLocationName(fromId);

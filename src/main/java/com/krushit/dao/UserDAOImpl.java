@@ -57,16 +57,18 @@ public class UserDAOImpl implements IUserDAO {
                 }
             }
             if (userId > 0) {
-                String displayId = user.getRole().getRoleName().equalsIgnoreCase("Driver")
-                        ? generateDriverDisplayId(userId)
-                        : generateCustomerDisplayId(userId);
+                String displayId = null;
+                if(user.getRole() == Role.ROLE_DRIVER){
+                    displayId = generateDriverDisplayId(userId);
+                } else {
+                    displayId = generateCustomerDisplayId(userId);
+                }
                 try (PreparedStatement updateStmt = connection.prepareStatement(CREATE_DISPLAY_ID)) {
                     updateStmt.setString(1, displayId);
                     updateStmt.setInt(2, userId);
                     updateStmt.executeUpdate();
                 }
-                //TODO : Use Enum
-                if (user.getRole().getRoleName().equalsIgnoreCase("Driver")) {
+                if (user.getRole() == Role.ROLE_DRIVER) {
                     try (PreparedStatement driverStmt = connection.prepareStatement(INSERT_DRIVER_ENTRY)) {
                         driverStmt.setInt(1, userId);
                         driverStmt.executeUpdate();
@@ -284,8 +286,7 @@ public class UserDAOImpl implements IUserDAO {
             throw new DBException(Message.User.ERROR_WHILE_UPDATING_PASSWORD, e);
         }
     }
-
-    //TODO : remove connection from argument
+    
     public void updateUserRating(int userId, int rating, Connection connection) throws DBException {
         try (PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_USER_RATING)) {
             prepareStatement.setInt(1, rating);

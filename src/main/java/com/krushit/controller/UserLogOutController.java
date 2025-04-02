@@ -15,6 +15,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/userLogout")
 public class UserLogOutController extends HttpServlet {
     @Override
@@ -31,11 +33,5 @@ public class UserLogOutController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

@@ -112,6 +112,7 @@ public final class Message {
         public static final String ERROR_WHILE_UPDATING_USER_DETAILS = "Error while updating user details";
         public static final String ERROR_WHILE_UPDATING_PASSWORD = "Error while updating password";
         public static final String ERROR_WHILE_UPDATE_DRIVER_RATING = "Error while updating driver rating";
+        public static final String DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
 
         private User() {
         }

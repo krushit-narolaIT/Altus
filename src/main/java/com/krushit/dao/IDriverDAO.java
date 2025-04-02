@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IDriverDAO {
     boolean isDriverExist(int driverId) throws DBException;
-    void verifyDriver(int driverId, boolean isVerified, String rejectionMessage) throws DBException;
+    void updateDriveVerificationDetail(int driverId, boolean isVerified, String rejectionMessage) throws DBException;
     List<Driver> fetchAllDrivers() throws DBException;
     void insertDriverDetails(Driver driver) throws DBException;
     List<Driver> getDriversWithPendingVerification() throws DBException;

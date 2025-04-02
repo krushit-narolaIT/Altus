@@ -19,36 +19,31 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/giveFeedback")
 public class GiveUserFeedbackController extends HttpServlet {
     private final FeedbackService feedbackService = new FeedbackService();
-    private final Mapper mapper =Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
-            //AuthValidator.validateUser(user, Role.ROLE_CUSTOMER.getRoleName());
+            User user = SessionUtils.validateSession(request);
             int rideId = Integer.parseInt(request.getParameter("rideId"));
             FeedbackDTO feedbackDTO = ObjectMapperUtils.toObject(request.getReader(), FeedbackDTO.class);
-            int toUserId = feedbackService.getToUserId(rideId, user.getRole().getRoleName());
+            int toUserId = feedbackService.getToUserId(rideId, user.getRole());
             feedbackService.submitFeedback(user.getUserId(), toUserId, feedbackDTO, rideId);
-            sendResponse(response, HttpServletResponse.SC_OK, Message.FeedBack.FEEDBACK_SUBMITTED, null);
+            createResponse(response, Message.FeedBack.FEEDBACK_SUBMITTED, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
-            sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);
+            e.printStackTrace();
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
-            sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, e.getMessage(), null);
+            createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {
-            sendResponse(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, Message.GENERIC_ERROR, null);
+            e.printStackTrace();
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void sendResponse(HttpServletResponse response, int statusCode, String message, Object data) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

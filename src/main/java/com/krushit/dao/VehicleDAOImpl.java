@@ -4,13 +4,14 @@ import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
 import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.BrandModelResponseDTO;
 import com.krushit.model.BrandModel;
 import com.krushit.model.RideRequest;
 import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;
 
-import java.sql.*;
 import java.sql.Date;
+import java.sql.*;
 import java.util.*;
 
 public class VehicleDAOImpl implements IVehicleDAO {
@@ -134,8 +135,8 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
-    //TODO : Use  class design as return type
-    public Map<String, List<String>> getAllBrandModels() throws DBException {
+    public List<BrandModelResponseDTO> getAllBrandModels() throws DBException {
+        List<BrandModelResponseDTO> brandModelList = new ArrayList<>();
         Map<String, List<String>> brandModelMap = new HashMap<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_BRAND_MODELS);
@@ -145,14 +146,17 @@ public class VehicleDAOImpl implements IVehicleDAO {
                 String model = resultSet.getString("model");
                 brandModelMap.computeIfAbsent(brandName, k -> new ArrayList<>()).add(model);
             }
+            for (Map.Entry<String, List<String>> entry : brandModelMap.entrySet()) {
+                brandModelList.add(new BrandModelResponseDTO(entry.getKey(), entry.getValue()));
+            }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_GETTING_ALL_BRAND_MODELS, e);
         }
-        return brandModelMap;
+        return brandModelList;
     }
 
-    //TODO : Use primitive datatype as return type
-    public Integer getMinYearForBrandModel(int brandModelId) throws DBException {
+
+    public int getMinYearForBrandModel(int brandModelId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(GET_MINIMUM_VEHICLE_YEAR)) {
             stmt.setInt(1, brandModelId);
@@ -164,7 +168,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_MIN_YEAR, e);
         }
-        return null;
+        return  0;
     }
 
     @Override
@@ -209,7 +213,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     @Override
     public Optional<VehicleService> getServiceById(int serviceId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
-                PreparedStatement ps = connection.prepareStatement(GET_SERVICE_BY_SERVICE_ID)) {
+             PreparedStatement ps = connection.prepareStatement(GET_SERVICE_BY_SERVICE_ID)) {
             ps.setInt(1, serviceId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {

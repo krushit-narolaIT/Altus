@@ -13,10 +13,6 @@ public enum VehicleType {
         this.typeName = typeName;
     }
 
-    public String getTypeName() {
-        return typeName;
-    }
-
     public static VehicleType getType(String typeName) {
         for (VehicleType type : VehicleType.values()) {
             if (type.getTypeName().equalsIgnoreCase(typeName)) {
@@ -26,13 +22,17 @@ public enum VehicleType {
         throw new IllegalArgumentException(Message.Vehicle.INVALID_VEHICLE_TYPE + typeName);
     }
 
-    public static boolean isValidVehicleType(String vehicleType){
+    public static boolean isValidVehicleType(String vehicleType) {
         for (VehicleType type : VehicleType.values()) {
             if (type.getTypeName().equalsIgnoreCase(vehicleType)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public String getTypeName() {
+        return typeName;
     }
 
     @Override

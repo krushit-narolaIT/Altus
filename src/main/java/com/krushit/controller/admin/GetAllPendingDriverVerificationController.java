@@ -7,10 +7,8 @@ import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
 import com.krushit.dto.ApiResponseDTO;
-import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
@@ -24,18 +22,18 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/getAllPendingVerification")
 public class GetAllPendingDriverVerificationController extends HttpServlet {
     private final DriverService driverService = new DriverService();
-    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.INVALID_CONTENT_TYPE);
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
             List<Driver> pendingDrivers = driverService.getPendingVerificationDrivers();
             if (pendingDrivers.isEmpty()) {
@@ -52,11 +50,5 @@ public class GetAllPendingDriverVerificationController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

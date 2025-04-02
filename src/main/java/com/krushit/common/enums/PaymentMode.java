@@ -13,15 +13,6 @@ public enum PaymentMode {
         this.mode = mode;
     }
 
-    public String getMode() {
-        return mode;
-    }
-
-    @Override
-    public String toString() {
-        return mode;
-    }
-
     public static PaymentMode getType(String mode) {
         for (PaymentMode p : PaymentMode.values()) {
             if (p.mode.equalsIgnoreCase(mode)) {
@@ -29,5 +20,14 @@ public enum PaymentMode {
             }
         }
         throw new IllegalArgumentException(Message.INVALID_PAYMENT_MODE + mode);
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    @Override
+    public String toString() {
+        return mode;
     }
 }

@@ -3,24 +3,16 @@ package com.krushit.common.enums;
 import com.krushit.common.Message;
 
 public enum Role {
-    ROLE_CUSTOMER("Customer",2),
+    ROLE_CUSTOMER("Customer", 2),
     ROLE_SUPER_ADMIN("Admin", 1),
-    ROLE_DRIVER("Driver",3);
+    ROLE_DRIVER("Driver", 3);
 
-    private final Role roleName;
+    private final String roleName;
     private final int roleId;
 
-    Role(Role name, int id) {
+    Role(String name, int id) {
         roleName = name;
         roleId = id;
-    }
-
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public Role getRoleName() {
-        return roleName;
     }
 
     public static Role getType(int roleId) {
@@ -30,6 +22,14 @@ public enum Role {
             }
         }
         throw new IllegalArgumentException(Message.INVALID_ROLE + roleId);
+    }
+
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
     }
 
     @Override

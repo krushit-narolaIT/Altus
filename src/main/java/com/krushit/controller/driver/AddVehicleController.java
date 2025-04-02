@@ -6,11 +6,9 @@ import com.krushit.dto.ApiResponseDTO;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
-import com.krushit.common.enums.Role;
 import com.krushit.model.User;
 import com.krushit.model.Vehicle;
 import com.krushit.service.DriverService;
-import com.krushit.controller.validator.AuthValidator;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
@@ -23,18 +21,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
+import static com.krushit.utils.ResponseUtils.createResponse;
+
 @WebServlet(value = "/addVehicle")
 public class AddVehicleController extends HttpServlet {
     private final DriverService driverService = new DriverService();
-    private final Mapper mapper = Mapper.getInstance();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
-            UserDTO userDTO = SessionUtils.validateSession(request);
-            User user = mapper.convertToEntityUserDTO(userDTO);
+            User user = SessionUtils.validateSession(request);
             AuthUtils.validateDriverRole(user);
             Vehicle vehicle = ObjectMapperUtils.toObject(request.getReader(), Vehicle.class);
             VehicleServicesValidator.validateVehicleDetails(vehicle);
@@ -49,11 +47,5 @@ public class AddVehicleController extends HttpServlet {
             e.printStackTrace();
             createResponse(response, Message.INTERNAL_SERVER_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private void createResponse(HttpServletResponse response, String message, Object data, int statusCode) throws IOException {
-        response.setStatus(statusCode);
-        ApiResponseDTO apiResponseDTO = new ApiResponseDTO(message, data);
-        response.getWriter().write(ObjectMapperUtils.toString(apiResponseDTO));
     }
 }

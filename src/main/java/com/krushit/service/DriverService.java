@@ -83,9 +83,9 @@ public class DriverService {
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
         if(DriverDocumentVerificationStatus.ACCEPTED.getStatus().equalsIgnoreCase(verificationRequest.getVerificationStatus())){
-            driverDAO.verifyDriver(driverId, true, null);
+            driverDAO.updateDriveVerificationDetail(driverId, true, null);
         } else if(DriverDocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequest.getVerificationStatus())) {
-            driverDAO.verifyDriver(driverId, false, verificationRequest.getMessage());
+            driverDAO.updateDriveVerificationDetail(driverId, false, verificationRequest.getMessage());
         } else {
             throw new ApplicationException(Message.Driver.PLEASE_PERFORM_VALID_VERIFICATION_OPERATION);
         }
@@ -109,7 +109,7 @@ public class DriverService {
         if (!vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_NOT_SUPPORTED);
         }
-        Integer minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModelId());
+        int minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModelId());
         if (vehicle.getYear() < minYear) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_YEAR_NOT_SUPPORTED);
         }

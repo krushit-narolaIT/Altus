@@ -34,8 +34,8 @@ public class GetRideDetailsByRangeController extends HttpServlet {
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         try {
-            User user = SessionUtils.validateSession(request);
-            AuthUtils.validateAdminRole(user);
+//            User user = SessionUtils.validateSession(request);
+//            AuthUtils.validateAdminRole(user);
             LocalDate startDate = DateValidator.getLocalDate(request.getParameter("startDate"));
             LocalDate endDate = DateValidator.getLocalDate(request.getParameter("endDate"));
             DateRangeIncomeResponseDTO dateRangeIncomeResponseDTO = vehicleRideService.getIncomeByDateRange(0, startDate, endDate);

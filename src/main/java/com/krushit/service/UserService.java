@@ -82,7 +82,7 @@ public class UserService {
     }
 
     public String getUserDisplayIdById(int userId) throws ApplicationException{
-        return userDAO.getUserFullNameById(userId);
+        return userDAO.getUserDisplayIdById(userId);
     }
 
     public String getUserFullNameById(int userId) throws ApplicationException{

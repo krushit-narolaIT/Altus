@@ -51,7 +51,7 @@ public class RideValidator {
             throw new ApplicationException(Message.Ride.RIDE_DATE_IN_PAST);
         }
 
-        if (rideDate.isAfter(LocalDate.now().plusDays(15))) {
+        if (rideDate.isAfter(LocalDate.now().plusDays(10))) {
             throw new ApplicationException(Message.Ride.BOOK_RIDE_IN_ONLY_FIFTEEN_DAYS_IN_ADVANCE);
         }
 

@@ -18,11 +18,19 @@ import java.util.List;
 public class DriverDAOImpl implements IDriverDAO {
     private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = ?";
     private static final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ?, updated_by = ? WHERE user_id = ?";
-    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT * FROM drivers WHERE is_document_verified = FALSE AND licence_number IS NOT NULL";
+    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT d.driver_id, d.user_id, d.licence_number, d.licence_photo, " +
+            "d.is_document_verified, d.verification_status, d.comment, " +
+            "u.email_id, u.first_name, u.last_name, u.role_id, u.display_id " +
+            "FROM Drivers d " +
+            "JOIN Users u ON d.user_id = u.user_id " +
+            "WHERE d.is_document_verified = FALSE";
     private static final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ?, updated_by = ? WHERE driver_id = ?";
     private static final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
     private static final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
-    private static final String GET_ALL_DRIVERS = "SELECT * FROM drivers";
+    private static final String GET_ALL_DRIVERS = "SELECT d.*, " +
+            "u.first_name, u.last_name, u.email_id, u.display_id " +
+            "FROM Drivers d " +
+            "JOIN Users u ON d.user_id = u.user_id";
     private static final String GET_DRIVER_ID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
     private static final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
     private static final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
@@ -43,7 +51,6 @@ public class DriverDAOImpl implements IDriverDAO {
         }
     }
 
-    //TODO : Use join query to fetch data in single query
     @Override
     public List<Driver> getDriversWithPendingVerification() throws DBException {
         List<Driver> pendingDrivers = new ArrayList<>();
@@ -51,20 +58,19 @@ public class DriverDAOImpl implements IDriverDAO {
              PreparedStatement statement = connection.prepareStatement(GET_PENDING_VERIFICATION_DRIVERS);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
-                User user = userDAO.getUserDetails(resultSet.getInt("user_id")).get();
                 Driver driver = (Driver) new Driver.DriverBuilder()
+                        .setDriverId(resultSet.getInt("driver_id"))
                         .setLicenceNumber(resultSet.getString("licence_number"))
                         .setLicencePhoto(resultSet.getString("licence_photo"))
                         .setDocumentVerified(resultSet.getBoolean("is_document_verified"))
                         .setVerificationStatus(resultSet.getString("verification_status"))
                         .setComment(resultSet.getString("comment"))
-                        .setDriverId(resultSet.getInt("driver_id"))
                         .setUserId(resultSet.getInt("user_id"))
-                        .setEmailId(user.getEmailId())
-                        .setFirstName(user.getFirstName())
-                        .setLastName(user.getLastName())
-                        .setRole(user.getRole())
-                        .setDisplayId(user.getDisplayId())
+                        .setEmailId(resultSet.getString("email_id"))
+                        .setFirstName(resultSet.getString("first_name"))
+                        .setLastName(resultSet.getString("last_name"))
+                        .setRole(Role.getType(resultSet.getInt("role_id")))
+                        .setDisplayId(resultSet.getString("display_id"))
                         .build();
                 pendingDrivers.add(driver);
             }
@@ -108,8 +114,6 @@ public class DriverDAOImpl implements IDriverDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_DRIVERS);
              ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
-                int userId = resultSet.getInt("user_id");
-                User userDrive = userDAO.getUserDetails(userId).get();
                 Driver driver = (Driver) new Driver.DriverBuilder()
                         .setDriverId(resultSet.getInt("driver_id"))
                         .setLicenceNumber(resultSet.getString("licence_number"))
@@ -117,10 +121,10 @@ public class DriverDAOImpl implements IDriverDAO {
                         .setAvailable(resultSet.getBoolean("is_available"))
                         .setVerificationStatus(resultSet.getString("verification_status"))
                         .setComment(resultSet.getString("comment"))
-                        .setUserId(userId)
-                        .setFirstName(userDrive.getFirstName())
-                        .setLastName(userDrive.getLastName())
-                        .setEmailId(userDrive.getEmailId())
+                        .setUserId(resultSet.getInt("user_id"))
+                        .setFirstName(resultSet.getString("first_name"))
+                        .setLastName(resultSet.getString("last_name"))
+                        .setEmailId(resultSet.getString("email_id"))
                         .build();
                 drivers.add(driver);
             }
@@ -129,7 +133,6 @@ public class DriverDAOImpl implements IDriverDAO {
         }
         return drivers;
     }
-
 
     @Override
     public int getDriverId(int userId) throws DBException {

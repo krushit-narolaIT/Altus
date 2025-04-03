@@ -1,9 +1,9 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
+import com.krushit.common.config.DBConfig;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Location;
-import com.krushit.common.config.DBConfig;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocationDAOImpl implements ILocationDAO{
+public class LocationDAOImpl implements ILocationDAO {
     private static final String GET_LOCATION = "SELECT name FROM locations WHERE location_id = ?";
     private static final String ADD_LOCATION = "INSERT INTO locations (name) VALUES (?)";
     private static final String GET_ALL_LOCATIONS = "SELECT location_id, name FROM locations";
@@ -21,11 +21,11 @@ public class LocationDAOImpl implements ILocationDAO{
 
     @Override
     public void addLocation(String location) throws DBException {
-        try(Connection connection = DBConfig.INSTANCE.getConnection();
-            PreparedStatement statement = connection.prepareStatement(ADD_LOCATION)){
-                statement.setString(1, location);
-                statement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e){
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement statement = connection.prepareStatement(ADD_LOCATION)) {
+            statement.setString(1, location);
+            statement.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Location.ERROR_WHILE_ADDING_LOCATION, e);
         }
     }
@@ -40,7 +40,7 @@ public class LocationDAOImpl implements ILocationDAO{
             if (rs.next()) {
                 locationName = rs.getString("name");
             }
-        } catch (SQLException | ClassNotFoundException e){
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Location.ERROR_WHILE_GETTING_LOCATION_BY_NAME, e);
         }
         return locationName;
@@ -55,7 +55,7 @@ public class LocationDAOImpl implements ILocationDAO{
             while (rs.next()) {
                 locations.add(new Location(rs.getInt("location_id"), rs.getString("name")));
             }
-        } catch (SQLException | ClassNotFoundException e){
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Location.ERROR_WHILE_GETTING_ALL_LOCATION, e);
         }
         return locations;
@@ -67,7 +67,7 @@ public class LocationDAOImpl implements ILocationDAO{
              PreparedStatement stmt = conn.prepareStatement(DELETE_LOCATION)) {
             stmt.setInt(1, locationId);
             stmt.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e){
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Location.ERROR_WHILE_DELETING_LOCATION, e);
         }
     }
@@ -82,7 +82,7 @@ public class LocationDAOImpl implements ILocationDAO{
             if (rs.next()) {
                 commissionPercentage = rs.getDouble("commission_percentage");
             }
-        } catch (SQLException | ClassNotFoundException e){
+        } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Location.ERROR_WHILE_GET_COMMISSION_BY_DISTANCE, e);
         }
         return commissionPercentage;

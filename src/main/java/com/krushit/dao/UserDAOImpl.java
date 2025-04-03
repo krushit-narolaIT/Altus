@@ -36,6 +36,7 @@ public class UserDAOImpl implements IUserDAO {
             "rating_count = rating_count + 1 " +
             "WHERE user_id = ?;";
 
+    @Override
     public void registerUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection()) {
             connection.setAutoCommit(false);
@@ -58,7 +59,7 @@ public class UserDAOImpl implements IUserDAO {
             }
             if (userId > 0) {
                 String displayId = null;
-                if(user.getRole() == Role.ROLE_DRIVER){
+                if (user.getRole() == Role.ROLE_DRIVER) {
                     displayId = generateDriverDisplayId(userId);
                 } else {
                     displayId = generateCustomerDisplayId(userId);
@@ -84,6 +85,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    @Override
     public User getUser(String emailId, String password) throws DBException {
         User user = null;
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -114,6 +116,7 @@ public class UserDAOImpl implements IUserDAO {
         return user;
     }
 
+    @Override
     public boolean isValidUser(String emailID, String password) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(CHECK_USER_CREDENTIALS)) {
@@ -127,6 +130,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    @Override
     public boolean isUserExist(String emailID, String phoneNo) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(CHECK_USER_EXISTENCE)) {
@@ -140,6 +144,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    @Override
     public boolean isUserExist(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(CHECK_USER_EXISTENCE_BY_ID)) {
@@ -164,6 +169,7 @@ public class UserDAOImpl implements IUserDAO {
         return "DR" + userIdPart + "V" + timestampPart;
     }
 
+    @Override
     public Optional<User> getUserDetails(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
@@ -190,6 +196,7 @@ public class UserDAOImpl implements IUserDAO {
         return Optional.empty();
     }
 
+    @Override
     public List<User> fetchAllCustomers() throws DBException {
         List<User> users = new ArrayList<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
@@ -211,6 +218,7 @@ public class UserDAOImpl implements IUserDAO {
         return users;
     }
 
+    @Override
     public String getUserDisplayIdById(int userId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_DISPLAY_ID_FROM_USER_ID)) {
@@ -226,6 +234,7 @@ public class UserDAOImpl implements IUserDAO {
         return null;
     }
 
+    @Override
     public String getUserFullNameById(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_FULL_NAME_FROM_USER_ID)) {
@@ -242,6 +251,7 @@ public class UserDAOImpl implements IUserDAO {
         return null;
     }
 
+    @Override
     public void updateUser(User user) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(UPDATE_USER_DETAILS)) {
@@ -257,6 +267,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    @Override
     public Optional<User> findByEmail(String email) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_USER_BY_EMAIL)) {
@@ -276,6 +287,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    @Override
     public void updatePassword(String email, String newPassword) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(UPDATE_PASSWORD)) {
@@ -286,7 +298,8 @@ public class UserDAOImpl implements IUserDAO {
             throw new DBException(Message.User.ERROR_WHILE_UPDATING_PASSWORD, e);
         }
     }
-    
+
+    @Override
     public void updateUserRating(int userId, int rating, Connection connection) throws DBException {
         try (PreparedStatement prepareStatement = connection.prepareStatement(UPDATE_USER_RATING)) {
             prepareStatement.setInt(1, rating);
@@ -308,6 +321,7 @@ public class UserDAOImpl implements IUserDAO {
         }
     }
 
+    @Override
     public boolean isUserBlocked(int userId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(IS_USER_BLOCKED)) {

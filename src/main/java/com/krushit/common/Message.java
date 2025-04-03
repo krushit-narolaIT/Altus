@@ -73,6 +73,8 @@ public final class Message {
         public static final String ERROR_WHILE_CALCULATING_DRIVER_TOTAL_EARNING = "error while calculation total driver earning";
         public static final String INVALID_RIDE_STATUS = "Invalid Ride Status";
         public static final String BOOK_RIDE_IN_ONLY_FIFTEEN_DAYS_IN_ADVANCE = "You can book ride in 15 days is advance";
+        public static final String RIDE_ALREADY_SCHEDULED = "You already have a ride scheduled";
+        public static final String PLEASE_MANAGE_YOUR_SCHEDULE_ACCORDINGLY = "Please manage your schedule accordingly";
 
         private Ride() {
         }

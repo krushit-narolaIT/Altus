@@ -13,7 +13,9 @@ import com.krushit.model.RideRequest;
 
 import java.sql.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,6 +64,11 @@ public class RideDAOImpl implements IRideDAO {
     private static final String GET_RIDE_BY_USER_ID = "SELECT * FROM rides WHERE customer_id = ? OR driver_id = ? ORDER BY ride_date DESC";
     private static final String GET_RIDE_STATUS = "SELECT ride_status FROM rides WHERE ride_id = ?";
     private static final String UPDATE_RIDE_REQUEST_STATUS = "UPDATE Ride_requests SET ride_request_status = ? WHERE ride_request_id = ?";
+    private static final String CHECK_IS_ANOTHER_RIDE_IS_ALREADY_SCHEDULED = "SELECT ride_id, ride_status, pick_location_id, drop_off_location_id, pick_up_time, ride_date, display_id " +
+            "FROM rides " +
+            "WHERE driver_id = ? AND ride_date = ? " +
+            "AND pick_up_time >= ? AND pick_up_time <= ? " +
+            "AND ride_status IN ('Scheduled', 'Ongoing') ";
 
     public List<RideRequest> getAllMatchingRideRequests(int driverId) throws DBException {
         List<RideRequest> rideRequests = new ArrayList<>();
@@ -113,7 +120,37 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public void createRide(Ride ride) throws DBException {
+    public Optional<Ride> getConflictingRide(int driverId, LocalDate rideDate, LocalTime pickUpTime) throws DBException {
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(CHECK_IS_ANOTHER_RIDE_IS_ALREADY_SCHEDULED)) {
+            LocalTime startTime = pickUpTime.minusMinutes(15);
+            LocalTime endTime = pickUpTime.plusMinutes(30);
+            stmt.setInt(1, driverId);
+            stmt.setDate(2, Date.valueOf(rideDate));
+            stmt.setTime(3, Time.valueOf(startTime));
+            stmt.setTime(4, Time.valueOf(endTime));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Ride ride = new Ride.RideBuilder()
+                            .setRideId(rs.getInt("ride_id"))
+                            .setRideStatus(RideStatus.valueOf(rs.getString("ride_status").toUpperCase()))
+                            .setPickLocationId(rs.getInt("pick_location_id"))
+                            .setDropOffLocationId(rs.getInt("drop_off_location_id"))
+                            .setRideDate(rs.getDate("ride_date").toLocalDate())
+                            .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
+                            .setDisplayId(rs.getString("display_id"))
+                            .build();
+                    return Optional.of(ride);
+                }
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.Ride.ERROR_WHILE_GETTING_RIDE_REQUEST_BY_ID, e);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public void createRide(int rideRequestId, Ride ride) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(INSERT_RIDE)) {
             try {
@@ -134,7 +171,7 @@ public class RideDAOImpl implements IRideDAO {
                 pstmt.setDouble(14, ride.getDriverEarning());
                 pstmt.setDouble(15, ride.getSystemEarning());
                 pstmt.executeUpdate();
-                updateRideRequestStatus(RideRequestStatus.ACCEPTED, conn);
+                updateRideRequestStatus(rideRequestId ,RideRequestStatus.ACCEPTED, conn);
                 conn.commit();
             } catch (SQLException e) {
                 conn.rollback();
@@ -173,9 +210,10 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public void updateRideRequestStatus(RideRequestStatus status, Connection connection) throws DBException {
+    public void updateRideRequestStatus(int rideRequestId, RideRequestStatus status, Connection connection) throws DBException {
         try (PreparedStatement stmt = connection.prepareStatement(UPDATE_RIDE_REQUEST_STATUS)) {
             stmt.setString(1, status.getStatus());
+            stmt.setInt(2, rideRequestId);
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS, e);

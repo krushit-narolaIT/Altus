@@ -22,7 +22,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -123,13 +122,18 @@ public class VehicleRideService {
         if (rideRequest == null || !rideRequest.getRideRequestStatus().equals(RideRequestStatus.PENDING)) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }
+        Optional<Ride> conflictingRideOpt = rideDAO.getConflictingRide(driverId, rideRequest.getRideDate(), rideRequest.getPickUpTime());
+        if (conflictingRideOpt.isPresent()) {
+            Ride conflictingRide = conflictingRideOpt.get();
+            throw new ApplicationException(Message.Ride.RIDE_ALREADY_SCHEDULED + " (Ride ID #" + conflictingRide.getDisplayId() +
+                    ") at " + conflictingRide.getPickUpTime() +
+                    ". " + Message.Ride.PLEASE_MANAGE_YOUR_SCHEDULE_ACCORDINGLY);
+        }
         String userIdPart = String.format("%04d", rideRequest.getUserId() % 10000);
         String driverIdPart = String.format("%04d", driverId % 10000);
         String displayId = "R" + userIdPart + "I" + driverIdPart;
         Optional<VehicleService> vehicleService = vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
-
         VehicleService service = vehicleService.orElseThrow(() -> new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST));
-
         double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
         double commissionPercentage = locationService.getCommissionByDistance(distance);
         double totalCost = service.getBaseFare() + (service.getPerKmRate() * distance);
@@ -152,7 +156,7 @@ public class VehicleRideService {
                 .setDriverEarning(driverEarning)
                 .setSystemEarning(systemEarning)
                 .build();
-        rideDAO.createRide(ride);
+        rideDAO.createRide(rideRequestId, ride);
     }
 
     public void cancelRide(int rideId, int userId, boolean isDriver) throws ApplicationException {

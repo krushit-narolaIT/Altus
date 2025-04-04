@@ -4,16 +4,17 @@ import com.krushit.common.Message;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.dao.FeedbackDAOImpl;
+import com.krushit.dao.IFeedbackDAO;
 import com.krushit.dto.FeedbackDTO;
 import com.krushit.model.Feedback;
 
 public class FeedbackService {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
     private final UserService userService = new UserService();
-    private final FeedbackDAOImpl feedbackDAO = new FeedbackDAOImpl();
+    private final IFeedbackDAO feedbackDAO = new FeedbackDAOImpl();
 
     public void submitFeedback(int fromUserId, int toUserId, FeedbackDTO feedbackDTO, int rideId) throws ApplicationException {
-        if (vehicleRideService.fetchRideStatus(rideId) == null) {
+        if (vehicleRideService.getRideStatus(rideId) == null) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_FEEDBACK_AFTER_RIDE_COMPLETED);
         }
         int rating = feedbackDTO.getRating();
@@ -40,7 +41,7 @@ public class FeedbackService {
 
 
     public int getToUserId(int rideId, Role userRole) throws ApplicationException {
-        int toUserId = feedbackDAO.findToUserIdByRide(rideId, userRole);
+        int toUserId = feedbackDAO.getRecipientUserIdByRideId(rideId, userRole);
         if (toUserId == 0) {
             throw new ApplicationException(Message.User.INVALID_USER_ID);
         }

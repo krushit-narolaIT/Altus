@@ -24,6 +24,7 @@ public final class Message {
         public static final String ERROR_WHILE_ADDING_FEEDBACK = "Error while giving feedback";
         public static final String ERROR_WHILE_FETCHING_TO_FEEDBACK = "Error while fetching to user details";
         public static final String ERROR_WHILE_CHECKING_IS_FEEDBACK_GIVEN = "Error while checking is feedback is given or not";
+        public static final String MISSING_RATING_REVIEW_COUNT_PARAMS = "Missing taring & review params";
 
         private FeedBack(){
 
@@ -115,6 +116,7 @@ public final class Message {
         public static final String ERROR_WHILE_UPDATING_PASSWORD = "Error while updating password";
         public static final String ERROR_WHILE_UPDATE_DRIVER_RATING = "Error while updating driver rating";
         public static final String DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
+        public static final String ERROR_WHILE_GETTING_CUSTOMERS_BY_RATING = "Error while getting user ratings";
 
         private User() {
         }

@@ -9,6 +9,7 @@ import com.krushit.dto.UserDTO;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
+import com.krushit.service.UserService;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.ObjectMapperUtils;
@@ -26,7 +27,7 @@ import static com.krushit.utils.ResponseUtils.createResponse;
 
 @WebServlet(value = "/getAllCustomersByRating")
 public class GetAllCustomersByRatingController extends HttpServlet {
-    private final DriverService driverService = new DriverService();
+    private final UserService userService = new UserService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,11 +36,19 @@ public class GetAllCustomersByRatingController extends HttpServlet {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
-            List<Driver> drivers = driverService.getAllDrivers();
-            if (drivers.isEmpty()) {
+            String ratingParam = request.getParameter("rating");
+            String reviewParam = request.getParameter("reviews");
+            if (ratingParam == null || reviewParam == null) {
+                createResponse(response, Message.FeedBack.MISSING_RATING_REVIEW_COUNT_PARAMS, null, HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+            int ratingThreshold = Integer.parseInt(ratingParam);
+            int reviewThreshold = Integer.parseInt(reviewParam);
+            List<User> users = userService.getUsersWithLessRatingAndReviews(ratingThreshold, reviewThreshold);
+            if (users.isEmpty()) {
                 createResponse(response, Message.Driver.NO_DRIVERS_FOUND, null, HttpServletResponse.SC_NO_CONTENT);
             } else {
-                createResponse(response, Message.Driver.SUCCESSFULLY_RETRIEVED_DRIVERS, drivers, HttpServletResponse.SC_OK);
+                createResponse(response, Message.Driver.SUCCESSFULLY_RETRIEVED_DRIVERS, users, HttpServletResponse.SC_OK);
             }
         } catch (DBException e) {
             e.printStackTrace();

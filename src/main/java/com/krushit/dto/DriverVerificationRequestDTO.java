@@ -1,6 +1,6 @@
 package com.krushit.dto;
 
-public class DriverVerificationRequest {
+public class DriverVerificationRequestDTO {
     private String verificationStatus;
     private String message;
 

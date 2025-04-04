@@ -35,6 +35,9 @@ public class UserDAOImpl implements IUserDAO {
             "SET total_ratings = ((total_ratings * rating_count) + ?) / (rating_count + 1), " +
             "rating_count = rating_count + 1 " +
             "WHERE user_id = ?;";
+    private static final String GET_CUSTOMERS_BY_RATING_AND_REVIEW = "SELECT * FROM users " +
+            "WHERE rating_count < ? " +
+            "AND total_ratings > ? ";
 
     @Override
     public void registerUser(User user) throws DBException {
@@ -170,7 +173,7 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public Optional<User> getUserDetails(int userId) throws DBException {
+    public Optional<User> getUser(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_USER_DETAIL)) {
             preparedStatement.setInt(1, userId);
@@ -197,7 +200,7 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public List<User> fetchAllCustomers() throws DBException {
+    public List<User> getAllCustomers() throws DBException {
         List<User> users = new ArrayList<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_USERS);
@@ -219,7 +222,7 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public String getUserDisplayIdById(int userId) throws DBException {
+    public String getUserDisplayId(int userId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_DISPLAY_ID_FROM_USER_ID)) {
             stmt.setInt(1, userId);
@@ -235,7 +238,7 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public String getUserFullNameById(int userId) throws DBException {
+    public String getUserFullName(int userId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_FULL_NAME_FROM_USER_ID)) {
             statement.setInt(1, userId);
@@ -268,7 +271,7 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) throws DBException {
+    public Optional<User> getUserByEmail(String email) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_USER_BY_EMAIL)) {
             statement.setString(1, email);
@@ -335,4 +338,37 @@ public class UserDAOImpl implements IUserDAO {
         }
         return false;
     }
+
+    public List<User> getUsersByLowRatingAndReviewCount(double ratingThreshold, int reviewCountThreshold) throws DBException {
+        List<User> users = new ArrayList<>();
+        try (Connection connection = DBConfig.INSTANCE.getConnection();
+             PreparedStatement ps = connection.prepareStatement(GET_CUSTOMERS_BY_RATING_AND_REVIEW)) {
+            ps.setDouble(1, ratingThreshold);
+            ps.setInt(2, reviewCountThreshold);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User.UserBuilder()
+                        .setUserId(rs.getInt("user_id"))
+                        .setRole(Role.getType(rs.getInt("role_id")))
+                        .setFirstName(rs.getString("first_name"))
+                        .setLastName(rs.getString("last_name"))
+                        .setPhoneNo(rs.getString("phone_no"))
+                        .setEmailId(rs.getString("email_id"))
+                        .setPassword(rs.getString("password"))
+                        .setDisplayId(rs.getString("display_id"))
+                        .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
+                        .setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime())
+                        .setCreatedBy(rs.getString("created_by"))
+                        .setUpdatedBy(rs.getString("updated_by"))
+                        .setTotalRatings(rs.getInt("total_ratings"))
+                        .setRatingCount(rs.getInt("rating_count"))
+                        .build();
+                users.add(user);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_GETTING_CUSTOMERS_BY_RATING, e);
+        }
+        return users;
+    }
+
 }

@@ -13,14 +13,15 @@ public interface IUserDAO {
     boolean isUserExist(String emailID, String phoneNo) throws DBException;
     boolean isValidUser(String emailID, String password) throws DBException;
     boolean isUserExist(int userId) throws DBException;
-    Optional<User> getUserDetails(int userId) throws DBException;
-    List<User> fetchAllCustomers() throws DBException;
-    String getUserDisplayIdById(int userId) throws DBException;
-    String getUserFullNameById(int userId) throws DBException;
+    Optional<User> getUser(int userId) throws DBException;
+    List<User> getAllCustomers() throws DBException;
+    String getUserDisplayId(int userId) throws DBException;
+    String getUserFullName(int userId) throws DBException;
     void updateUser(User updatedUser) throws DBException;
-    Optional<User> findByEmail(String email) throws DBException;
+    Optional<User> getUserByEmail(String email) throws DBException;
     void updatePassword(String email, String newPassword) throws DBException;
     void updateUserRating(int toUserId, int rating, Connection connection) throws DBException;
     void blockUser(int userId) throws DBException;
     boolean isUserBlocked(int userId) throws DBException;
+    List<User> getUsersByLowRatingAndReviewCount(double ratingThreshold, int reviewCountThreshold) throws DBException;
 }

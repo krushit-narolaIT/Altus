@@ -15,7 +15,6 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,7 +68,7 @@ public class RideDAOImpl implements IRideDAO {
             "WHERE driver_id = ? AND ride_date = ? " +
             "AND pick_up_time >= ? AND pick_up_time <= ? " +
             "AND ride_status IN ('Scheduled', 'Ongoing') ";
-
+    @Override
     public List<RideRequest> getAllMatchingRideRequests(int driverId) throws DBException {
         List<RideRequest> rideRequests = new ArrayList<>();
         try (Connection conn = DBConfig.INSTANCE.getConnection();
@@ -95,7 +94,7 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public Optional<RideRequest> getRideRequestById(int rideRequestId) throws DBException {
+    public Optional<RideRequest> getRideRequest(int rideRequestId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(GET_RIDE_REQUEST_BY_ID)) {
             pstmt.setInt(1, rideRequestId);
@@ -185,7 +184,7 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public Optional<Ride> getRideById(int rideId) throws DBException {
+    public Optional<Ride> getRide(int rideId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_RIDE_BY_ID)) {
             stmt.setInt(1, rideId);
@@ -195,7 +194,7 @@ public class RideDAOImpl implements IRideDAO {
                         .setRideId(rs.getInt("ride_id"))
                         .setCustomerId(rs.getInt("customer_id"))
                         .setDriverId(rs.getInt("driver_id"))
-                        .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
+                        .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
                         .setRideDate(rs.getDate("ride_date").toLocalDate())
                         .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                         .setDisplayId(rs.getString("display_id"))
@@ -224,7 +223,7 @@ public class RideDAOImpl implements IRideDAO {
     public void updateRideCancellation(RideCancellationDetailsDTO cancellationDetails) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_RIDE_STATUS);) {
-            stmt.setString(1, cancellationDetails.getRideStatus());
+            stmt.setString(1, RideStatus.getType(cancellationDetails.getRideStatus()));
             stmt.setDouble(2, cancellationDetails.getCancellationCharge());
             stmt.setDouble(3, cancellationDetails.getDriverEarning());
             stmt.setDouble(4, cancellationDetails.getSystemEarning());
@@ -243,7 +242,7 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public List<Ride> getAllRideByUserId(int userId) throws DBException {
+    public List<Ride> getAllRidesByUserId(int userId) throws DBException {
         List<Ride> rideList = new ArrayList<>();
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = conn.prepareStatement(GET_RIDE_BY_USER_ID)) {
@@ -253,7 +252,7 @@ public class RideDAOImpl implements IRideDAO {
             while (rs.next()) {
                 Ride ride = new Ride.RideBuilder()
                         .setRideId(rs.getInt("ride_id"))
-                        .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
+                        .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
                         .setPickLocationId(rs.getInt("pick_location_id"))
                         .setDropOffLocationId(rs.getInt("drop_off_location_id"))
                         .setCustomerId(rs.getInt("customer_id"))
@@ -286,7 +285,7 @@ public class RideDAOImpl implements IRideDAO {
             preparedStatement.setInt(1, rideId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    rideStatus = RideStatus.getType(resultSet.getString("ride_status"));
+                    rideStatus = RideStatus.valueOf(resultSet.getString("ride_status"));
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
@@ -296,7 +295,7 @@ public class RideDAOImpl implements IRideDAO {
     }
 
     @Override
-    public List<Ride> getRideDetailsByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
+    public List<Ride> getRidesByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws DBException {
         List<Ride> rideList = new ArrayList<>();
         String GET_RIDES = GET_DRIVER_RIDES_BY_DATE_RANGE;
         if (driverId == 0) {
@@ -310,7 +309,7 @@ public class RideDAOImpl implements IRideDAO {
                     Ride.RideBuilder builder = new Ride.RideBuilder()
                             .setRideId(rs.getInt("ride_id"))
                             .setDisplayId(rs.getString("display_id"))
-                            .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
+                            .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
                             .setPickLocationId(rs.getInt("pick_location_id"))
                             .setDropOffLocationId(rs.getInt("drop_off_location_id"))
                             .setCustomerId(rs.getInt("customer_id"))

@@ -6,5 +6,6 @@ import com.krushit.model.Feedback;
 
 public interface IFeedbackDAO {
     void saveFeedback(Feedback feedback) throws DBException;
-    int findToUserIdByRide(int rideId, Role userRole) throws DBException;
+    int getRecipientUserIdByRideId(int rideId, Role userRole) throws DBException;
+    boolean isFeedbackGiven(int fromUserId, int toUserId, int rideId) throws DBException;
 }

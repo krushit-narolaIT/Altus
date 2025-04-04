@@ -1,8 +1,10 @@
 package com.krushit.dto;
 
+import com.krushit.common.enums.RideStatus;
+
 public class RideCancellationDetailsDTO {
     private final int rideId;
-    private final String rideStatus; //TODO : Use Enum
+    private final RideStatus rideStatus;
     private final double cancellationCharge;
     private final double driverEarning;
     private final double systemEarning;
@@ -21,7 +23,7 @@ public class RideCancellationDetailsDTO {
         return rideId;
     }
 
-    public String getRideStatus() {
+    public RideStatus getRideStatus() {
         return rideStatus;
     }
 
@@ -43,7 +45,7 @@ public class RideCancellationDetailsDTO {
 
     public static class RideCancellationDetailsBuilder {
         private int rideId;
-        private String rideStatus;
+        private RideStatus rideStatus;
         private double cancellationCharge;
         private double driverEarning;
         private double systemEarning;
@@ -54,7 +56,7 @@ public class RideCancellationDetailsDTO {
             return this;
         }
 
-        public RideCancellationDetailsBuilder setRideStatus(String rideStatus) {
+        public RideCancellationDetailsBuilder setRideStatus(RideStatus rideStatus) {
             this.rideStatus = rideStatus;
             return this;
         }

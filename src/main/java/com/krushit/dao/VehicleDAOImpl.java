@@ -39,6 +39,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     private static final String DELETE_DRIVER_VEHICLE = "DELETE FROM Vehicles WHERE driver_id = (SELECT driver_id FROM Drivers WHERE user_id = ?)";
     private static final String GET_SERVICE_BY_SERVICE_ID = "SELECT * FROM Vehicle_Service WHERE service_id = ?";
 
+    @Override
     public boolean isVehicleServiceExists(String serviceName) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(CHECK_VEHICLE_SERVICE_EXIST)) {
@@ -51,6 +52,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    @Override
     public void addVehicleService(VehicleService vehicleService) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement insertStmt = connection.prepareStatement(INSERT_VEHICLE_SERVICE)) {
@@ -66,6 +68,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    @Override
     public boolean isBrandModelExists(String brandName, String model) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement checkStatement = connection.prepareStatement(CHECK_BRAND_MODEL_EXISTENCE_QUERY)) {
@@ -79,6 +82,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    @Override
     public boolean isBrandModelExistsByID(int brandModelId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(CHECK_BRAND_MODEL_EXISTENCE_BY_ID)) {
@@ -91,7 +95,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
-
+    @Override
     public void addBrandModel(BrandModel brandModel) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT_BRAND_MODEL)) {
@@ -105,6 +109,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    @Override
     public void addVehicle(Vehicle vehicle) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(INSERT_VEHICLE_QUERY)) {
@@ -123,6 +128,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    @Override
     public boolean isDriverVehicleExist(int driverID) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_DRIVER_VEHICLE_EXIST)) {
@@ -135,6 +141,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         }
     }
 
+    @Override
     public List<BrandModelResponseDTO> getAllBrandModels() throws DBException {
         List<BrandModelResponseDTO> brandModelList = new ArrayList<>();
         Map<String, List<String>> brandModelMap = new HashMap<>();
@@ -155,7 +162,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         return brandModelList;
     }
 
-
+    @Override
     public int getMinYearForBrandModel(int brandModelId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(GET_MINIMUM_VEHICLE_YEAR)) {
@@ -168,7 +175,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_MIN_YEAR, e);
         }
-        return  0;
+        return 0;
     }
 
     @Override
@@ -211,7 +218,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     }
 
     @Override
-    public Optional<VehicleService> getServiceById(int serviceId) throws DBException {
+    public Optional<VehicleService> getVehicleService(int serviceId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement ps = connection.prepareStatement(GET_SERVICE_BY_SERVICE_ID)) {
             ps.setInt(1, serviceId);

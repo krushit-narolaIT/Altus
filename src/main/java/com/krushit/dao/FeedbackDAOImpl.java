@@ -16,6 +16,7 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
     private static final String SAVE_FEEDBACK = "INSERT INTO feedback (from_user_id, to_user_id, ride_id, rating, comment) VALUES (?, ?, ?, ?, ?)";
     private final IUserDAO userDAO = new UserDAOImpl();
 
+    @Override
     public void saveFeedback(Feedback feedback) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement statement = connection.prepareStatement(SAVE_FEEDBACK)) {
@@ -33,8 +34,10 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
         }
     }
 
-    public int findToUserIdByRide(int rideId, Role role) throws DBException {
-        String query = "SELECT customer_id FROM rides WHERE ride_id = ?";;
+    @Override
+    public int getRecipientUserIdByRideId(int rideId, Role role) throws DBException {
+        String query = "SELECT customer_id FROM rides WHERE ride_id = ?";
+        ;
         if (Role.ROLE_CUSTOMER == role) {
             query = "SELECT driver_id FROM rides WHERE ride_id = ?";
         }
@@ -51,6 +54,7 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
         return 0;
     }
 
+    @Override
     public boolean isFeedbackGiven(int fromUserId, int toUserId, int rideId) throws DBException {
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(IS_FEEDBACK_GIVEN)) {

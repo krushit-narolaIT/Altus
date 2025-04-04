@@ -13,10 +13,10 @@ public enum RideStatus {
         this.status = status;
     }
 
-    public static RideStatus getType(String status) {
+    public static String getType(RideStatus status) {
         for (RideStatus r : RideStatus.values()) {
-            if (r.status.equalsIgnoreCase(status)) {
-                return r;
+            if (r == status) {
+                return r.getStatus();
             }
         }
         return null;

@@ -5,7 +5,7 @@ import com.krushit.common.enums.DriverDocumentVerificationStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
-import com.krushit.dto.DriverVerificationRequest;
+import com.krushit.dto.DriverVerificationRequestDTO;
 import com.krushit.model.Driver;
 import com.krushit.model.User;
 import com.krushit.model.Vehicle;
@@ -36,7 +36,7 @@ public class DriverService {
         if (driverDAO.isLicenseNumberExist(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
-        if (driverDAO.isDocumentUnderReview(driver.getDriverId()).equalsIgnoreCase(DriverDocumentVerificationStatus.PENDING.getStatus())) {
+        if (driverDAO.isDocumentUnderReview(driver.getDriverId()) == DriverDocumentVerificationStatus.PENDING) {
             throw new ApplicationException(Message.Driver.DOCUMENT_IS_UNDER_REVIEW);
         }
         Driver updatedDriver = (Driver) new Driver.DriverBuilder()
@@ -75,24 +75,24 @@ public class DriverService {
         return driverDAO.isDriverExist(driverId);
     }
 
-    public void verifyDriver(DriverVerificationRequest verificationRequest, int driverId) throws ApplicationException {
+    public void verifyDriver(DriverVerificationRequestDTO verificationRequestDTO, int driverId) throws ApplicationException {
         if (!isDriverExist(driverId)) {
             throw new ApplicationException(Message.DRIVER_NOT_EXIST);
         }
         if(!driverDAO.isDocumentExist(driverId)){
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
-        if(DriverDocumentVerificationStatus.ACCEPTED.getStatus().equalsIgnoreCase(verificationRequest.getVerificationStatus())){
+        if(DriverDocumentVerificationStatus.ACCEPTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
             driverDAO.updateDriveVerificationDetail(driverId, true, null);
-        } else if(DriverDocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequest.getVerificationStatus())) {
-            driverDAO.updateDriveVerificationDetail(driverId, false, verificationRequest.getMessage());
+        } else if(DriverDocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
+            driverDAO.updateDriveVerificationDetail(driverId, false, verificationRequestDTO.getMessage());
         } else {
             throw new ApplicationException(Message.Driver.PLEASE_PERFORM_VALID_VERIFICATION_OPERATION);
         }
     }
 
     public List<Driver> getAllDrivers() throws ApplicationException {
-        return driverDAO.fetchAllDrivers();
+        return driverDAO.getAllDrivers();
     }
 
     public void addVehicle(Vehicle vehicle, int userId) throws ApplicationException {

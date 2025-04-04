@@ -19,6 +19,9 @@ public class User {
     private final String password;
     private final boolean isActive;
     private final String displayId;
+    private final boolean isBlocked;
+    private final int totalRatings;
+    private final int ratingCount;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
     private final String createdBy;
@@ -34,96 +37,13 @@ public class User {
         this.password = builder.password;
         this.isActive = builder.isActive;
         this.displayId = builder.displayId;
+        this.isBlocked = builder.isBlocked;
+        this.totalRatings = builder.totalRatings;
+        this.ratingCount = builder.ratingCount;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
         this.createdBy = builder.createdBy;
         this.updatedBy = builder.updatedBy;
-    }
-
-    @JsonPOJOBuilder(withPrefix = "set")
-    public static class UserBuilder {
-        private int userId;
-        private Role role;
-        private String firstName;
-        private String lastName;
-        private String phoneNo;
-        private String emailId;
-        private String password;
-        private boolean isActive;
-        private String displayId;
-        private LocalDateTime createdAt;
-        private LocalDateTime updatedAt;
-        private String createdBy;
-        private String updatedBy;
-
-        public UserBuilder setUserId(int userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public UserBuilder setRole(Role role) {
-            this.role = role;
-            return this;
-        }
-
-        public UserBuilder setFirstName(String firstName) {
-            this.firstName = firstName;
-            return this;
-        }
-
-        public UserBuilder setLastName(String lastName) {
-            this.lastName = lastName;
-            return this;
-        }
-
-        public UserBuilder setPhoneNo(String phoneNo) {
-            this.phoneNo = phoneNo;
-            return this;
-        }
-
-        public UserBuilder setEmailId(String emailId) {
-            this.emailId = emailId;
-            return this;
-        }
-
-        public UserBuilder setPassword(String password) {
-            this.password = password;
-            return this;
-        }
-
-        public UserBuilder setActive(boolean isActive) {
-            this.isActive = isActive;
-            return this;
-        }
-
-        public UserBuilder setDisplayId(String displayId) {
-            this.displayId = displayId;
-            return this;
-        }
-
-        public UserBuilder setCreatedAt(LocalDateTime createdAt) {
-            this.createdAt = createdAt;
-            return this;
-        }
-
-        public UserBuilder setUpdatedAt(LocalDateTime updatedAt) {
-            this.updatedAt = updatedAt;
-            return this;
-        }
-
-        public UserBuilder setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
-            return this;
-        }
-
-        public UserBuilder setUpdatedBy(String updatedBy) {
-            this.updatedBy = updatedBy;
-            return this;
-        }
-
-        public User build() {
-            return new User(this);
-        }
     }
 
     @Override
@@ -195,5 +115,121 @@ public class User {
 
     public String getUpdatedBy() {
         return updatedBy;
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public int getTotalRatings() {
+        return totalRatings;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    @JsonPOJOBuilder(withPrefix = "set")
+    public static class UserBuilder {
+        private int userId;
+        private Role role;
+        private String firstName;
+        private String lastName;
+        private String phoneNo;
+        private String emailId;
+        private String password;
+        private boolean isActive;
+        private String displayId;
+        private boolean isBlocked;
+        private int totalRatings;
+        private int ratingCount;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+        private String createdBy;
+        private String updatedBy;
+
+        public UserBuilder setUserId(int userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public UserBuilder setRole(Role role) {
+            this.role = role;
+            return this;
+        }
+
+        public UserBuilder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public UserBuilder setLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public UserBuilder setPhoneNo(String phoneNo) {
+            this.phoneNo = phoneNo;
+            return this;
+        }
+
+        public UserBuilder setEmailId(String emailId) {
+            this.emailId = emailId;
+            return this;
+        }
+
+        public UserBuilder setPassword(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserBuilder setActive(boolean isActive) {
+            this.isActive = isActive;
+            return this;
+        }
+
+        public UserBuilder setDisplayId(String displayId) {
+            this.displayId = displayId;
+            return this;
+        }
+
+        public UserBuilder setIsBlocked(boolean isBlocked) {
+            this.isBlocked = isBlocked;
+            return this;
+        }
+
+        public UserBuilder setTotalRatings(int totalRatings) {
+            this.totalRatings = totalRatings;
+            return this;
+        }
+
+        public UserBuilder setRatingCount(int ratingCount) {
+            this.ratingCount = ratingCount;
+            return this;
+        }
+
+        public UserBuilder setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public UserBuilder setUpdatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+        public UserBuilder setCreatedBy(String createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+
+        public UserBuilder setUpdatedBy(String updatedBy) {
+            this.updatedBy = updatedBy;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
     }
 }

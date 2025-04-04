@@ -114,7 +114,7 @@ public class VehicleRideService {
     }
 
     public void acceptRide(int driverId, int rideRequestId) throws Exception {
-        Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequestById(rideRequestId);
+        Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequest(rideRequestId);
         if (!rideRequestOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_REQUEST_NOT_EXIST);
         }
@@ -132,7 +132,7 @@ public class VehicleRideService {
         String userIdPart = String.format("%04d", rideRequest.getUserId() % 10000);
         String driverIdPart = String.format("%04d", driverId % 10000);
         String displayId = "R" + userIdPart + "I" + driverIdPart;
-        Optional<VehicleService> vehicleService = vehicleDAO.getServiceById(rideRequest.getVehicleServiceId());
+        Optional<VehicleService> vehicleService = vehicleDAO.getVehicleService(rideRequest.getVehicleServiceId());
         VehicleService service = vehicleService.orElseThrow(() -> new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST));
         double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
         double commissionPercentage = locationService.getCommissionByDistance(distance);
@@ -160,7 +160,7 @@ public class VehicleRideService {
     }
 
     public void cancelRide(int rideId, int userId, boolean isDriver) throws ApplicationException {
-        Optional<Ride> rideOpt = rideDAO.getRideById(rideId);
+        Optional<Ride> rideOpt = rideDAO.getRide(rideId);
         if (!rideOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_NOT_FOUND_FOR_CANCELLATION);
         }
@@ -193,11 +193,11 @@ public class VehicleRideService {
                 systemEarning = cancellationCharge * 0.55;
             }
         }
-        String rideStatus = null;
+        RideStatus rideStatus = null;
         if (isDriver) {
-            rideStatus = RideStatus.REJECTED.getStatus();
+            rideStatus = RideStatus.REJECTED;
         } else {
-            rideStatus = RideStatus.CANCELLED.getStatus();
+            rideStatus = RideStatus.CANCELLED;
         }
         RideCancellationDetailsDTO cancellationDetails = new RideCancellationDetailsDTO.RideCancellationDetailsBuilder()
                 .setRideId(rideId)
@@ -211,7 +211,7 @@ public class VehicleRideService {
     }
 
     public List<RideDTO> getAllRides(int userId, boolean isDriver) throws ApplicationException {
-        List<Ride> rideList = rideDAO.getAllRideByUserId(userId);
+        List<Ride> rideList = rideDAO.getAllRidesByUserId(userId);
         List<RideDTO> rideDTOList = new ArrayList<>();
         for (Ride ride : rideList) {
             try {
@@ -247,12 +247,12 @@ public class VehicleRideService {
         return rideDTOList;
     }
 
-    public RideStatus fetchRideStatus(int rideId) throws DBException {
+    public RideStatus getRideStatus(int rideId) throws DBException {
         return rideDAO.getRideStatus(rideId);
     }
 
     public DateRangeIncomeResponseDTO getIncomeByDateRange(int driverId, LocalDate startDate, LocalDate endDate) throws ApplicationException {
-        List<Ride> rideDetails = rideDAO.getRideDetailsByDateRange(driverId, startDate, endDate);
+        List<Ride> rideDetails = rideDAO.getRidesByDateRange(driverId, startDate, endDate);
         int totalRides = rideDAO.getTotalRides(driverId, startDate, endDate);
         double totalEarning = rideDAO.getTotalEarnings(driverId, startDate, endDate);
         List<RideDTO> rideDTOS = toRideDTOList(rideDetails);

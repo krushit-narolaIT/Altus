@@ -1,6 +1,5 @@
 package com.krushit.dao;
 
-import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.BrandModelResponseDTO;
 import com.krushit.model.RideRequest;
@@ -8,9 +7,7 @@ import com.krushit.model.Vehicle;
 import com.krushit.model.VehicleService;
 import com.krushit.model.BrandModel;
 
-import java.sql.Connection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface IVehicleDAO {
@@ -25,6 +22,6 @@ public interface IVehicleDAO {
     int getMinYearForBrandModel(int brandModelId) throws DBException;
     List<VehicleService> getAllAvailableVehicleServices() throws DBException;
     void bookRide(RideRequest rideRequest) throws DBException;
-    Optional<VehicleService> getServiceById(int vehicleServiceId) throws DBException;
+    Optional<VehicleService> getVehicleService(int vehicleServiceId) throws DBException;
     void deleteVehicleByUserId(int userId) throws DBException;
 }

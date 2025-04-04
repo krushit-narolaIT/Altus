@@ -6,7 +6,6 @@ import com.krushit.common.enums.DriverDocumentVerificationStatus;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
 import com.krushit.model.Driver;
-import com.krushit.model.User;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -108,7 +107,7 @@ public class DriverDAOImpl implements IDriverDAO {
     }
 
     @Override
-    public List<Driver> fetchAllDrivers() throws DBException {
+    public List<Driver> getAllDrivers() throws DBException {
         List<Driver> drivers = new ArrayList<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_DRIVERS);
@@ -196,12 +195,12 @@ public class DriverDAOImpl implements IDriverDAO {
     }
 
     @Override
-    public String isDocumentUnderReview(int driverId) throws DBException {
+    public DriverDocumentVerificationStatus isDocumentUnderReview(int driverId) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(IS_DOCUMENT_UNDER_REVIEW)) {
             stmt.setInt(1, driverId);
             try (ResultSet rs = stmt.executeQuery()) {
-                return rs.getString("verification_status");
+                return DriverDocumentVerificationStatus.getType(rs.getString("verification_status"));
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_LICENCE_NUMBER, e);

@@ -2,11 +2,8 @@ package com.krushit.controller.admin;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
-import com.krushit.dto.DriverVerificationRequest;
+import com.krushit.dto.DriverVerificationRequestDTO;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.service.DriverService;
 import com.krushit.controller.validator.DriverServicesValidator;
@@ -32,7 +29,7 @@ public class VerifyDriverDocumentController extends HttpServlet {
             User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
             int driverId = Integer.parseInt(request.getParameter("driverId"));
-            DriverVerificationRequest verificationRequest = ObjectMapperUtils.toObject(request.getReader(), DriverVerificationRequest.class);
+            DriverVerificationRequestDTO verificationRequest = ObjectMapperUtils.toObject(request.getReader(), DriverVerificationRequestDTO.class);
             DriverServicesValidator.validateDriverApprovalRequest(verificationRequest);
             driverService.verifyDriver(verificationRequest, driverId);
             createResponse(response, Message.Driver.VERIFICATION_DONE_SUCCESSFUL, null, HttpServletResponse.SC_OK);

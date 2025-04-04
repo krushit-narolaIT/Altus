@@ -24,7 +24,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/UserLogin",
+							"raw": "http://localhost:8080/Altus_war_exploded/userLogin",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -32,7 +32,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"UserLogin"
+								"userLogin"
 							]
 						}
 					},
@@ -85,7 +85,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"serviceName\": \"Altus Black\",\r\n    \"baseFare\": 250.00,\r\n    \"perKmRate\": 37.50,\r\n    \"vehicleType\": \"4W\",\r\n    \"maxPassengers\": 4,\r\n    \"commissionPercentage\": 13.4\r\n}\r\n",
+							"raw": "{\r\n    \"serviceName\": \"Altus Green\",\r\n    \"baseFare\": 150.00,\r\n    \"perKmRate\": 12,\r\n    \"vehicleType\": \"4W\",\r\n    \"maxPassengers\": 4,\r\n    \"commissionPercentage\": 8.5\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -93,7 +93,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/AddVehicleService",
+							"raw": "http://localhost:8080/Altus_war_exploded/addVehicleService",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -101,7 +101,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"AddVehicleService"
+								"addVehicleService"
 							]
 						}
 					},
@@ -143,7 +143,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"serviceId\": 2,\r\n    \"brandName\": \"Range Rover\",\r\n    \"model\": \"Land Rover\",\r\n    \"minYear\": 2012\r\n}\r\n",
+							"raw": "{\r\n    \"serviceId\": 3,\r\n    \"brandName\": \"Jeep\",\r\n    \"model\": \"Grand Wagoneer\",\r\n    \"minYear\": 2023\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -151,7 +151,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/AddBrandModel",
+							"raw": "http://localhost:8080/Altus_war_exploded/addBrandModel",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -159,7 +159,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"AddBrandModel"
+								"addBrandModel"
 							]
 						}
 					},
@@ -183,7 +183,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/GetAllPendingDriverVerification",
+							"raw": "http://localhost:8080/Altus_war_exploded/getAllPendingVerification",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -191,7 +191,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"GetAllPendingDriverVerification"
+								"getAllPendingVerification"
 							]
 						}
 					},
@@ -199,9 +199,21 @@
 				},
 				{
 					"name": "Get All Brand Model",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "http://localhost:8080/Altus_war_exploded/GetAllModels",
 							"protocol": "http",
@@ -302,7 +314,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"driverId\" : 6,\r\n    \"verificationStatus\": \"ACCEPT\"\r\n}",
+							"raw": "{\r\n    \"driverId\" : 8,\r\n    \"verificationStatus\": \"ACCEPT\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -310,7 +322,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/DriverVerification",
+							"raw": "http://localhost:8080/Altus_war_exploded/verifyDriverDocument",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -318,7 +330,63 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"DriverVerification"
+								"verifyDriverDocument"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "block User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/blockUser?userId=13",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"blockUser"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Rides With Earning",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/getRideDetailsByRange?startDate=2025-03-20&endDate=2025-03-31",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"getRideDetailsByRange"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2025-03-20"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-03-31"
+								}
 							]
 						}
 					},
@@ -336,7 +404,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"emailId\": \"rashu@email.com\",\r\n    \"password\": \"Rashu@123\"\r\n}\r\n",
+							"raw": "{\r\n    \"emailId\": \"ajs@narola.email\",\r\n    \"password\": \"Arpan@113\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -394,7 +462,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"from\" : 5,\r\n    \"to\" : 7\r\n}",
+							"raw": "{\r\n    \"from\" : 1,\r\n    \"to\" : 7\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -402,7 +470,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/BookRideRequest",
+							"raw": "http://localhost:8080/Altus_war_exploded/rideRequest",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -410,20 +478,20 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"BookRideRequest"
+								"rideRequest"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Request for a ride",
+					"name": "Book Ride",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"pickUpLocationId\": 5,\r\n    \"dropOffLocationId\": 4,\r\n    \"vehicleServiceId\": 1,\r\n    \"rideDate\": \"2025-03-26\",\r\n    \"pickUpTime\": \"09:30:00\"\r\n}\r\n",
+							"raw": "{\r\n    \"pickUpLocationId\": 6,\r\n    \"dropOffLocationId\": 7,\r\n    \"vehicleServiceId\": 3,\r\n    \"rideDate\": \"2025-04-04\",\r\n    \"pickUpTime\": \"15:00:00\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -431,7 +499,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/BookRide",
+							"raw": "http://localhost:8080/Altus_war_exploded/bookRide",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -439,7 +507,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"BookRide"
+								"bookRide"
 							]
 						}
 					},
@@ -519,6 +587,93 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailId\" : \"charan@gmail.com\",\r\n    \"oldPassword\" : \"Charan@123\",\r\n    \"newPassword\" : \"Charan@321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/changePassword",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"changePassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Give Feedback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rideId\" : 1,\r\n    \"rating\" : 5,\r\n    \"comment\" : \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/giveFeedback",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"giveFeedback"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Block User Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailId\": \"vincity@gmail.com\",\r\n    \"password\": \"User@123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/userLogin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"userLogin"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -532,7 +687,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"driverId\": 6,\r\n  \"brandModelId\": 5,\r\n  \"registrationNumber\": \"GJ05KB7537\",\r\n  \"year\": 2018,\r\n  \"fuelType\": \"Diesel\",\r\n  \"transmission\": \"Manual\",\r\n  \"groundClearance\": 190.50,\r\n  \"wheelBase\": 290.75\r\n}\r\n",
+							"raw": "{\r\n  \"brandModelId\": 8,\r\n  \"registrationNumber\": \"GJ01KB7537\",\r\n  \"year\": 2024,\r\n  \"fuelType\": \"Diesel\",\r\n  \"transmission\": \"Automatic\",\r\n  \"groundClearance\": 180,\r\n  \"wheelBase\": 320\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -540,7 +695,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/AddVehicle",
+							"raw": "http://localhost:8080/Altus_war_exploded/addVehicle",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -548,7 +703,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"AddVehicle"
+								"addVehicle"
 							]
 						}
 					},
@@ -561,7 +716,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"emailId\": \"andrew@gmail.com\",\r\n    \"password\": \"User@123\"\r\n}\r\n",
+							"raw": "{\r\n    \"emailId\": \"Ashish@gmail.com\",\r\n    \"password\": \"User@123\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -590,7 +745,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"firstName\": \"Andrew\",\r\n    \"lastName\": \"Singh\",\r\n    \"phoneNo\": \"6666695499\",\r\n    \"emailId\": \"andrew@gmail.com\",\r\n    \"password\": \"User@123\"\r\n}",
+							"raw": "{\r\n    \"firstName\": \"Ashish\",\r\n    \"lastName\": \"Patel\",\r\n    \"phoneNo\": \"6666676666\",\r\n    \"emailId\": \"Ashish@gmail.com\",\r\n    \"password\": \"User@123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -598,7 +753,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/DriverSignUp",
+							"raw": "http://localhost:8080/Altus_war_exploded/driverSignUp",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -606,7 +761,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"DriverSignUp"
+								"driverSignUp"
 							]
 						}
 					},
@@ -618,16 +773,22 @@
 						"method": "PUT",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"licenceNumber\": \"DL0855698712365\",\r\n    \"licencePhoto\": \"D:\\\\Public\\\\Images\\\\Licence_Photo_1.jpg\"\r\n}\r\n",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "licenceNumber",
+									"value": "GJ0155698712369",
+									"type": "text"
+								},
+								{
+									"key": "licencePhoto",
+									"type": "file",
+									"src": "postman-cloud:///1f00a3f1-8217-4a70-90c6-b7f2e2626498"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/AddDriverDocument",
+							"raw": "http://localhost:8080/Altus_war_exploded/addDriverDetails",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -635,7 +796,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"AddDriverDocument"
+								"addDriverDetails"
 							]
 						}
 					},
@@ -647,7 +808,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/GetAllRideRequests",
+							"raw": "http://localhost:8080/Altus_war_exploded/getAllRideRequest",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -655,7 +816,7 @@
 							"port": "8080",
 							"path": [
 								"Altus_war_exploded",
-								"GetAllRideRequests"
+								"getAllRideRequest"
 							]
 						}
 					},
@@ -667,7 +828,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8080/Altus_war_exploded/acceptRide?rideRequestId=2",
+							"raw": "http://localhost:8080/Altus_war_exploded/acceptRide?rideRequestId=10",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -680,7 +841,7 @@
 							"query": [
 								{
 									"key": "rideRequestId",
-									"value": "2"
+									"value": "10"
 								}
 							]
 						}
@@ -806,8 +967,114 @@
 				{
 					"name": "Delete driver vehicle",
 					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/deleteVehicle",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"deleteVehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Income By Range",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var template = `\r",
+									"<style type=\"text/css\">\r",
+									"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}\r",
+									"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}\r",
+									"    .tftable tr {background-color:#ffffff;}\r",
+									"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}\r",
+									"    .tftable tr:hover {background-color:#e0ffff;}\r",
+									"</style>\r",
+									"\r",
+									"<table class=\"tftable\" border=\"1\">\r",
+									"    <tr>\r",
+									"        <th>Ride ID</th>\r",
+									"        <th>Ride Status</th>\r",
+									"        <th>Pick Location ID</th>\r",
+									"        <th>Drop-off Location ID</th>\r",
+									"        <th>Ride Date</th>\r",
+									"        <th>Pick-up Time</th>\r",
+									"        <th>Total Kilometers</th>\r",
+									"        <th>Total Cost</th>\r",
+									"        <th>Payment Mode</th>\r",
+									"        <th>Payment Status</th>\r",
+									"        <th>Cancellation Charge</th>\r",
+									"        <th>Driver Earning</th>\r",
+									"        <th>Cancellation Driver Earning</th>\r",
+									"        <th>Driver Penalty</th>\r",
+									"    </tr>\r",
+									"    \r",
+									"    {{#each response.data.ridesDTO}}\r",
+									"        <tr id=row_{{@key}}>\r",
+									"            <td>{{rideId}}</td>\r",
+									"            <td>{{rideStatus}}</td>\r",
+									"            <td>{{pickLocationId}}</td>\r",
+									"            <td>{{dropOffLocationId}}</td>\r",
+									"            <td>{{rideDate}}</td>\r",
+									"            <td>{{pickUpTime}}</td>\r",
+									"            <td>{{totalKm}}</td>\r",
+									"            <td>{{totalCost}}</td>\r",
+									"            <td>{{paymentMode}}</td>\r",
+									"            <td>{{paymentStatus}}</td>\r",
+									"            <td>{{cancellationCharge}}</td>\r",
+									"            <td>{{driverEarning}}</td>\r",
+									"            <td>{{cancellationDriverEarning}}</td>\r",
+									"            <td>{{driverPenalty}}</td>\r",
+									"        </tr>\r",
+									"    {{/each}}\r",
+									"</table>\r",
+									"`;\r",
+									"\r",
+									"function constructVisualizerPayload() {\r",
+									"    return {response: pm.response.json()}\r",
+									"}\r",
+									"\r",
+									"pm.visualizer.set(template, constructVisualizerPayload());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/Altus_war_exploded/getIncomeByRange?startDate=2025-03-20&endDate=2025-03-31",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"Altus_war_exploded",
+								"getIncomeByRange"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2025-03-20"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-03-31"
+								}
+							]
+						}
 					},
 					"response": []
 				}

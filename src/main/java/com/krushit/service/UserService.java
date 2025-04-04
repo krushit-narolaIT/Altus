@@ -36,14 +36,14 @@ public class UserService {
     }
 
     public List<User> getAllCustomers() throws ApplicationException {
-        return userDAO.fetchAllCustomers();
+        return userDAO.getAllCustomers();
     }
 
     public void updateUser(UserDTO userDTO, int userId) throws ApplicationException {
         if (userId == 0) {
             throw new ApplicationException("User ID is required");
         }
-        Optional<User> userOpt = userDAO.getUserDetails(userId);
+        Optional<User> userOpt = userDAO.getUser(userId);
         if (!userOpt.isPresent()) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
@@ -59,7 +59,7 @@ public class UserService {
     }
 
     public void updatePassword(String email, String oldPassword, String newPassword) throws ApplicationException {
-        Optional<User> userOpt = userDAO.findByEmail(email);
+        Optional<User> userOpt = userDAO.getUserByEmail(email);
         if (!userOpt.isPresent()) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
@@ -78,18 +78,22 @@ public class UserService {
     }
 
     public String getUserNameById(int userId) throws ApplicationException {
-        return userDAO.getUserFullNameById(userId);
+        return userDAO.getUserFullName(userId);
     }
 
     public String getUserDisplayIdById(int userId) throws ApplicationException{
-        return userDAO.getUserDisplayIdById(userId);
+        return userDAO.getUserDisplayId(userId);
     }
 
     public String getUserFullNameById(int userId) throws ApplicationException{
-        return userDAO.getUserFullNameById(userId);
+        return userDAO.getUserFullName(userId);
     }
 
     public Optional<User> getUserDetails(int fromUserId) throws ApplicationException{
-        return userDAO.getUserDetails(fromUserId);
+        return userDAO.getUser(fromUserId);
+    }
+
+    public List<User> getUsersWithLessRatingAndReviews(double ratingThreshold, int reviewCountThreshold) throws ApplicationException {
+        return userDAO.getUsersByLowRatingAndReviewCount(ratingThreshold, reviewCountThreshold);
     }
 }

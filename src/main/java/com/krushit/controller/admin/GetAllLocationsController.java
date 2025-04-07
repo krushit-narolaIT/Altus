@@ -27,9 +27,6 @@ public class GetAllLocationsController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         response.setContentType(Message.APPLICATION_JSON);
         try {
             //User user = SessionUtils.validateSession(request);

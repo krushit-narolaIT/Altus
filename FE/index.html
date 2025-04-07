@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Login</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="rootElem">
+
+    <div class="formEle" id="loginForm">
+        <h1>User Login</h1>
+        <form id="commonLoginForm" method="post" name="commonLoginForm">
+            <label for="email">Email: </label>
+            <input id="email" name="email" placeholder="Enter email" type="text" required>
+            <br />
+            <label for="password">Password</label>
+            <input id="password" name="password" placeholder="Enter password" type="password" required>
+            <br />
+            <button type="submit">Submit</button>
+            <p id="errorBlock"></p>
+        </form>
+        <br />
+        <hr />
+        <p class="signup-text">
+            Don't have an account?
+            <a href="signup.html" class="signup-link">Sign Up</a>
+        </p>
+    </div>
+</body>
+
+<script>
+    const form = document.getElementById("commonLoginForm");
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        const formData = JSON.stringify({ emailId: email, password: password });
+
+        const errorBlock = document.getElementById("errorBlock");
+
+        fetch("http://192.168.100.99:8081/Altus_war_exploded/userLogin", {
+            method: "POST",
+            body: formData,
+        })
+            .then((response) => {
+                let data = response.json().then(data => {
+                    if (response.status === 200) {
+                        console.log("API response:", data);
+                        errorBlock.className = "success";
+                        errorBlock.innerHTML = data.message;
+                    } else {
+                        console.log("API ERROR:", data);
+                        errorBlock.className = "error";
+                        errorBlock.innerHTML = data.message;
+                    }
+
+                });
+
+            })
+            .catch((error) => {
+                console.error("API error:", error);
+            });
+    });
+</script>
+
+</html>

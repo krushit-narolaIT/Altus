@@ -3,14 +3,12 @@ package com.krushit.controller.admin;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.Driver;
 import com.krushit.model.User;
-import com.krushit.service.DriverService;
 import com.krushit.service.UserService;
-import com.krushit.utils.*;
+import com.krushit.utils.ApplicationUtils;
+import com.krushit.utils.AuthUtils;
+import com.krushit.utils.SessionUtils;
+import com.krushit.utils.UserContextUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,8 +20,8 @@ import java.util.List;
 
 import static com.krushit.utils.ResponseUtils.createResponse;
 
-@WebServlet(value = "/getAllCustomersByRating")
-public class GetAllCustomersByRatingController extends HttpServlet {
+@WebServlet(value = "/getUsersByOffsetAndLimit")
+public class GetUsersByPaginationController extends HttpServlet {
     private final UserService userService = new UserService();
 
     @Override
@@ -32,19 +30,13 @@ public class GetAllCustomersByRatingController extends HttpServlet {
         try {
             User user = UserContextUtils.getUser();
             AuthUtils.validateAdminRole(user);
-            String rating = request.getParameter("rating");
-            String total_rating = request.getParameter("");
-            if (rating == null || total_rating == null) {
-                createResponse(response, Message.FeedBack.MISSING_RATING_REVIEW_COUNT_PARAMS, null, HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-            int ratingThreshold = Integer.parseInt(rating);
-            int reviewThreshold = Integer.parseInt(total_rating);
-            List<User> users = userService.getUsersWithLessRatingAndReviews(ratingThreshold, reviewThreshold);
+            int offset = Integer.parseInt(request.getParameter("offset"));
+            int limit = Integer.parseInt(request.getParameter("limit"));
+            List<User> users = userService.getCustomersByOffsetAndLimit(offset, limit);
             if (users.isEmpty()) {
-                createResponse(response, Message.Driver.NO_DRIVERS_FOUND, null, HttpServletResponse.SC_NO_CONTENT);
+                createResponse(response, Message.Customer.NO_CUSTOMER_FOUND, null, HttpServletResponse.SC_OK);
             } else {
-                createResponse(response, Message.Driver.SUCCESSFULLY_RETRIEVED_DRIVERS, users, HttpServletResponse.SC_OK);
+                createResponse(response, Message.Customer.SUCCESSFULLY_RETRIEVED_CUSTOMER, users, HttpServletResponse.SC_OK);
             }
         } catch (DBException e) {
             e.printStackTrace();

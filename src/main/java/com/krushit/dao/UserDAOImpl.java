@@ -36,8 +36,8 @@ public class UserDAOImpl implements IUserDAO {
             "rating_count = rating_count + 1 " +
             "WHERE user_id = ?;";
     private static final String GET_CUSTOMERS_BY_RATING_AND_REVIEW = "SELECT * FROM users " +
-            "WHERE rating_count < ? " +
-            "AND total_ratings > ? ";
+            "WHERE total_ratings < ? " +
+            "AND rating_count > ? ";
 
     @Override
     public void registerUser(User user) throws DBException {
@@ -339,11 +339,11 @@ public class UserDAOImpl implements IUserDAO {
         return false;
     }
 
-    public List<User> getUsersByLowRatingAndReviewCount(double ratingThreshold, int reviewCountThreshold) throws DBException {
+    public List<User> getUsersByLowRatingAndReviewCount(int ratingThreshold, int reviewCountThreshold) throws DBException {
         List<User> users = new ArrayList<>();
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement ps = connection.prepareStatement(GET_CUSTOMERS_BY_RATING_AND_REVIEW)) {
-            ps.setDouble(1, ratingThreshold);
+            ps.setInt(1, ratingThreshold);
             ps.setInt(2, reviewCountThreshold);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -369,6 +369,40 @@ public class UserDAOImpl implements IUserDAO {
             throw new DBException(Message.User.ERROR_WHILE_GETTING_CUSTOMERS_BY_RATING, e);
         }
         return users;
+    }
+
+    @Override
+    public List<User> getUsersByPagination(int offset, int limit) throws DBException{
+        List<User> userList = new ArrayList<>();
+        String sql = "SELECT * FROM users LIMIT ? OFFSET ?";
+        try (Connection conn = DBConfig.INSTANCE.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, limit);
+            ps.setInt(2, offset);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User.UserBuilder()
+                .setUserId(rs.getInt("user_id"))
+                        .setUserId(rs.getInt("user_id"))
+                        .setRole(Role.getType(rs.getInt("role_id")))
+                        .setFirstName(rs.getString("first_name"))
+                        .setLastName(rs.getString("last_name"))
+                        .setPhoneNo(rs.getString("phone_no"))
+                        .setEmailId(rs.getString("email_id"))
+                        .setDisplayId(rs.getString("display_id"))
+                        .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
+                        .setUpdatedAt(rs.getTimestamp("updated_at").toLocalDateTime())
+                        .setCreatedBy(rs.getString("created_by"))
+                        .setUpdatedBy(rs.getString("updated_by"))
+                        .setTotalRatings(rs.getInt("total_ratings"))
+                        .setRatingCount(rs.getInt("rating_count"))
+                .build();
+                userList.add(user);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new DBException(Message.User.ERROR_WHILE_GETTING_CUSTOMERS_BY_RATING, e);
+        }
+        return userList;
     }
 
 }

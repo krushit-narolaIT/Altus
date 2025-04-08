@@ -93,7 +93,17 @@ public class UserService {
         return userDAO.getUser(fromUserId);
     }
 
-    public List<User> getUsersWithLessRatingAndReviews(double ratingThreshold, int reviewCountThreshold) throws ApplicationException {
+    public List<User> getUsersWithLessRatingAndReviews(int ratingThreshold, int reviewCountThreshold) throws ApplicationException {
         return userDAO.getUsersByLowRatingAndReviewCount(ratingThreshold, reviewCountThreshold);
+    }
+
+    public List<User> getCustomersByOffsetAndLimit(int offset, int limit) throws ApplicationException{
+        return userDAO.getUsersByPagination(offset, limit);
+    }
+
+    public List<User> getCustomersByPage(int page, int recordsPerPage) throws ApplicationException{
+        int offset = (page - 1) * recordsPerPage;
+        int limit = recordsPerPage;
+        return userDAO.getUsersByPagination(offset, limit);
     }
 }

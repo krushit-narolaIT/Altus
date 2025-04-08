@@ -1,6 +1,7 @@
 package com.krushit.common.config;
 
 import com.krushit.common.Message;
+import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -8,6 +9,7 @@ import org.flywaydb.core.Flyway;
 
 @WebListener
 public class FlywayConfig implements ServletContextListener {
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {

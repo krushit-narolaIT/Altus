@@ -124,7 +124,7 @@ public final class Message {
 
     public static final class Auth {
         public static final String SESSION_EXPIRED = "Session Expired";
-        public static final String PLEASE_LOGIN_FIRST = "Please login";
+        public static final String PLEASE_LOGIN = "Please login";
         public static final String UNAUTHORIZED = "You don't have valid privilege to perform this operation";
         private Auth() {
         }
@@ -166,7 +166,7 @@ public final class Message {
 
     public static final class Customer {
         public static final String CUSTOMER_PATH = "/userSignUp";
-        public static final String NO_CUSTOMER_FOUND = "No users found in system";
+        public static final String NO_CUSTOMER_FOUND = "No users found";
         public static final String SUCCESSFULLY_RETRIEVED_CUSTOMER = "Successfully Retrieved Customers";
         private Customer() {
         }

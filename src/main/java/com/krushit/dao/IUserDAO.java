@@ -23,5 +23,6 @@ public interface IUserDAO {
     void updateUserRating(int toUserId, int rating, Connection connection) throws DBException;
     void blockUser(int userId) throws DBException;
     boolean isUserBlocked(int userId) throws DBException;
-    List<User> getUsersByLowRatingAndReviewCount(double ratingThreshold, int reviewCountThreshold) throws DBException;
+    List<User> getUsersByLowRatingAndReviewCount(int ratingThreshold, int reviewCountThreshold) throws DBException;
+    List<User> getUsersByPagination(int offset, int limit) throws DBException;
 }

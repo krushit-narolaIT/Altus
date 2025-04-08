@@ -9,10 +9,7 @@ import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.model.User;
 import com.krushit.service.UserService;
-import com.krushit.utils.ApplicationUtils;
-import com.krushit.utils.AuthUtils;
-import com.krushit.utils.ObjectMapperUtils;
-import com.krushit.utils.SessionUtils;
+import com.krushit.utils.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +29,7 @@ public class UserUpdateController extends HttpServlet {
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
+            //User user = UserContextUtils.getUser();
             AuthUtils.validateUser(user, Role.ROLE_CUSTOMER);
             UserDTO updatedUser = ObjectMapperUtils.toObject(request.getReader(), UserDTO.class);
             userService.updateUser(updatedUser, user.getUserId());

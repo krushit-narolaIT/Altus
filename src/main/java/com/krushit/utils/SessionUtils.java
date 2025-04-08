@@ -17,11 +17,11 @@ public class SessionUtils {
     public static User validateSession(HttpServletRequest request) throws ApplicationException {
         HttpSession session = request.getSession(false);
         if (session == null) {
-            throw new ApplicationException(Message.Auth.SESSION_EXPIRED + Message.Auth.PLEASE_LOGIN_FIRST);
+            throw new ApplicationException(Message.Auth.SESSION_EXPIRED + Message.Auth.PLEASE_LOGIN);
         }
         UserDTO userDTO = (UserDTO) session.getAttribute("user");
         if (userDTO == null) {
-            throw new ApplicationException(Message.Auth.PLEASE_LOGIN_FIRST);
+            throw new ApplicationException(Message.Auth.PLEASE_LOGIN);
         }
         return mapper.convertToEntityUserDTO(userDTO);
     }

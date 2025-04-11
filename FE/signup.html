@@ -3,15 +3,24 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>User Login</title>
+    <title>Registration</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="rootElem">
 
-    <div class="formEle" id="loginForm">
-        <h1>User Login</h1>
-        <form id="commonLoginForm" method="post" name="commonLoginForm">
+    <div class="formEle" id="registrationForm">
+        <h1>User Registration</h1>
+        <form id="commonRegistrationForm" method="post" name="commonRegistrationForm">
+            <label for="firstName">FirstName: </label>
+            <input id="firstName" name="firstName" placeholder="Enter FirstName" type="text" required>
+            <!-- <br /> -->
+            <label for="lastName">LastName: </label>
+            <input id="lastName" name="lastName" placeholder="Enter LastName" type="text" required>
+            <br />
+            <label for="phoneNo">Phone No.: </label>
+            <input id="phoneNo" name="phoneNo" placeholder="Enter phoneNo" type="text" required>
+            <!-- <br /> -->
             <label for="email">Email: </label>
             <input id="email" name="email" placeholder="Enter email" type="text" required>
             <br />
@@ -24,27 +33,32 @@
         <br />
         <hr />
         <p class="signup-text">
-            Don't have an account?
-            <a href="signup.html" class="signup-link">Sign Up</a>
+            Already have an account?
+            <a href="userLogin.html" class="signup-link">Login</a>
         </p>
     </div>
 </body>
 
 <script>
-    const form = document.getElementById("commonLoginForm");
+    const form = document.getElementById("commonRegistrationForm");
 
     form.addEventListener("submit", (event) => {
         event.preventDefault();
 
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+        const phoneNo = document.getElementById("phoneNo").value;
 
-        const formData = JSON.stringify({ emailId: email, password: password });
+        const formData = JSON.stringify({ emailId: email, password: password, firstName: firstName, lastName: lastName, phoneNo: phoneNo });
 
         const errorBlock = document.getElementById("errorBlock");
 
-        fetch("http://192.168.100.99:8081/Altus_war_exploded/userLogin", {
+        fetch("http://192.168.100.99:8081/Altus_war_exploded/userSignUp", {
             method: "POST",
+            headers: {"content-type": "application/json"},
+            credentials: 'same-origin',
             body: formData,
         })
             .then((response) => {
@@ -53,6 +67,7 @@
                         console.log("API response:", data);
                         errorBlock.className = "success";
                         errorBlock.innerHTML = data.message;
+                        console.log(response.cookie)
                     } else {
                         console.log("API ERROR:", data);
                         errorBlock.className = "error";

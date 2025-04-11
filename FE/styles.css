@@ -1,34 +1,3 @@
-/* .rootElem {
-    background-color: rgba(196, 194, 201, 0.363);
-    align-content: center;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-}
-
-.formEle { */
-    /* padding: 90px 0; */
-    /* display: flex; */
-    /* justify-content: center;
-    margin: auto;
-    background-color: rgba(78, 156, 244, 0.445);
-    align-content: center;
-    text-align: center;
-    width: 30%;
-    border: 3px solid white;
-    border-radius: 5%;
-    min-height: 500px;
-}
-
-.rootElem #loginForm {
-    margin: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  } */
-
   /* Root styles */
 .rootElem {
     display: flex;
@@ -46,16 +15,6 @@
     border-radius: 12px;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
     width: 25%; /* increased width */
-    max-width: 90%;
-    text-align: center;
-}
-
-.formEle #registrationForm {
-    background: white;
-    padding: 40px; /* more internal spacing */
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    width: 75%; /* increased width */
     max-width: 90%;
     text-align: center;
 }
@@ -84,8 +43,11 @@
     font-weight: bold;
 }
 
-.formEle #commonRegistrationForm label {
-    border: 1px solid red;
+.formEle #commonRegistrationForm input{
+    /* border: 1px solid red; */
+    /* width: 50%; */
+    margin: auto;
+    padding: 10px;
 
 }
 
@@ -102,6 +64,7 @@
 .formEle button {
     width: 100%;
     padding: 10px;
+    margin-top: 20px;
     background-color: #176e05;
     border: none;
     color: white;
@@ -111,9 +74,9 @@
     transition: background-color 0.3s;
 }
 
-.formEle button:hover {
+/* .formEle button:hover {
     background-color: #0056b3;
-}
+} */
 
 
 /* Common style for all messages */
@@ -165,3 +128,82 @@
     color: #0056b3;
     text-decoration: underline;
 }
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f5f7fa;
+  }
+  
+  header {
+    background-color: #2f3542;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  nav {
+    width: 200px;
+    background-color: #57606f;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 80px;
+    color: white;
+  }
+  
+  nav ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  nav ul li {
+    padding: 15px;
+    cursor: pointer;
+  }
+  
+  nav ul li:hover,
+  nav ul li.active {
+    background-color: #747d8c;
+  }
+  
+  main {
+    margin-left: 200px;
+    padding: 20px;
+  }
+  
+  h2 {
+    margin-top: 0;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background-color: white;
+  }
+  
+  table, th, td {
+    border: 1px solid #dcdde1;
+  }
+  
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f1f2f6;
+  }
+  
+  .status-true {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .status-false {
+    color: red;
+    font-weight: bold;
+  }
+  

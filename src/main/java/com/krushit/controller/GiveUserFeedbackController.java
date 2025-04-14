@@ -3,11 +3,8 @@ package com.krushit.controller;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.FeedbackDTO;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.service.FeedbackService;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
@@ -33,8 +30,7 @@ public class GiveUserFeedbackController extends HttpServlet {
             User user = SessionUtils.validateSession(request);
             int rideId = Integer.parseInt(request.getParameter("rideId"));
             FeedbackDTO feedbackDTO = ObjectMapperUtils.toObject(request.getReader(), FeedbackDTO.class);
-            int toUserId = feedbackService.getToUserId(rideId, user.getRole());
-            feedbackService.submitFeedback(user.getUserId(), toUserId, feedbackDTO, rideId);
+            feedbackService.submitFeedback(user.getUserId(), feedbackDTO, rideId);
             createResponse(response, Message.FeedBack.FEEDBACK_SUBMITTED, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();

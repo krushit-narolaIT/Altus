@@ -5,7 +5,7 @@ import com.krushit.common.config.DBConfig;
 import com.krushit.common.enums.DriverDocumentVerificationStatus;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
-import com.krushit.model.Driver;
+import com.krushit.entity.Driver;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

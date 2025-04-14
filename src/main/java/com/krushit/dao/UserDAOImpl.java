@@ -2,9 +2,13 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.config.JPAConfig;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
-import com.krushit.model.User;
+import com.krushit.entity.User;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -309,6 +313,20 @@ public class UserDAOImpl implements IUserDAO {
             prepareStatement.setInt(2, userId);
             prepareStatement.executeUpdate();
         } catch (SQLException e) {
+            throw new DBException(Message.User.ERROR_WHILE_UPDATE_DRIVER_RATING, e);
+        }
+    }
+
+    @Override
+    public void updateUserRating(int userId, int newRating, EntityManager em) throws DBException {
+        try {
+            Query query = em.createQuery(
+                    "UPDATE User u SET u.totalRatings = ((u.totalRatings * u.ratingCount) + :rating) / (u.ratingCount + 1), " +
+                            "u.ratingCount = u.ratingCount + 1 " +
+                            "WHERE u.userId = :userId"
+            ).setParameter("rating", newRating).setParameter("userId", userId);
+            query.executeUpdate();
+        } catch (Exception e) {
             throw new DBException(Message.User.ERROR_WHILE_UPDATE_DRIVER_RATING, e);
         }
     }

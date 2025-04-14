@@ -6,14 +6,15 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.dao.FeedbackDAOImpl;
 import com.krushit.dao.IFeedbackDAO;
 import com.krushit.dto.FeedbackDTO;
-import com.krushit.model.Feedback;
+import com.krushit.entity.Feedback;
 
 public class FeedbackService {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
     private final UserService userService = new UserService();
     private final IFeedbackDAO feedbackDAO = new FeedbackDAOImpl();
 
-    public void submitFeedback(int fromUserId, int toUserId, FeedbackDTO feedbackDTO, int rideId) throws ApplicationException {
+    public void submitFeedback(int fromUserId, FeedbackDTO feedbackDTO, int rideId) throws ApplicationException {
+        int toUserId = getToUserId(rideId, userService.getUserDetails(fromUserId).get().getRole());
         if (vehicleRideService.getRideStatus(rideId) == null) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_FEEDBACK_AFTER_RIDE_COMPLETED);
         }
@@ -36,6 +37,7 @@ public class FeedbackService {
                 .setComment(comment)
                 .setRating(rating)
                 .build();
+        System.out.println("Feed Back :: " + feedback);
         feedbackDAO.saveFeedback(feedback);
     }
 

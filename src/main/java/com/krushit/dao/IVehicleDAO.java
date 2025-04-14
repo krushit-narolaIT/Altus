@@ -2,10 +2,10 @@ package com.krushit.dao;
 
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.BrandModelResponseDTO;
-import com.krushit.model.RideRequest;
-import com.krushit.model.Vehicle;
-import com.krushit.model.VehicleService;
-import com.krushit.model.BrandModel;
+import com.krushit.entity.RideRequest;
+import com.krushit.entity.Vehicle;
+import com.krushit.entity.VehicleService;
+import com.krushit.entity.BrandModel;
 
 import java.util.List;
 import java.util.Optional;

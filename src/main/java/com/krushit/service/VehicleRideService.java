@@ -12,10 +12,10 @@ import com.krushit.dao.IVehicleDAO;
 import com.krushit.dao.RideDAOImpl;
 import com.krushit.dao.VehicleDAOImpl;
 import com.krushit.dto.*;
-import com.krushit.model.BrandModel;
-import com.krushit.model.Ride;
-import com.krushit.model.RideRequest;
-import com.krushit.model.VehicleService;
+import com.krushit.entity.BrandModel;
+import com.krushit.entity.Ride;
+import com.krushit.entity.RideRequest;
+import com.krushit.entity.VehicleService;
 
 import java.time.Duration;
 import java.time.LocalDate;

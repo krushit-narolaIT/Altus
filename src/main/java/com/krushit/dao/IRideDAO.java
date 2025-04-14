@@ -4,8 +4,8 @@ import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.RideCancellationDetailsDTO;
-import com.krushit.model.Ride;
-import com.krushit.model.RideRequest;
+import com.krushit.entity.Ride;
+import com.krushit.entity.RideRequest;
 
 import java.sql.Connection;
 import java.time.LocalDate;

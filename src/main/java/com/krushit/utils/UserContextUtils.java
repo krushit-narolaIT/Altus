@@ -1,6 +1,6 @@
 package com.krushit.utils;
 
-import com.krushit.model.User;
+import com.krushit.entity.User;
 
 public class UserContextUtils {
     private static final ThreadLocal<User> currentUser = new ThreadLocal<>();

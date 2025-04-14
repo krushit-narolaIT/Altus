@@ -1,18 +1,26 @@
-package com.krushit.model;
+package com.krushit.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "locations")
 public class Location {
-    int id;
-    String name;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id")
+    private int id;
 
-    public Location() {
-    }
+    @Column(name = "name")
+    private String name;
+
+    public Location() {}
 
     public Location(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Location(String name){
+    public Location(String name) {
         this.name = name;
     }
 

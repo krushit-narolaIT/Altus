@@ -6,9 +6,9 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
 import com.krushit.dto.DriverVerificationRequestDTO;
-import com.krushit.model.Driver;
-import com.krushit.model.User;
-import com.krushit.model.Vehicle;
+import com.krushit.entity.Driver;
+import com.krushit.entity.User;
+import com.krushit.entity.Vehicle;
 import jakarta.servlet.http.Part;
 
 import java.io.File;

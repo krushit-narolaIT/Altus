@@ -4,7 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 

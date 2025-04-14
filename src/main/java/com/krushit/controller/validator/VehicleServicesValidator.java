@@ -5,7 +5,7 @@ import com.krushit.common.enums.FuelType;
 import com.krushit.common.enums.VehicleType;
 import com.krushit.common.enums.Transmission;
 import com.krushit.common.exception.ValidationException;
-import com.krushit.model.*;
+import com.krushit.entity.*;
 
 import java.time.LocalDateTime;
 

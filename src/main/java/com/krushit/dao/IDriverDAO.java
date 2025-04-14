@@ -2,7 +2,7 @@ package com.krushit.dao;
 
 import com.krushit.common.enums.DriverDocumentVerificationStatus;
 import com.krushit.common.exception.DBException;
-import com.krushit.model.Driver;
+import com.krushit.entity.Driver;
 
 import java.util.List;
 

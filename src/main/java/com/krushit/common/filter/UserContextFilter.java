@@ -2,12 +2,11 @@ package com.krushit.common.filter;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import static com.krushit.utils.ResponseUtils.createResponse;
 import com.krushit.utils.SessionUtils;
 import com.krushit.utils.UserContextUtils;
 import jakarta.servlet.*;
-import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 

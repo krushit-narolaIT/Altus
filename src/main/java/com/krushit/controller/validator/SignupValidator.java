@@ -3,7 +3,7 @@ package com.krushit.controller.validator;
 
 
 import com.krushit.common.Message;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.common.exception.ValidationException;
 
 public class SignupValidator {

@@ -1,31 +1,68 @@
-package com.krushit.model;
+package com.krushit.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.krushit.common.enums.Role;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = User.UserBuilder.class)
 public class User {
-    private final int userId;
-    private final Role role;
-    private final String firstName;
-    private final String lastName;
-    private final String phoneNo;
-    private final String emailId;
-    private final String password;
-    private final boolean isActive;
-    private final String displayId;
-    private final boolean isBlocked;
-    private final int totalRatings;
-    private final int ratingCount;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final String createdBy;
-    private final String updatedBy;
+    @Id
+    @Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int userId;
+
+    @Column(name = "role_id")
+    private Role role;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "phone_no")
+    private String phoneNo;
+
+    @Column(name = "email_id")
+    private String emailId;
+
+    @Column(name = "password")
+    private String password;
+
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    @Column(name = "display_id")
+    private String displayId;
+
+    @Column(name = "is_blocked")
+    private boolean isBlocked;
+
+    @Column(name = "total_ratings")
+    private int totalRatings;
+
+    @Column(name = "rating_count")
+    private int ratingCount;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
+
 
     protected User(UserBuilder builder) {
         this.userId = builder.userId;
@@ -46,6 +83,9 @@ public class User {
         this.updatedBy = builder.updatedBy;
     }
 
+    public User() {
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -63,6 +103,10 @@ public class User {
                 ", createdBy='" + createdBy + '\'' +
                 ", updatedBy='" + updatedBy + '\'' +
                 '}';
+    }
+
+    public void setTotalRatings(int totalRatings) {
+        this.totalRatings = totalRatings;
     }
 
     public int getUserId() {

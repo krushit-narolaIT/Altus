@@ -2,9 +2,12 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.config.JPAConfig;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
-import com.krushit.model.Feedback;
+import com.krushit.entity.Feedback;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,62 +15,52 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class FeedbackDAOImpl implements IFeedbackDAO {
-    private static final String IS_FEEDBACK_GIVEN = "SELECT COUNT(*) FROM feedback WHERE from_user_id = ? AND to_user_id = ? AND ride_id = ?";
-    private static final String SAVE_FEEDBACK = "INSERT INTO feedback (from_user_id, to_user_id, ride_id, rating, comment) VALUES (?, ?, ?, ?, ?)";
+    private static final String IS_FEEDBACK_GIVEN =
+            "SELECT 1 FROM Feedback f WHERE f.fromUserId = :fromUserId AND f.toUserId = :toUserId AND f.rideId = :rideId";
     private final IUserDAO userDAO = new UserDAOImpl();
 
     @Override
     public void saveFeedback(Feedback feedback) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(SAVE_FEEDBACK)) {
-            connection.setAutoCommit(false);
-            statement.setInt(1, feedback.getFromUserId());
-            statement.setInt(2, feedback.getToUserId());
-            statement.setInt(3, feedback.getRideId());
-            statement.setInt(4, feedback.getRating());
-            statement.setString(5, feedback.getComment());
-            statement.executeUpdate();
-            userDAO.updateUserRating(feedback.getToUserId(), feedback.getRating(), connection);
-            connection.setAutoCommit(true);
-        } catch (SQLException | ClassNotFoundException e) {
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            em.persist(feedback);
+            userDAO.updateUserRating(feedback.getToUserId(), feedback.getRating(), em);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             throw new DBException(Message.FeedBack.ERROR_WHILE_ADDING_FEEDBACK, e);
         }
     }
 
     @Override
     public int getRecipientUserIdByRideId(int rideId, Role role) throws DBException {
-        String query = "SELECT customer_id FROM rides WHERE ride_id = ?";
-        ;
-        if (Role.ROLE_CUSTOMER == role) {
-            query = "SELECT driver_id FROM rides WHERE ride_id = ?";
-        }
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, rideId);
-            ResultSet rs = statement.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException | ClassNotFoundException e) {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            String query = (Role.ROLE_CUSTOMER == role)
+                    ? "SELECT r.driver.id FROM Ride r WHERE r.rideId = :rideId"
+                    : "SELECT r.customer.id FROM Ride r WHERE r.rideId = :rideId";
+            return em.createQuery(query, Integer.class)
+                    .setParameter("rideId", rideId).executeUpdate();
+        } catch (Exception e) {
             throw new DBException(Message.FeedBack.ERROR_WHILE_FETCHING_TO_FEEDBACK, e);
         }
-        return 0;
     }
 
     @Override
     public boolean isFeedbackGiven(int fromUserId, int toUserId, int rideId) throws DBException {
-        try (Connection conn = DBConfig.INSTANCE.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(IS_FEEDBACK_GIVEN)) {
-            pstmt.setInt(1, fromUserId);
-            pstmt.setInt(2, toUserId);
-            pstmt.setInt(3, rideId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1) > 0;
-            }
-        } catch (SQLException | ClassNotFoundException e) {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            Integer result = em.createQuery(IS_FEEDBACK_GIVEN, Integer.class)
+                    .setParameter("fromUserId", fromUserId)
+                    .setParameter("toUserId", toUserId)
+                    .setParameter("rideId", rideId)
+                    .setMaxResults(1)
+                    .getSingleResult();
+            return result != null;
+        } catch (Exception e) {
             throw new DBException(Message.FeedBack.ERROR_WHILE_CHECKING_IS_FEEDBACK_GIVEN, e);
         }
-        return false;
     }
 }

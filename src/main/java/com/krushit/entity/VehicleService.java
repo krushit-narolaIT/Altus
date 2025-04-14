@@ -1,16 +1,34 @@
-package com.krushit.model;
+package com.krushit.entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "vehicle_service")
 public class VehicleService {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "service_id")
     private int serviceId;
+
+    @Column(name = "service_name", nullable = false)
     private String serviceName;
+
+    @Column(name = "base_fare")
     private double baseFare;
+
+    @Column(name = "per_km_rate")
     private double perKmRate;
+
+    @Column(name = "vehicle_type")
     private String vehicleType;
+
+    @Column(name = "max_passengers")
     private int maxPassengers;
+
+    @Column(name = "commission_percentage")
     private double commissionPercentage;
 
-    public VehicleService() {
-    }
+    public VehicleService() {}
 
     public VehicleService(int serviceId, String serviceName, double baseFare, double perKmRate,
                           String vehicleType, int maxPassengers, double commissionPercentage) {

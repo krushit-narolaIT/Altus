@@ -3,7 +3,7 @@ package com.krushit.dao;
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
 import com.krushit.common.exception.DBException;
-import com.krushit.model.Location;
+import com.krushit.entity.Location;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

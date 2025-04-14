@@ -6,7 +6,7 @@ import com.krushit.common.mapper.Mapper;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 
 import java.util.List;
 import java.util.Optional;

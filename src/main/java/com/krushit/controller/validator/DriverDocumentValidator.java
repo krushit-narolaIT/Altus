@@ -2,7 +2,7 @@ package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ValidationException;
-import com.krushit.model.Driver;
+import com.krushit.entity.Driver;
 import jakarta.servlet.http.Part;
 
 public class DriverDocumentValidator {

@@ -22,6 +22,16 @@ public enum RideStatus {
         return null;
     }
 
+    public static RideStatus getType(String status) {
+        for (RideStatus rs : RideStatus.values()) {
+            if (rs.name().equalsIgnoreCase(status)) {
+                return rs;
+            }
+        }
+        return null;
+    }
+
+
     public String getStatus() {
         return status;
     }

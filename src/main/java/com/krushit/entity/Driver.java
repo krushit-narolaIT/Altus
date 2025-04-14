@@ -1,25 +1,55 @@
-package com.krushit.model;
+package com.krushit.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "drivers")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = Driver.DriverBuilder.class)
+@PrimaryKeyJoinColumn(name = "user_id")
+@MappedSuperclass
 public class Driver extends User {
-    private final int driverId;
-    private final String licenceNumber;
-    private final boolean isDocumentVerified;
-    private final String licencePhoto;
-    private final boolean isAvailable;
-    private final String verificationStatus;
-    private final String comment;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final String createdBy;
-    private final String updatedBy;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "driver_id")
+    private int driverId;
+
+    @Column(name = "licence_number", length = 15, unique = true)
+    private String licenceNumber;
+
+    @Column(name = "is_document_verified", nullable = false)
+    private boolean isDocumentVerified = false;
+
+    @Column(name = "licence_photo", length = 255)
+    private String licencePhoto;
+
+    @Column(name = "is_available")
+    private boolean isAvailable;
+
+    @Column(name = "verification_status", nullable = false, length = 20)
+    private String verificationStatus = "FALSE";
+
+    @Column(name = "comment", length = 254)
+    private String comment;
+
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt;
+
+    @Column(name = "created_by", length = 10)
+    private String createdBy;
+
+    @Column(name = "updated_by", length = 10)
+    private String updatedBy;
+
+    public Driver() {}
 
     private Driver(DriverBuilder builder) {
         super(builder);
@@ -36,49 +66,27 @@ public class Driver extends User {
         this.updatedBy = builder.updatedBy;
     }
 
-    public int getDriverId() {
-        return driverId;
-    }
+    public int getDriverId() { return driverId; }
 
-    public String getLicenceNumber() {
-        return licenceNumber;
-    }
+    public String getLicenceNumber() { return licenceNumber; }
 
-    public boolean isDocumentVerified() {
-        return isDocumentVerified;
-    }
+    public boolean isDocumentVerified() { return isDocumentVerified; }
 
-    public String getLicencePhoto() {
-        return licencePhoto;
-    }
+    public String getLicencePhoto() { return licencePhoto; }
 
-    public boolean isAvailable() {
-        return isAvailable;
-    }
+    public boolean isAvailable() { return isAvailable; }
 
-    public String getVerificationStatus() {
-        return verificationStatus;
-    }
+    public String getVerificationStatus() { return verificationStatus; }
 
-    public String getComment() {
-        return comment;
-    }
+    public String getComment() { return comment; }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
+    public String getCreatedBy() { return createdBy; }
 
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
+    public String getUpdatedBy() { return updatedBy; }
 
     @Override
     public String toString() {
@@ -92,7 +100,7 @@ public class Driver extends User {
                 ", comment='" + comment + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", createdBy='" + createdBy + '\'' +
+                ", createdBy=" + createdBy +
                 ", updatedBy='" + updatedBy + '\'' +
                 '}';
     }

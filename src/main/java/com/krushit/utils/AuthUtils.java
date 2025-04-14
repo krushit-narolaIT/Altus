@@ -3,7 +3,7 @@ package com.krushit.utils;
 import com.krushit.common.Message;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.AuthException;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 
 public class AuthUtils {
 

@@ -4,7 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.dao.ILocationDAO;
 import com.krushit.dao.LocationDAOImpl;
-import com.krushit.model.Location;
+import com.krushit.entity.Location;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

@@ -7,7 +7,7 @@ import jakarta.servlet.http.Part;
 
 public class DriverDocumentValidator {
     public static void validateDriverDocuments(Driver driver, Part licencePhoto) throws ValidationException {
-        if (driver.getUserId() <= 0) {
+        if (driver.getUser().getUserId() <= 0) {
             throw new ValidationException(Message.Driver.INVALID_DRIVER_ID);
         }
         validateLicenceNumber(driver.getLicenceNumber());

@@ -4,8 +4,10 @@ import com.krushit.common.enums.Role;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.dto.UserSignUpDTO;
+import com.krushit.entity.Location;
 import com.krushit.entity.RideRequest;
 import com.krushit.entity.User;
+import com.krushit.entity.VehicleService;
 
 public class Mapper {
     private static final Mapper INSTANCE = new Mapper();
@@ -59,14 +61,26 @@ public class Mapper {
                 .build();
     }
 
-    public RideRequest toRideRequest(RideRequestDTO rideRequestDTO) {
+    public RideRequest toRideRequest(RideRequestDTO dto) {
+        User user = new User.UserBuilder().setUserId(dto.getUserId()).build();
+
+        Location pickUpLocation = new Location();
+        pickUpLocation.setId(dto.getPickUpLocationId());
+
+        Location dropOffLocation = new Location();
+        dropOffLocation.setId(dto.getDropOffLocationId());
+
+        VehicleService vehicleService = new VehicleService();
+        vehicleService.setServiceId(dto.getVehicleServiceId());
+
         return new RideRequest.RideRequestBuilder()
-                .setUser(rideRequestDTO.getUserId())
-                .setPickUpLocationId(rideRequestDTO.getPickUpLocationId())
-                .setDropOffLocationId(rideRequestDTO.getDropOffLocationId())
-                .setVehicleServiceId(rideRequestDTO.getVehicleServiceId())
-                .setRideDate(rideRequestDTO.getRideDate())
-                .setPickUpTime(rideRequestDTO.getPickUpTime())
+                .setUser(user)
+                .setPickUpLocation(pickUpLocation)
+                .setDropOffLocation(dropOffLocation)
+                .setVehicleService(vehicleService)
+                .setRideDate(dto.getRideDate())
+                .setPickUpTime(dto.getPickUpTime())
                 .build();
     }
+
 }

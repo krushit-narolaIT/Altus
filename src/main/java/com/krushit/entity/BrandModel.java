@@ -10,10 +10,10 @@ public class BrandModel {
     @Column(name = "brand_model_id")
     private int brandModelId;
 
-    @Column(name = "brand_name", nullable = false)
+    @Column(name = "brand_name", nullable = false, length = 20)
     private String brandName;
 
-    @Column(name = "model", nullable = false)
+    @Column(name = "model", nullable = false, length = 20)
     private String model;
 
     @Column(name = "min_year")

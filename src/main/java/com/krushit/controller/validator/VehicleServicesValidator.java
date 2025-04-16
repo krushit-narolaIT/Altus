@@ -50,7 +50,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_BRAND_MODEL);
         }
 
-        if (model.getServiceId() <= 0) {
+        if (model.getVehicleService().getServiceId() <= 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_SERVICE_ID);
         }
 
@@ -72,7 +72,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.VEHICLE_DATA_MISSING);
         }
 
-        if (isNullOrEmpty(vehicle.getBrandModelId()) || vehicle.getBrandModelId() <= 0) {
+        if (isNullOrEmpty(vehicle.getBrandModel().getBrandModelId()) || vehicle.getBrandModel().getBrandModelId() <= 0) {
             throw new ValidationException(Message.Vehicle.BRAND_MODEL_ID_INVALID);
         }
 

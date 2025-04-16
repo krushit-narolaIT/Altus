@@ -7,6 +7,7 @@ import com.krushit.common.enums.PaymentMode;
 import com.krushit.common.enums.PaymentStatus;
 import com.krushit.common.enums.RideStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -24,7 +25,7 @@ public class RideDTO {
     private final LocalTime dropOffTime;
     private final String displayId;
     private final double totalKm;
-    private final double totalCost;
+    private final BigDecimal totalCost;
     private final PaymentMode paymentMode;
     private final PaymentStatus paymentStatus;
 
@@ -32,22 +33,22 @@ public class RideDTO {
     private final double commissionPercentage;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private final Double driverEarning;
+    private final BigDecimal driverEarning;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private final Double systemEarning;
+    private final BigDecimal systemEarning;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private final double cancellationCharge;
+    private final BigDecimal cancellationCharge;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private final Double cancellationDriverEarning;
+    private final BigDecimal cancellationDriverEarning;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private final Double cancellationSystemEarning;
+    private final BigDecimal cancellationSystemEarning;
 
     @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-    private final Double driverPenalty;
+    private final BigDecimal driverPenalty;
 
     private RideDTO(RideDTOBuilder builder) {
         this.rideId = builder.rideId;
@@ -86,16 +87,16 @@ public class RideDTO {
         private LocalTime dropOffTime;
         private String displayId;
         private double totalKm;
-        private double totalCost;
+        private BigDecimal totalCost;
         private PaymentMode paymentMode;
         private PaymentStatus paymentStatus;
         private double commissionPercentage;
-        private Double driverEarning;
-        private Double systemEarning;
-        private double cancellationCharge;
-        private Double cancellationDriverEarning;
-        private Double cancellationSystemEarning;
-        private Double driverPenalty;
+        private BigDecimal driverEarning;
+        private BigDecimal systemEarning;
+        private BigDecimal cancellationCharge;
+        private BigDecimal cancellationDriverEarning;
+        private BigDecimal cancellationSystemEarning;
+        private BigDecimal driverPenalty;
 
         public RideDTOBuilder setRideId(int rideId) {
             this.rideId = rideId;
@@ -152,7 +153,7 @@ public class RideDTO {
             return this;
         }
 
-        public RideDTOBuilder setTotalCost(double totalCost) {
+        public RideDTOBuilder setTotalCost(BigDecimal totalCost) {
             this.totalCost = totalCost;
             return this;
         }
@@ -172,32 +173,32 @@ public class RideDTO {
             return this;
         }
 
-        public RideDTOBuilder setDriverEarning(Double driverEarning) {
+        public RideDTOBuilder setDriverEarning(BigDecimal driverEarning) {
             this.driverEarning = driverEarning;
             return this;
         }
 
-        public RideDTOBuilder setSystemEarning(Double systemEarning) {
+        public RideDTOBuilder setSystemEarning(BigDecimal systemEarning) {
             this.systemEarning = systemEarning;
             return this;
         }
 
-        public RideDTOBuilder setCancellationCharge(double cancellationCharge) {
+        public RideDTOBuilder setCancellationCharge(BigDecimal cancellationCharge) {
             this.cancellationCharge = cancellationCharge;
             return this;
         }
 
-        public RideDTOBuilder setCancellationDriverEarning(Double cancellationDriverEarning) {
+        public RideDTOBuilder setCancellationDriverEarning(BigDecimal cancellationDriverEarning) {
             this.cancellationDriverEarning = cancellationDriverEarning;
             return this;
         }
 
-        public RideDTOBuilder setCancellationSystemEarning(Double cancellationSystemEarning) {
+        public RideDTOBuilder setCancellationSystemEarning(BigDecimal cancellationSystemEarning) {
             this.cancellationSystemEarning = cancellationSystemEarning;
             return this;
         }
 
-        public RideDTOBuilder setDriverPenalty(Double driverPenalty) {
+        public RideDTOBuilder setDriverPenalty(BigDecimal driverPenalty) {
             this.driverPenalty = driverPenalty;
             return this;
         }
@@ -251,7 +252,7 @@ public class RideDTO {
         return totalKm;
     }
 
-    public double getTotalCost() {
+    public BigDecimal getTotalCost() {
         return totalCost;
     }
 
@@ -267,27 +268,27 @@ public class RideDTO {
         return commissionPercentage;
     }
 
-    public Double getDriverEarning() {
+    public BigDecimal getDriverEarning() {
         return driverEarning;
     }
 
-    public Double getSystemEarning() {
+    public BigDecimal getSystemEarning() {
         return systemEarning;
     }
 
-    public double getCancellationCharge() {
+    public BigDecimal getCancellationCharge() {
         return cancellationCharge;
     }
 
-    public Double getCancellationDriverEarning() {
+    public BigDecimal getCancellationDriverEarning() {
         return cancellationDriverEarning;
     }
 
-    public Double getCancellationSystemEarning() {
+    public BigDecimal getCancellationSystemEarning() {
         return cancellationSystemEarning;
     }
 
-    public Double getDriverPenalty() {
+    public BigDecimal getDriverPenalty() {
         return driverPenalty;
     }
 }

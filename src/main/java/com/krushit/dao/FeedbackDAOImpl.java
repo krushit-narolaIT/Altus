@@ -16,7 +16,7 @@ import java.sql.SQLException;
 
 public class FeedbackDAOImpl implements IFeedbackDAO {
     private static final String IS_FEEDBACK_GIVEN =
-            "SELECT 1 FROM Feedback f WHERE f.fromUserId = :fromUserId AND f.toUserId = :toUserId AND f.rideId = :rideId";
+            "SELECT 1 FROM Feedback f WHERE f.fromUser.userId = :fromUserId AND f.toUser.userId = :toUserId AND f.ride.rideId = :rideId";
     private final IUserDAO userDAO = new UserDAOImpl();
 
     @Override
@@ -26,7 +26,7 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
             tx = em.getTransaction();
             tx.begin();
             em.persist(feedback);
-            userDAO.updateUserRating(feedback.getToUserId(), feedback.getRating(), em);
+            userDAO.updateUserRating(feedback.getToUserId().getUserId(), feedback.getRating(), em);
             tx.commit();
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {

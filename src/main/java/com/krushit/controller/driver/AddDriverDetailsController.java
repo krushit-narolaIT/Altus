@@ -37,10 +37,10 @@ public class AddDriverDetailsController extends HttpServlet {
             String licenceNumber = request.getParameter("licenceNumber");
             Part licencePhoto = request.getPart("licencePhoto");
             String storedPhotoPath = driverService.storeLicencePhoto(licencePhoto, licenceNumber, user.getDisplayId());
-            Driver driver = (Driver) new Driver.DriverBuilder()
+            Driver driver = new Driver.DriverBuilder()
                     .setLicenceNumber(licenceNumber)
                     .setLicencePhoto(storedPhotoPath)
-                    .setUserId(user.getUserId())
+                    .setUser(user)
                     .build();
             DriverDocumentValidator.validateDriverDocuments(driver, licencePhoto);
             driverService.storeDriverDetails(driver);

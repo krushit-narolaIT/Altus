@@ -6,6 +6,7 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
 import com.krushit.dto.DriverVerificationRequestDTO;
+import com.krushit.dto.PendingDriverDTO;
 import com.krushit.entity.Driver;
 import com.krushit.entity.User;
 import com.krushit.entity.Vehicle;
@@ -29,7 +30,7 @@ public class DriverService {
     private final UserService userService = new UserService();
 
     public void storeDriverDetails(Driver driver) throws ApplicationException {
-        Optional<User> userOpt = userService.getUserDetails(driver.getUserId());
+        Optional<User> userOpt = userService.getUserDetails(driver.getUser().getUserId());
         if (!userOpt.isPresent()) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
@@ -39,11 +40,11 @@ public class DriverService {
         if (driverDAO.isDocumentUnderReview(driver.getDriverId()) == DriverDocumentVerificationStatus.PENDING) {
             throw new ApplicationException(Message.Driver.DOCUMENT_IS_UNDER_REVIEW);
         }
-        Driver updatedDriver = (Driver) new Driver.DriverBuilder()
+        Driver updatedDriver = new Driver.DriverBuilder()
                 .setLicenceNumber(driver.getLicenceNumber())
                 .setLicencePhoto(driver.getLicencePhoto())
                 .setVerificationStatus(DriverDocumentVerificationStatus.PENDING.getStatus())
-                .setUserId(driver.getUserId())
+                .setUser(new User.UserBuilder().setUserId(driver.getUser().getUserId()).build())
                 .build();
         driverDAO.insertDriverDetails(updatedDriver);
     }
@@ -67,7 +68,7 @@ public class DriverService {
         }
     }
 
-    public List<Driver> getPendingVerificationDrivers() throws DBException {
+    public List<PendingDriverDTO> getPendingVerificationDrivers() throws DBException {
         return driverDAO.getDriversWithPendingVerification();
     }
 
@@ -109,11 +110,11 @@ public class DriverService {
         if (!vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_NOT_SUPPORTED);
         }
-        int minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModelId());
+        int minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModel().getBrandModelId());
         if (vehicle.getYear() < minYear) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_YEAR_NOT_SUPPORTED);
         }
-        vehicle.setDriverId(driverId);
+        //vehicle.setDriver(driverId);
         driverDAO.updateDriverAvailability(driverId);
         vehicleDAO.addVehicle(vehicle);
     }

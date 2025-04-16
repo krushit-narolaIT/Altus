@@ -12,34 +12,37 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = User.UserBuilder.class)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User {
+
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "role_id")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", length = 50, nullable = false)
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", length = 50, nullable = false)
     private String lastName;
 
-    @Column(name = "phone_no")
+    @Column(name = "phone_no", length = 10, nullable = false, unique = true)
     private String phoneNo;
 
-    @Column(name = "email_id")
+    @Column(name = "email_id", length = 254, nullable = false, unique = true)
     private String emailId;
 
-    @Column(name = "password")
+    @Column(name = "password", length = 20, nullable = false)
     private String password;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
     private boolean isActive;
 
-    @Column(name = "display_id")
+    @Column(name = "display_id", length = 10, unique = true)
     private String displayId;
 
     @Column(name = "is_blocked")
@@ -51,18 +54,11 @@ public class User {
     @Column(name = "rating_count")
     private int ratingCount;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
-
-    @Column(name = "created_by")
-    private String createdBy;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
-
 
     protected User(UserBuilder builder) {
         this.userId = builder.userId;
@@ -79,8 +75,6 @@ public class User {
         this.ratingCount = builder.ratingCount;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
-        this.createdBy = builder.createdBy;
-        this.updatedBy = builder.updatedBy;
     }
 
     public User() {
@@ -100,8 +94,6 @@ public class User {
                 ", displayId='" + displayId + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", createdBy='" + createdBy + '\'' +
-                ", updatedBy='" + updatedBy + '\'' +
                 '}';
     }
 
@@ -151,14 +143,6 @@ public class User {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
     }
 
     public boolean isBlocked() {

@@ -10,7 +10,7 @@ public class Location {
     @Column(name = "location_id")
     private int id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true, length = 20)
     private String name;
 
     public Location() {}

@@ -31,9 +31,9 @@ public class FeedbackService {
             throw new ApplicationException(Message.FeedBack.FEEDBACK_ALREADY_SUBMITTED);
         }
         Feedback feedback = new Feedback.FeedbackBuilder()
-                .setRideId(rideId)
-                .setFromUserId(fromUserId)
-                .setToUserId(toUserId)
+                //.setRideId(rideId)
+               // .setFromUserId(fromUserId)
+                //.setToUserId(toUserId)
                 .setComment(comment)
                 .setRating(rating)
                 .build();

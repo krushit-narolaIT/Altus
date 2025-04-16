@@ -11,13 +11,15 @@ import java.time.LocalDateTime;
 @Table(name = "drivers")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = Driver.DriverBuilder.class)
-@PrimaryKeyJoinColumn(name = "user_id")
-@MappedSuperclass
-public class Driver extends User {
+public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "driver_id")
     private int driverId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
 
     @Column(name = "licence_number", length = 15, unique = true)
     private String licenceNumber;
@@ -43,17 +45,12 @@ public class Driver extends User {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    @Column(name = "created_by", length = 10)
-    private String createdBy;
-
-    @Column(name = "updated_by", length = 10)
-    private String updatedBy;
-
-    public Driver() {}
+    public Driver() {
+    }
 
     private Driver(DriverBuilder builder) {
-        super(builder);
         this.driverId = builder.driverId;
+        this.user = builder.user;
         this.licenceNumber = builder.licenceNumber;
         this.isDocumentVerified = builder.isDocumentVerified;
         this.licencePhoto = builder.licencePhoto;
@@ -62,31 +59,48 @@ public class Driver extends User {
         this.comment = builder.comment;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
-        this.createdBy = builder.createdBy;
-        this.updatedBy = builder.updatedBy;
     }
 
-    public int getDriverId() { return driverId; }
+    public int getDriverId() {
+        return driverId;
+    }
 
-    public String getLicenceNumber() { return licenceNumber; }
+    public User getUser() {
+        return user;
+    }
 
-    public boolean isDocumentVerified() { return isDocumentVerified; }
 
-    public String getLicencePhoto() { return licencePhoto; }
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
 
-    public boolean isAvailable() { return isAvailable; }
+    public boolean isDocumentVerified() {
+        return isDocumentVerified;
+    }
 
-    public String getVerificationStatus() { return verificationStatus; }
+    public String getLicencePhoto() {
+        return licencePhoto;
+    }
 
-    public String getComment() { return comment; }
+    public boolean isAvailable() {
+        return isAvailable;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
+    public String getVerificationStatus() {
+        return verificationStatus;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public String getComment() {
+        return comment;
+    }
 
-    public String getCreatedBy() { return createdBy; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
-    public String getUpdatedBy() { return updatedBy; }
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 
     @Override
     public String toString() {
@@ -100,14 +114,13 @@ public class Driver extends User {
                 ", comment='" + comment + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", createdBy=" + createdBy +
-                ", updatedBy='" + updatedBy + '\'' +
                 '}';
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
-    public static class DriverBuilder extends UserBuilder {
+    public static class DriverBuilder {
         private int driverId;
+        private User user;
         private String licenceNumber;
         private boolean isDocumentVerified;
         private String licencePhoto;
@@ -116,11 +129,14 @@ public class Driver extends User {
         private String comment;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        private String createdBy;
-        private String updatedBy;
 
         public DriverBuilder setDriverId(int driverId) {
             this.driverId = driverId;
+            return this;
+        }
+
+        public DriverBuilder setUser(User user) {
+            this.user = user;
             return this;
         }
 
@@ -164,17 +180,6 @@ public class Driver extends User {
             return this;
         }
 
-        public DriverBuilder setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
-            return this;
-        }
-
-        public DriverBuilder setUpdatedBy(String updatedBy) {
-            this.updatedBy = updatedBy;
-            return this;
-        }
-
-        @Override
         public Driver build() {
             return new Driver(this);
         }

@@ -2,10 +2,15 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.DBConfig;
+import com.krushit.common.config.JPAConfig;
 import com.krushit.common.enums.DriverDocumentVerificationStatus;
 import com.krushit.common.enums.Role;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.PendingDriverDTO;
 import com.krushit.entity.Driver;
+import com.krushit.entity.User;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,14 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
-    private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = ?";
-    private static final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ?, updated_by = ? WHERE user_id = ?";
-    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT d.driver_id, d.user_id, d.licence_number, d.licence_photo, " +
-            "d.is_document_verified, d.verification_status, d.comment, " +
-            "u.email_id, u.first_name, u.last_name, u.role_id, u.display_id " +
-            "FROM Drivers d " +
-            "JOIN Users u ON d.user_id = u.user_id " +
-            "WHERE d.is_document_verified = FALSE";
+    private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = :driverId";
+    private static final String UPDATE_DRIVER_DETAILS = "UPDATE Driver SET licenceNumber = ?, licencePhoto = ?WHERE user.userId = ?";
+    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT d.driverId, d.user.userId, d.licenceNumber, d.licencePhoto, " +
+            "d.isDocumentVerified, d.verificationStatus, d.comment, " +
+            "u.emailId, u.firstName, u.lastName, u.displayId " +
+            "FROM Driver d " +
+            "JOIN User u ON d.user.userId = u.userId " +
+            "WHERE d.isDocumentVerified = FALSE";
     private static final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ?, updated_by = ? WHERE driver_id = ?";
     private static final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
     private static final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
@@ -38,42 +43,52 @@ public class DriverDAOImpl implements IDriverDAO {
 
     @Override
     public void insertDriverDetails(Driver driver) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_DRIVER_DETAILS)) {
-            statement.setString(1, driver.getLicenceNumber());
-            statement.setString(2, driver.getLicencePhoto());
-            statement.setString(3, Role.ROLE_DRIVER.getRoleName());
-            statement.setInt(4, driver.getUserId());
-            statement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            em.createQuery(UPDATE_DRIVER_DETAILS)
+                    .setParameter("driverId", driver.getUser().getUserId())
+                    .executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
         }
     }
 
     @Override
-    public List<Driver> getDriversWithPendingVerification() throws DBException {
-        List<Driver> pendingDrivers = new ArrayList<>();
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_PENDING_VERIFICATION_DRIVERS);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                Driver driver = (Driver) new Driver.DriverBuilder()
-                        .setDriverId(resultSet.getInt("driver_id"))
-                        .setLicenceNumber(resultSet.getString("licence_number"))
-                        .setLicencePhoto(resultSet.getString("licence_photo"))
-                        .setDocumentVerified(resultSet.getBoolean("is_document_verified"))
-                        .setVerificationStatus(resultSet.getString("verification_status"))
-                        .setComment(resultSet.getString("comment"))
-                        .setUserId(resultSet.getInt("user_id"))
-                        .setEmailId(resultSet.getString("email_id"))
-                        .setFirstName(resultSet.getString("first_name"))
-                        .setLastName(resultSet.getString("last_name"))
-                        .setRole(Role.getType(resultSet.getInt("role_id")))
-                        .setDisplayId(resultSet.getString("display_id"))
+    public List<PendingDriverDTO> getDriversWithPendingVerification() throws DBException {
+        List<PendingDriverDTO> pendingDrivers = new ArrayList<>();
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            @SuppressWarnings("unchecked")
+            List<Object[]> rows = em.createQuery(GET_PENDING_VERIFICATION_DRIVERS).getResultList();
+            for (Object[] row : rows) {
+                PendingDriverDTO dto = new PendingDriverDTO.PendingDriverDTOBuilder()
+                        .setDriverId((Integer) row[0])
+                        .setUserId((Integer) row[1])
+                        .setLicenceNumber((String) row[2])
+                        .setLicencePhoto((String) row[3])
+                        .setDocumentVerified((Boolean) row[4])
+                        .setVerificationStatus((String) row[5])
+                        .setComment((String) row[6])
+                        .setEmailId((String) row[7])
+                        .setFirstName((String) row[8])
+                        .setLastName((String) row[9])
+                        .setDisplayId((String) row[10])
                         .build();
-                pendingDrivers.add(driver);
+                pendingDrivers.add(dto);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             throw new DBException(Message.Driver.ERROR_WHILE_GETTING_PENDING_VERIFICATION_DRIVER, e);
         }
         return pendingDrivers;
@@ -120,10 +135,8 @@ public class DriverDAOImpl implements IDriverDAO {
                         .setAvailable(resultSet.getBoolean("is_available"))
                         .setVerificationStatus(resultSet.getString("verification_status"))
                         .setComment(resultSet.getString("comment"))
-                        .setUserId(resultSet.getInt("user_id"))
-                        .setFirstName(resultSet.getString("first_name"))
-                        .setLastName(resultSet.getString("last_name"))
-                        .setEmailId(resultSet.getString("email_id"))
+                        .setUser(new User.UserBuilder().setUserId(resultSet.getInt("user_id")).setFirstName(resultSet.getString("first_name")).setLastName(resultSet.getString("last_name"))
+                                .setEmailId(resultSet.getString("email_id")).build())
                         .build();
                 drivers.add(driver);
             }

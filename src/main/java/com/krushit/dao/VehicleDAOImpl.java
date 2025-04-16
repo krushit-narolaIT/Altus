@@ -99,7 +99,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     public void addBrandModel(BrandModel brandModel) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT_BRAND_MODEL)) {
-            insertStatement.setInt(1, brandModel.getServiceId());
+            insertStatement.setInt(1, brandModel.getVehicleService().getServiceId());
             insertStatement.setString(2, brandModel.getBrandName());
             insertStatement.setString(3, brandModel.getModel());
             insertStatement.setInt(4, brandModel.getMinYear());
@@ -113,8 +113,8 @@ public class VehicleDAOImpl implements IVehicleDAO {
     public void addVehicle(Vehicle vehicle) throws DBException {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement stmt = connection.prepareStatement(INSERT_VEHICLE_QUERY)) {
-            stmt.setInt(1, vehicle.getDriverId());
-            stmt.setInt(2, vehicle.getBrandModelId());
+            stmt.setInt(1, vehicle.getDriver().getDriverId());
+            stmt.setInt(2, vehicle.getBrandModel().getBrandModelId());
             stmt.setString(3, vehicle.getRegistrationNumber());
             stmt.setInt(4, vehicle.getYear());
             stmt.setString(5, vehicle.getFuelType());
@@ -205,10 +205,10 @@ public class VehicleDAOImpl implements IVehicleDAO {
         try (Connection connection = DBConfig.INSTANCE.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(REQUEST_FOR_A_RIDE)) {
             preparedStatement.setString(1, RideRequestStatus.PENDING.getStatus());
-            preparedStatement.setInt(2, rideRequest.getPickUpLocationId());
-            preparedStatement.setInt(3, rideRequest.getDropOffLocationId());
-            preparedStatement.setInt(4, rideRequest.getVehicleServiceId());
-            preparedStatement.setInt(5, rideRequest.getUserId());
+            preparedStatement.setInt(2, rideRequest.getPickUpLocation().getId());
+            preparedStatement.setInt(3, rideRequest.getDropOffLocation().getId());
+            preparedStatement.setInt(4, rideRequest.getVehicleService().getServiceId());
+            preparedStatement.setInt(5, rideRequest.getUser().getUserId());
             preparedStatement.setDate(6, Date.valueOf(rideRequest.getRideDate()));
             preparedStatement.setTime(7, Time.valueOf(rideRequest.getPickUpTime()));
             preparedStatement.executeUpdate();

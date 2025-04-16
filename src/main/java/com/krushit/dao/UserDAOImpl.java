@@ -112,8 +112,6 @@ public class UserDAOImpl implements IUserDAO {
                         .setDisplayId(resultSet.getString("display_id"))
                         .setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime())
                         .setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime())
-                        .setCreatedBy(resultSet.getString("created_by"))
-                        .setUpdatedBy(resultSet.getString("updated_by"))
                         .build();
             }
             resultSet.close();

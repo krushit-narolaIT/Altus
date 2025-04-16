@@ -5,6 +5,7 @@ import com.krushit.common.config.DBConfig;
 import com.krushit.common.exception.DBException;
 import com.krushit.entity.Location;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -73,14 +74,14 @@ public class LocationDAOImpl implements ILocationDAO {
     }
 
     @Override
-    public double getCommissionByDistance(double distance) throws DBException {
-        double commissionPercentage = 0.0;
+    public BigDecimal getCommissionByDistance(double distance) throws DBException {
+        BigDecimal commissionPercentage = new BigDecimal(0.0);
         try (Connection conn = DBConfig.INSTANCE.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(GET_COMMISSION_PERCENTAGE)) {
             pstmt.setDouble(1, distance);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                commissionPercentage = rs.getDouble("commission_percentage");
+                commissionPercentage = rs.getBigDecimal("commission_percentage");
             }
         } catch (SQLException | ClassNotFoundException e) {
             throw new DBException(Message.Location.ERROR_WHILE_GET_COMMISSION_BY_DISTANCE, e);

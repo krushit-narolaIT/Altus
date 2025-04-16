@@ -8,6 +8,7 @@ import com.krushit.entity.Location;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -101,7 +102,7 @@ public class LocationService {
         return locationDAO.getLocationName(pickLocationId);
     }
 
-    public double getCommissionByDistance(double distance) throws ApplicationException{
+    public BigDecimal getCommissionByDistance(double distance) throws ApplicationException{
         return locationDAO.getCommissionByDistance(distance);
     }
 }

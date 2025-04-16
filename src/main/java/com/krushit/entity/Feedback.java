@@ -2,33 +2,41 @@ package com.krushit.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "feedback")
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "feedback_id")
-    private int feedBackId;
+    private int feedbackId;
 
-    @Column(name = "from_user_id")
-    private int fromUserId;
+    @ManyToOne
+    @JoinColumn(name = "from_user_id", nullable = false)
+    private User fromUser;
 
-    @Column(name = "to_user_id")
-    private int toUserId;
+    @ManyToOne
+    @JoinColumn(name = "to_user_id", nullable = false)
+    private User toUser;
 
-    @Column(name = "ride_id")
-    private int rideId;
+    @ManyToOne
+    @JoinColumn(name = "ride_id", nullable = false)
+    private Ride ride;
 
-    @Column(name = "rating")
+    @Column(name = "rating", nullable = false)
     private int rating;
 
-    @Column(name = "comment")
+    @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
 
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    private LocalDateTime createdAt;
+
     private Feedback(FeedbackBuilder builder) {
-        this.fromUserId = builder.fromUserId;
-        this.toUserId = builder.toUserId;
-        this.rideId = builder.rideId;
+        this.fromUser = builder.fromUserId;
+        this.toUser = builder.toUserId;
+        this.ride = builder.rideId;
         this.rating = builder.rating;
         this.comment = builder.comment;
     }
@@ -36,20 +44,20 @@ public class Feedback {
     public Feedback() {
     }
 
-    public int getFromUserId() {
-        return fromUserId;
+    public User getFromUser() {
+        return fromUser;
     }
 
-    public int getFeedBackId() {
-        return feedBackId;
+    public int getFeedBack() {
+        return feedbackId;
     }
 
-    public int getToUserId() {
-        return toUserId;
+    public User getToUserId() {
+        return toUser;
     }
 
-    public int getRideId() {
-        return rideId;
+    public Ride getRideId() {
+        return ride;
     }
 
     public int getRating() {
@@ -63,33 +71,33 @@ public class Feedback {
     @Override
     public String toString() {
         return "Feedback{" +
-                "feedBackId=" + feedBackId +
-                ", fromUserId=" + fromUserId +
-                ", toUserId=" + toUserId +
-                ", rideId=" + rideId +
+                "feedBackId=" + feedbackId +
+                ", fromUserId=" + fromUser +
+                ", toUserId=" + toUser +
+                ", rideId=" + ride +
                 ", rating=" + rating +
                 ", comment='" + comment + '\'' +
                 '}';
     }
 
     public static class FeedbackBuilder {
-        private int fromUserId;
-        private int toUserId;
-        private int rideId;
+        private User fromUserId;
+        private User toUserId;
+        private Ride rideId;
         private int rating;
         private String comment;
 
-        public FeedbackBuilder setFromUserId(int fromUserId) {
+        public FeedbackBuilder setFromUserId(User fromUserId) {
             this.fromUserId = fromUserId;
             return this;
         }
 
-        public FeedbackBuilder setToUserId(int toUserId) {
+        public FeedbackBuilder setToUserId(User toUserId) {
             this.toUserId = toUserId;
             return this;
         }
 
-        public FeedbackBuilder setRideId(int rideId) {
+        public FeedbackBuilder setRideId(Ride rideId) {
             this.rideId = rideId;
             return this;
         }

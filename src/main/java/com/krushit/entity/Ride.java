@@ -8,7 +8,9 @@ import com.krushit.common.enums.PaymentStatus;
 import com.krushit.common.enums.RideStatus;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -22,71 +24,77 @@ public class Ride {
     private int rideId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ride_status")
+    @Column(name = "ride_status", nullable = false)
     private RideStatus rideStatus;
 
     @ManyToOne
-    @JoinColumn(name = "pick_location_id")
+    @JoinColumn(name = "pick_location_id", nullable = false)
     private Location pickLocation;
 
     @ManyToOne
-    @JoinColumn(name = "drop_off_location_id")
+    @JoinColumn(name = "drop_off_location_id", nullable = false)
     private Location dropOffLocation;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private User customer;
 
     @ManyToOne
-    @JoinColumn(name = "driver_id")
+    @JoinColumn(name = "driver_id", nullable = false)
     private User driver;
 
-    @Column(name = "ride_date")
+    @Column(name = "ride_date", nullable = false)
     private LocalDate rideDate;
 
-    @Column(name = "pick_up_time")
+    @Column(name = "pick_up_time", nullable = false)
     private LocalTime pickUpTime;
 
     @Column(name = "drop_off_time")
     private LocalTime dropOffTime;
 
-    @Column(name = "display_id")
+    @Column(name = "display_id", length = 10, nullable = false)
     private String displayId;
 
-    @Column(name = "total_km")
+    @Column(name = "total_km", nullable = false)
     private double totalKm;
 
-    @Column(name = "total_cost")
-    private double totalCost;
+    @Column(name = "total_cost", nullable = false)
+    private BigDecimal totalCost;
+
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_mode")
+    @Column(name = "payment_mode", nullable = false)
     private PaymentMode paymentMode;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status")
+    @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus;
 
-    @Column(name = "commission_percentage")
-    private double commissionPercentage;
+    @Column(name = "commission_percentage", nullable = false)
+    private BigDecimal commissionPercentage;
 
-    @Column(name = "driver_earning")
-    private double driverEarning;
+    @Column(name = "driver_earning", nullable = false)
+    private BigDecimal driverEarning;
 
-    @Column(name = "system_earning")
-    private double systemEarning;
+    @Column(name = "system_earning", nullable = false)
+    private BigDecimal systemEarning;
 
-    @Column(name = "cancellation_charge")
-    private double cancellationCharge;
+    @Column(name = "cancellation_charge", nullable = false)
+    private BigDecimal cancellationCharge;
 
-    @Column(name = "cancellation_driver_earning")
-    private double cancellationDriverEarning;
+    @Column(name = "cancellation_driver_earning", nullable = false)
+    private BigDecimal cancellationDriverEarning;
 
-    @Column(name = "cancellation_system_earning")
-    private double cancellationSystemEarning;
+    @Column(name = "cancellation_system_earning", nullable = false)
+    private BigDecimal cancellationSystemEarning;
 
-    @Column(name = "driver_penalty")
-    private double driverPenalty;
+    @Column(name = "driver_penalty", nullable = false)
+    private BigDecimal driverPenalty;
 
     private Ride(RideBuilder builder) {
         this.rideId = builder.rideId;
@@ -159,7 +167,7 @@ public class Ride {
         return totalKm;
     }
 
-    public double getTotalCost() {
+    public BigDecimal getTotalCost() {
         return totalCost;
     }
 
@@ -171,31 +179,31 @@ public class Ride {
         return paymentStatus;
     }
 
-    public double getCommissionPercentage() {
+    public BigDecimal getCommissionPercentage() {
         return commissionPercentage;
     }
 
-    public double getDriverEarning() {
+    public BigDecimal getDriverEarning() {
         return driverEarning;
     }
 
-    public double getSystemEarning() {
+    public BigDecimal getSystemEarning() {
         return systemEarning;
     }
 
-    public double getCancellationCharge() {
+    public BigDecimal getCancellationCharge() {
         return cancellationCharge;
     }
 
-    public double getCancellationDriverEarning() {
+    public BigDecimal getCancellationDriverEarning() {
         return cancellationDriverEarning;
     }
 
-    public double getCancellationSystemEarning() {
+    public BigDecimal getCancellationSystemEarning() {
         return cancellationSystemEarning;
     }
 
-    public double getDriverPenalty() {
+    public BigDecimal getDriverPenalty() {
         return driverPenalty;
     }
 
@@ -212,16 +220,16 @@ public class Ride {
         private LocalTime dropOffTime;
         private String displayId;
         private double totalKm;
-        private double totalCost;
+        private BigDecimal totalCost;
         private PaymentMode paymentMode;
         private PaymentStatus paymentStatus;
-        private double commissionPercentage;
-        private double driverEarning;
-        private double systemEarning;
-        private double cancellationCharge;
-        private double cancellationDriverEarning;
-        private double cancellationSystemEarning;
-        private double driverPenalty;
+        private BigDecimal commissionPercentage;
+        private BigDecimal driverEarning;
+        private BigDecimal systemEarning;
+        private BigDecimal cancellationCharge;
+        private BigDecimal cancellationDriverEarning;
+        private BigDecimal cancellationSystemEarning;
+        private BigDecimal driverPenalty;
 
         public RideBuilder setRideId(int rideId) {
             this.rideId = rideId;
@@ -278,7 +286,7 @@ public class Ride {
             return this;
         }
 
-        public RideBuilder setTotalCost(double totalCost) {
+        public RideBuilder setTotalCost(BigDecimal totalCost) {
             this.totalCost = totalCost;
             return this;
         }
@@ -293,37 +301,37 @@ public class Ride {
             return this;
         }
 
-        public RideBuilder setCommissionPercentage(double commissionPercentage) {
+        public RideBuilder setCommissionPercentage(BigDecimal commissionPercentage) {
             this.commissionPercentage = commissionPercentage;
             return this;
         }
 
-        public RideBuilder setDriverEarning(double driverEarning) {
+        public RideBuilder setDriverEarning(BigDecimal driverEarning) {
             this.driverEarning = driverEarning;
             return this;
         }
 
-        public RideBuilder setSystemEarning(double systemEarning) {
+        public RideBuilder setSystemEarning(BigDecimal systemEarning) {
             this.systemEarning = systemEarning;
             return this;
         }
 
-        public RideBuilder setCancellationCharge(double cancellationCharge) {
+        public RideBuilder setCancellationCharge(BigDecimal cancellationCharge) {
             this.cancellationCharge = cancellationCharge;
             return this;
         }
 
-        public RideBuilder setCancellationDriverEarning(double cancellationDriverEarning) {
+        public RideBuilder setCancellationDriverEarning(BigDecimal cancellationDriverEarning) {
             this.cancellationDriverEarning = cancellationDriverEarning;
             return this;
         }
 
-        public RideBuilder setCancellationSystemEarning(double cancellationSystemEarning) {
+        public RideBuilder setCancellationSystemEarning(BigDecimal cancellationSystemEarning) {
             this.cancellationSystemEarning = cancellationSystemEarning;
             return this;
         }
 
-        public RideBuilder setDriverPenalty(double driverPenalty) {
+        public RideBuilder setDriverPenalty(BigDecimal driverPenalty) {
             this.driverPenalty = driverPenalty;
             return this;
         }

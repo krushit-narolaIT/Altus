@@ -13,6 +13,7 @@ import com.krushit.entity.Ride;
 import com.krushit.entity.RideRequest;
 import jakarta.persistence.EntityManager;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -105,8 +106,8 @@ public class RideDAOImpl implements IRideDAO {
                     Ride ride = new Ride.RideBuilder()
                             .setRideId(rs.getInt("ride_id"))
                             .setRideStatus(RideStatus.valueOf(rs.getString("ride_status").toUpperCase()))
-                            .setPickLocationId(rs.getInt("pick_location_id"))
-                            .setDropOffLocationId(rs.getInt("drop_off_location_id"))
+                            //.setPickLocationId(rs.getInt("pick_location_id"))
+                            //.setDropOffLocationId(rs.getInt("drop_off_location_id"))
                             .setRideDate(rs.getDate("ride_date").toLocalDate())
                             .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                             .setDisplayId(rs.getString("display_id"))
@@ -127,20 +128,20 @@ public class RideDAOImpl implements IRideDAO {
             try {
                 conn.setAutoCommit(false);
                 pstmt.setString(1, ride.getRideStatus().getStatus());
-                pstmt.setInt(2, ride.getPickLocationId());
-                pstmt.setInt(3, ride.getDropOffLocationId());
-                pstmt.setInt(4, ride.getCustomerId());
-                pstmt.setInt(5, ride.getDriverId());
+                pstmt.setInt(2, ride.getPickLocation().getId());
+                pstmt.setInt(3, ride.getDropOffLocation().getId());
+                pstmt.setInt(4, ride.getCustomer().getUserId());
+                pstmt.setInt(5, ride.getDriver().getUserId());
                 pstmt.setDate(6, Date.valueOf(ride.getRideDate()));
                 pstmt.setTime(7, Time.valueOf(ride.getPickUpTime()));
                 pstmt.setString(8, ride.getDisplayId());
                 pstmt.setDouble(9, ride.getTotalKm());
-                pstmt.setDouble(10, ride.getTotalCost());
+                pstmt.setDouble(10, ride.getTotalCost().doubleValue());
                 pstmt.setString(11, ride.getPaymentMode().getMode());
                 pstmt.setString(12, ride.getPaymentStatus().getStatus());
-                pstmt.setDouble(13, ride.getCommissionPercentage());
-                pstmt.setDouble(14, ride.getDriverEarning());
-                pstmt.setDouble(15, ride.getSystemEarning());
+                pstmt.setDouble(13, ride.getCommissionPercentage().doubleValue());
+                pstmt.setDouble(14, ride.getDriverEarning().doubleValue());
+                pstmt.setDouble(15, ride.getSystemEarning().doubleValue());
                 pstmt.executeUpdate();
                 updateRideRequestStatus(rideRequestId ,RideRequestStatus.ACCEPTED, conn);
                 conn.commit();
@@ -164,14 +165,14 @@ public class RideDAOImpl implements IRideDAO {
             if (rs.next()) {
                 return Optional.of(new Ride.RideBuilder()
                         .setRideId(rs.getInt("ride_id"))
-                        .setCustomerId(rs.getInt("customer_id"))
-                        .setDriverId(rs.getInt("driver_id"))
+                        //.setCustomerId(rs.getInt("customer_id"))
+                        //.setDriverId(rs.getInt("driver_id"))
                         .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
                         .setRideDate(rs.getDate("ride_date").toLocalDate())
                         .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                         .setDisplayId(rs.getString("display_id"))
-                        .setTotalCost(rs.getDouble("total_cost"))
-                        .setCommissionPercentage(rs.getDouble("commission_percentage"))
+                        .setTotalCost(new BigDecimal(rs.getDouble("total_cost")))
+                        .setCommissionPercentage(new BigDecimal(rs.getDouble("commission_percentage")))
                         .build());
             }
         } catch (SQLException | ClassNotFoundException e) {
@@ -225,21 +226,21 @@ public class RideDAOImpl implements IRideDAO {
                 Ride ride = new Ride.RideBuilder()
                         .setRideId(rs.getInt("ride_id"))
                         .setRideStatus(RideStatus.getType(rs.getString("ride_status")))
-                        .setPickLocationId(rs.getInt("pick_location_id"))
-                        .setDropOffLocationId(rs.getInt("drop_off_location_id"))
-                        .setCustomerId(rs.getInt("customer_id"))
-                        .setDriverId(rs.getInt("driver_id"))
+                        //.setPickLocationId(rs.getInt("pick_location_id"))
+                        //.setDropOffLocationId(rs.getInt("drop_off_location_id"))
+                        //.setCustomerId(rs.getInt("customer_id"))
+                        //.setDriverId(rs.getInt("driver_id"))
                         .setRideDate(rs.getDate("ride_date").toLocalDate())
                         .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                         .setDisplayId(rs.getString("display_id"))
                         .setTotalKm(rs.getDouble("total_km"))
-                        .setTotalCost(rs.getDouble("total_cost"))
+                        //.setTotalCost(rs.getDouble("total_cost")) TODO
                         .setPaymentMode(PaymentMode.getType(rs.getString("payment_mode")))
                         .setPaymentStatus(PaymentStatus.getType(rs.getString("payment_status")))
-                        .setCancellationCharge(rs.getDouble("cancellation_charge"))
-                        .setDriverEarning(rs.getDouble("driver_earning"))
-                        .setCancellationDriverEarning(rs.getDouble("cancellation_driver_earning"))
-                        .setDriverPenalty(rs.getDouble("driver_penalty"))
+                        //.setCancellationCharge(rs.getDouble("cancellation_charge"))
+                        //.setDriverEarning(rs.getDouble("driver_earning"))
+                        //.setCancellationDriverEarning(rs.getDouble("cancellation_driver_earning"))
+                        //.setDriverPenalty(rs.getDouble("driver_penalty"))
                         .build();
                 rideList.add(ride);
             }
@@ -282,21 +283,21 @@ public class RideDAOImpl implements IRideDAO {
                             .setRideId(rs.getInt("ride_id"))
                             .setDisplayId(rs.getString("display_id"))
                             .setRideStatus(RideStatus.valueOf(rs.getString("ride_status")))
-                            .setPickLocationId(rs.getInt("pick_location_id"))
-                            .setDropOffLocationId(rs.getInt("drop_off_location_id"))
-                            .setCustomerId(rs.getInt("customer_id"))
+                            //.setPickLocationId(rs.getInt("pick_location_id"))
+                            //.setDropOffLocationId(rs.getInt("drop_off_location_id"))
+                            //.setCustomerId(rs.getInt("customer_id"))
                             .setRideDate(rs.getDate("ride_date").toLocalDate())
                             .setPickUpTime(rs.getTime("pick_up_time").toLocalTime())
                             .setTotalKm(rs.getDouble("total_km"))
-                            .setTotalCost(rs.getDouble("total_cost"))
+                            //.setTotalCost(rs.getDouble("total_cost"))
                             .setPaymentMode(PaymentMode.getType(rs.getString("payment_mode")))
-                            .setPaymentStatus(PaymentStatus.getType(rs.getString("payment_status")))
-                            .setDriverEarning(rs.getDouble("driver_earning"))
-                            .setCancellationDriverEarning(rs.getDouble("cancellation_driver_earning"))
-                            .setDriverPenalty(rs.getDouble("driver_penalty"));
+                            .setPaymentStatus(PaymentStatus.getType(rs.getString("payment_status")));
+                            //.setDriverEarning(rs.getDouble("driver_earning"))
+                            //.setCancellationDriverEarning(rs.getDouble("cancellation_driver_earning"))
+                            //.setDriverPenalty(rs.getDouble("driver_penalty"));
                     if (driverId == 0) {
-                        builder.setSystemEarning(rs.getDouble("system_earning"))
-                                .setCancellationSystemEarning(rs.getDouble("cancellation_system_earning"));
+                        builder.setSystemEarning(new BigDecimal(rs.getDouble("system_earning")));
+                                //.setCancellationSystemEarning(rs.getDouble("cancellation_system_earning"));
                     }
                     rideList.add(builder.build());
                 }

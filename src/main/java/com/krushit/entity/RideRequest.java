@@ -46,10 +46,10 @@ public class RideRequest {
     @Column(name = "pick_up_time", nullable = false)
     private LocalTime pickUpTime;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
     private RideRequest(RideRequestBuilder builder) {

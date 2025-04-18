@@ -1,7 +1,7 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.Role;
+import com.krushit.common.enums.RoleType;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.UserDTO;
@@ -28,7 +28,7 @@ public class UserUpdateController extends HttpServlet {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
             //User user = UserContextUtils.getUser();
-            AuthUtils.validateUser(user, Role.ROLE_CUSTOMER);
+            AuthUtils.validateUser(user, RoleType.ROLE_CUSTOMER);
             UserDTO updatedUser = ObjectMapperUtils.toObject(request.getReader(), UserDTO.class);
             userService.updateUser(updatedUser, user.getUserId());
             createResponse(response, Message.User.DETAILS_UPDATED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);

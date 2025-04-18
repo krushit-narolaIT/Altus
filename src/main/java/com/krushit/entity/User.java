@@ -3,10 +3,13 @@ package com.krushit.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.krushit.common.enums.Role;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -14,14 +17,13 @@ import java.time.LocalDateTime;
 @JsonDeserialize(builder = User.UserBuilder.class)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private int userId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "role_id")
     private Role role;
 
     @Column(name = "first_name", length = 50, nullable = false)
@@ -54,10 +56,23 @@ public class User {
     @Column(name = "rating_count")
     private int ratingCount;
 
-    @Column(name = "created_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP", updatable = false, insertable = false)
+    @ManyToMany
+    @JoinTable(
+            name = "user_favorites",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "favorite_user_id")
+    )
+    private Set<User> favoriteUsers = new HashSet<>();
+
+    @ManyToMany(mappedBy = "favoriteUsers")
+    private Set<User> favoritedByUsers = new HashSet<>();
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", insertable = false, updatable = false)
+    @UpdateTimestamp
+    @Column(name = "updated_at", insertable = false)
     private LocalDateTime updatedAt;
 
     protected User(UserBuilder builder) {
@@ -75,31 +90,11 @@ public class User {
         this.ratingCount = builder.ratingCount;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
+        this.favoriteUsers = builder.favoriteUsers;
+        this.favoritedByUsers = builder.favoritedByUsers;
     }
 
-    public User() {
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "userId=" + userId +
-                ", role=" + role +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phoneNo='" + phoneNo + '\'' +
-                ", emailId='" + emailId + '\'' +
-                ", password='" + password + '\'' +
-                ", isActive=" + isActive +
-                ", displayId='" + displayId + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                '}';
-    }
-
-    public void setTotalRatings(int totalRatings) {
-        this.totalRatings = totalRatings;
-    }
+    public User() {}
 
     public int getUserId() {
         return userId;
@@ -137,12 +132,8 @@ public class User {
         return displayId;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
+    public void setDisplayId(String displayId) {
+        this.displayId = displayId;
     }
 
     public boolean isBlocked() {
@@ -153,8 +144,28 @@ public class User {
         return totalRatings;
     }
 
+    public void setTotalRatings(int totalRatings) {
+        this.totalRatings = totalRatings;
+    }
+
     public int getRatingCount() {
         return ratingCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public Set<User> getFavoriteUsers() {
+        return favoriteUsers;
+    }
+
+    public Set<User> getFavoritedByUsers() {
+        return favoritedByUsers;
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
@@ -173,8 +184,8 @@ public class User {
         private int ratingCount;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        private String createdBy;
-        private String updatedBy;
+        private Set<User> favoriteUsers = new HashSet<>();
+        private Set<User> favoritedByUsers = new HashSet<>();
 
         public UserBuilder setUserId(int userId) {
             this.userId = userId;
@@ -246,13 +257,13 @@ public class User {
             return this;
         }
 
-        public UserBuilder setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
+        public UserBuilder setFavoriteUsers(Set<User> favoriteUsers) {
+            this.favoriteUsers = favoriteUsers;
             return this;
         }
 
-        public UserBuilder setUpdatedBy(String updatedBy) {
-            this.updatedBy = updatedBy;
+        public UserBuilder setFavoritedByUsers(Set<User> favoritedByUsers) {
+            this.favoritedByUsers = favoritedByUsers;
             return this;
         }
 

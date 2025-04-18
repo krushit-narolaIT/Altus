@@ -4,7 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserSignUpDTO;
-import com.krushit.common.enums.Role;
+import com.krushit.common.enums.RoleType;
 import com.krushit.entity.User;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.service.UserService;
@@ -31,10 +31,10 @@ public class UserSignUpController extends HttpServlet {
                 throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
             }
             UserSignUpDTO userSignUpDTO = ObjectMapperUtils.toObject(request.getReader(), UserSignUpDTO.class);
-            Role userRole = request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)
-                    ? Role.ROLE_CUSTOMER
-                    : Role.ROLE_DRIVER;
-            User user = mapper.convertToEntity(userSignUpDTO, userRole);
+            RoleType userRoleType = request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)
+                    ? RoleType.ROLE_CUSTOMER
+                    : RoleType.ROLE_DRIVER;
+            User user = mapper.convertToEntity(userSignUpDTO, userRoleType);
             SignupValidator.validateUser(user);
             userService.registerUser(user);
             createResponse(response, Message.User.USER_REGISTERED_SUCCESSFULLY, user.getEmailId(), HttpServletResponse.SC_OK);

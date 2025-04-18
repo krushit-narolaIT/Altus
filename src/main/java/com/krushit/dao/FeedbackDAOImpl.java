@@ -1,18 +1,12 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.common.config.DBConfig;
 import com.krushit.common.config.JPAConfig;
-import com.krushit.common.enums.Role;
+import com.krushit.common.enums.RoleType;
 import com.krushit.common.exception.DBException;
 import com.krushit.entity.Feedback;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class FeedbackDAOImpl implements IFeedbackDAO {
     private static final String IS_FEEDBACK_GIVEN =
@@ -37,9 +31,9 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
     }
 
     @Override
-    public int getRecipientUserIdByRideId(int rideId, Role role) throws DBException {
+    public int getRecipientUserIdByRideId(int rideId, RoleType roleType) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            String query = (Role.ROLE_CUSTOMER == role)
+            String query = (RoleType.ROLE_CUSTOMER == roleType)
                     ? "SELECT r.driver.id FROM Ride r WHERE r.rideId = :rideId"
                     : "SELECT r.customer.id FROM Ride r WHERE r.rideId = :rideId";
             return em.createQuery(query, Integer.class)

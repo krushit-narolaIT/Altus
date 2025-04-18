@@ -3,7 +3,10 @@ package com.krushit.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.krushit.common.enums.DocumentVerificationStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -33,16 +36,19 @@ public class Driver {
     @Column(name = "is_available")
     private boolean isAvailable;
 
-    @Column(name = "verification_status", nullable = false, length = 20)
-    private String verificationStatus = "FALSE";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "verification_status")
+    private DocumentVerificationStatus verificationStatus;
 
     @Column(name = "comment", length = 254)
     private String comment;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Column(name = "updated_at", insertable = false)
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public Driver() {
@@ -86,7 +92,7 @@ public class Driver {
         return isAvailable;
     }
 
-    public String getVerificationStatus() {
+    public DocumentVerificationStatus getVerificationStatus() {
         return verificationStatus;
     }
 
@@ -125,7 +131,7 @@ public class Driver {
         private boolean isDocumentVerified;
         private String licencePhoto;
         private boolean isAvailable;
-        private String verificationStatus;
+        private DocumentVerificationStatus verificationStatus;
         private String comment;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
@@ -160,7 +166,7 @@ public class Driver {
             return this;
         }
 
-        public DriverBuilder setVerificationStatus(String verificationStatus) {
+        public DriverBuilder setVerificationStatus(DocumentVerificationStatus verificationStatus) {
             this.verificationStatus = verificationStatus;
             return this;
         }

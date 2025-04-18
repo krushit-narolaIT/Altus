@@ -1,13 +1,10 @@
 package com.krushit.common.mapper;
 
-import com.krushit.common.enums.Role;
+import com.krushit.common.enums.RoleType;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.dto.UserSignUpDTO;
-import com.krushit.entity.Location;
-import com.krushit.entity.RideRequest;
-import com.krushit.entity.User;
-import com.krushit.entity.VehicleService;
+import com.krushit.entity.*;
 
 public class Mapper {
     private static final Mapper INSTANCE = new Mapper();
@@ -38,7 +35,10 @@ public class Mapper {
                 .build();
     }
 
-    public User convertToEntity(UserSignUpDTO userSignUpDTO, Role role) {
+    public User convertToEntity(UserSignUpDTO userSignUpDTO, RoleType roleType) {
+        Role role = new Role();
+        role.setRoleId(roleType.getRoleId());
+        role.setRoleName(roleType.getRoleName());
         return new User.UserBuilder()
                 .setFirstName(userSignUpDTO.getFirstName())
                 .setLastName(userSignUpDTO.getLastName())

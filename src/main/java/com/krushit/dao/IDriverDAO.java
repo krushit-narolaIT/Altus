@@ -1,6 +1,6 @@
 package com.krushit.dao;
 
-import com.krushit.common.enums.DriverDocumentVerificationStatus;
+import com.krushit.common.enums.DocumentVerificationStatus;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.PendingDriverDTO;
 import com.krushit.entity.Driver;
@@ -17,6 +17,6 @@ public interface IDriverDAO {
     boolean isDocumentVerified(int driverId) throws DBException;
     boolean isDocumentExist(int driverId) throws DBException;
     boolean isLicenseNumberExist(String licenseNumber) throws DBException;
-    DriverDocumentVerificationStatus isDocumentUnderReview(int driverId) throws DBException;
+    DocumentVerificationStatus isDocumentUnderReview(int driverId) throws DBException;
     void updateDriverAvailability(int driverId) throws DBException;
 }

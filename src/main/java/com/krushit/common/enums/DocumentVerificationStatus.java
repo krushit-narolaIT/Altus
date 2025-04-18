@@ -2,19 +2,20 @@ package com.krushit.common.enums;
 
 import com.krushit.common.Message;
 
-public enum DriverDocumentVerificationStatus {
+public enum DocumentVerificationStatus {
     PENDING("Pending"),
-    ACCEPTED("Accepted"),
-    REJECTED("Rejected");
+    VERIFIED("Verified"),
+    REJECTED("Rejected"),
+    INCOMPLETE("Incomplete");
 
     private final String status;
 
-    DriverDocumentVerificationStatus(String status) {
+    DocumentVerificationStatus(String status) {
         this.status = status;
     }
 
-    public static DriverDocumentVerificationStatus getType(String status) {
-        for (DriverDocumentVerificationStatus r : DriverDocumentVerificationStatus.values()) {
+    public static DocumentVerificationStatus getType(String status) {
+        for (DocumentVerificationStatus r : DocumentVerificationStatus.values()) {
             if (r.status.equalsIgnoreCase(status)) {
                 return r;
             }

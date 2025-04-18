@@ -1,7 +1,7 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.DriverDocumentVerificationStatus;
+import com.krushit.common.enums.DocumentVerificationStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
@@ -37,13 +37,13 @@ public class DriverService {
         if (driverDAO.isLicenseNumberExist(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
-        if (driverDAO.isDocumentUnderReview(driver.getDriverId()) == DriverDocumentVerificationStatus.PENDING) {
+        if (driverDAO.isDocumentUnderReview(driver.getDriverId()) == DocumentVerificationStatus.PENDING) {
             throw new ApplicationException(Message.Driver.DOCUMENT_IS_UNDER_REVIEW);
         }
         Driver updatedDriver = new Driver.DriverBuilder()
                 .setLicenceNumber(driver.getLicenceNumber())
                 .setLicencePhoto(driver.getLicencePhoto())
-                .setVerificationStatus(DriverDocumentVerificationStatus.PENDING.getStatus())
+                .setVerificationStatus(DocumentVerificationStatus.PENDING)
                 .setUser(new User.UserBuilder().setUserId(driver.getUser().getUserId()).build())
                 .build();
         driverDAO.insertDriverDetails(updatedDriver);
@@ -83,9 +83,9 @@ public class DriverService {
         if(!driverDAO.isDocumentExist(driverId)){
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
-        if(DriverDocumentVerificationStatus.ACCEPTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
+        if(DocumentVerificationStatus.VERIFIED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
             driverDAO.updateDriveVerificationDetail(driverId, true, null);
-        } else if(DriverDocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
+        } else if(DocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
             driverDAO.updateDriveVerificationDetail(driverId, false, verificationRequestDTO.getMessage());
         } else {
             throw new ApplicationException(Message.Driver.PLEASE_PERFORM_VALID_VERIFICATION_OPERATION);

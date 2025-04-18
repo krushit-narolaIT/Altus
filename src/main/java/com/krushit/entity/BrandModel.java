@@ -19,9 +19,6 @@ public class BrandModel {
     @Column(name = "min_year")
     private int minYear;
 
-    /*    @Column(name = "service_id")
-    private int serviceId;*/
-
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
     private VehicleService vehicleService;

@@ -1,1 +1,0 @@
-ALTER TABLE brand_models MODIFY min_year INT;

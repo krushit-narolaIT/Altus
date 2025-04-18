@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "feedback")
+@Table(
+        name = "feedback",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"from_user_id", "ride_id"})
+)
 public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

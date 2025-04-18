@@ -2,12 +2,12 @@ package com.krushit.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.krushit.common.enums.Role;
+import com.krushit.entity.Role;
 
 @JsonDeserialize(builder = UserDTO.UserDTOBuilder.class)
 public class UserDTO {
     private final int userId;
-    private final Role role;
+    private final Role roleType;
     private final String firstName;
     private final String lastName;
     private final String phoneNo;
@@ -17,7 +17,7 @@ public class UserDTO {
 
     private UserDTO(UserDTOBuilder builder) {
         this.userId = builder.userId;
-        this.role = builder.role;
+        this.roleType = builder.roleType;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.phoneNo = builder.phoneNo;
@@ -29,7 +29,7 @@ public class UserDTO {
     @JsonPOJOBuilder(withPrefix = "set")
     public static class UserDTOBuilder {
         private int userId;
-        private Role role;
+        private Role roleType;
         private String firstName;
         private String lastName;
         private String phoneNo;
@@ -42,8 +42,8 @@ public class UserDTO {
             return this;
         }
 
-        public UserDTOBuilder setRole(Role role) {
-            this.role = role;
+        public UserDTOBuilder setRole(Role roleType) {
+            this.roleType = roleType;
             return this;
         }
 
@@ -87,7 +87,7 @@ public class UserDTO {
     }
 
     public Role getRole() {
-        return role;
+        return roleType;
     }
 
     public String getFirstName() {
@@ -118,7 +118,7 @@ public class UserDTO {
     public String toString() {
         return "UserDTO{" +
                 "userId=" + userId +
-                ", role=" + role +
+                ", role=" + roleType +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +

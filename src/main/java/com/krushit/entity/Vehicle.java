@@ -36,12 +36,6 @@ public class Vehicle {
     @Column(name = "wheel_base")
     private double wheelBase;
 
-    @Column(name = "verification_status")
-    private String verificationStatus;
-
-    @Column(name = "verification_message")
-    private String verificationMessage;
-
     public Vehicle() {}
 
     public int getVehicleId() {
@@ -116,22 +110,6 @@ public class Vehicle {
         this.wheelBase = wheelBase;
     }
 
-    public String getVerificationStatus() {
-        return verificationStatus;
-    }
-
-    public void setVerificationStatus(String verificationStatus) {
-        this.verificationStatus = verificationStatus;
-    }
-
-    public String getVerificationMessage() {
-        return verificationMessage;
-    }
-
-    public void setVerificationMessage(String verificationMessage) {
-        this.verificationMessage = verificationMessage;
-    }
-
     @Override
     public String toString() {
         return "Vehicle{" +
@@ -144,8 +122,6 @@ public class Vehicle {
                 ", transmission='" + transmission + '\'' +
                 ", groundClearance=" + groundClearance +
                 ", wheelBase=" + wheelBase +
-                ", verificationStatus='" + verificationStatus + '\'' +
-                ", verificationMessage='" + verificationMessage + '\'' +
                 '}';
     }
 }

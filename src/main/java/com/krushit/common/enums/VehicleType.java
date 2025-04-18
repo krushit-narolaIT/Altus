@@ -22,9 +22,9 @@ public enum VehicleType {
         throw new IllegalArgumentException(Message.Vehicle.INVALID_VEHICLE_TYPE + typeName);
     }
 
-    public static boolean isValidVehicleType(String vehicleType) {
+    public static boolean isValidVehicleType(VehicleType vehicleType) {
         for (VehicleType type : VehicleType.values()) {
-            if (type.getTypeName().equalsIgnoreCase(vehicleType)) {
+            if (type.getTypeName().equalsIgnoreCase(vehicleType.getTypeName())) {
                 return true;
             }
         }

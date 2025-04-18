@@ -1,5 +1,6 @@
 package com.krushit.common.mapper;
 
+import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.enums.RoleType;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
@@ -80,6 +81,7 @@ public class Mapper {
                 .setVehicleService(vehicleService)
                 .setRideDate(dto.getRideDate())
                 .setPickUpTime(dto.getPickUpTime())
+                .setRideRequestStatus(RideRequestStatus.PENDING)
                 .build();
     }
 

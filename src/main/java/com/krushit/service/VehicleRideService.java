@@ -58,6 +58,9 @@ public class VehicleRideService {
         List<VehicleService> availableServices = vehicleDAO.getAllAvailableVehicleServices();
         List<RideServiceDTO> rideOptions = new ArrayList<>();
         for (VehicleService service : availableServices) {
+            BigDecimal baseFare = BigDecimal.valueOf(service.getBaseFare());
+            BigDecimal perKmRate = BigDecimal.valueOf(service.getPerKmRate());
+            BigDecimal km = BigDecimal.valueOf(distance);
             double totalPrice = service.getBaseFare() + (service.getPerKmRate() * distance);
             RideServiceDTO ride = new RideServiceDTO(
                     service.getServiceId(),

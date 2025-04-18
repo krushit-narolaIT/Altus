@@ -1,6 +1,9 @@
 package com.krushit.entity;
 
+import com.krushit.common.enums.VehicleType;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "vehicle_service")
@@ -14,24 +17,25 @@ public class VehicleService {
     private String serviceName;
 
     @Column(name = "base_fare")
-    private double baseFare;
+    private BigDecimal baseFare;
 
     @Column(name = "per_km_rate")
-    private double perKmRate;
+    private BigDecimal perKmRate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type")
-    private String vehicleType;
+    private VehicleType vehicleType;
 
     @Column(name = "max_passengers")
     private int maxPassengers;
 
     @Column(name = "commission_percentage")
-    private double commissionPercentage;
+    private BigDecimal commissionPercentage;
 
     public VehicleService() {}
 
-    public VehicleService(int serviceId, String serviceName, double baseFare, double perKmRate,
-                          String vehicleType, int maxPassengers, double commissionPercentage) {
+    public VehicleService(int serviceId, String serviceName, BigDecimal baseFare, BigDecimal perKmRate,
+                          VehicleType vehicleType, int maxPassengers, BigDecimal commissionPercentage) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.baseFare = baseFare;
@@ -41,8 +45,8 @@ public class VehicleService {
         this.commissionPercentage = commissionPercentage;
     }
 
-    public VehicleService(int serviceId, String serviceName, double baseFare, double perKmRate,
-                          String vehicleType, int maxPassengers) {
+    public VehicleService(int serviceId, String serviceName, BigDecimal baseFare, BigDecimal perKmRate,
+                          VehicleType vehicleType, int maxPassengers) {
         this.serviceId = serviceId;
         this.serviceName = serviceName;
         this.baseFare = baseFare;
@@ -67,27 +71,27 @@ public class VehicleService {
         this.serviceName = serviceName;
     }
 
-    public double getBaseFare() {
+    public BigDecimal getBaseFare() {
         return baseFare;
     }
 
-    public void setBaseFare(double baseFare) {
+    public void setBaseFare(BigDecimal baseFare) {
         this.baseFare = baseFare;
     }
 
-    public double getPerKmRate() {
+    public BigDecimal getPerKmRate() {
         return perKmRate;
     }
 
-    public void setPerKmRate(double perKmRate) {
+    public void setPerKmRate(BigDecimal perKmRate) {
         this.perKmRate = perKmRate;
     }
 
-    public String getVehicleType() {
+    public VehicleType getVehicleType() {
         return vehicleType;
     }
 
-    public void setVehicleType(String vehicleType) {
+    public void setVehicleType(VehicleType vehicleType) {
         this.vehicleType = vehicleType;
     }
 
@@ -99,11 +103,11 @@ public class VehicleService {
         this.maxPassengers = maxPassengers;
     }
 
-    public double getCommissionPercentage() {
+    public BigDecimal getCommissionPercentage() {
         return commissionPercentage;
     }
 
-    public void setCommissionPercentage(double commissionPercentage) {
+    public void setCommissionPercentage(BigDecimal commissionPercentage) {
         this.commissionPercentage = commissionPercentage;
     }
 

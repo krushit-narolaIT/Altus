@@ -78,8 +78,8 @@ CREATE TABLE vehicles
     year                 INT                                             NOT NULL,
     fuel_type            ENUM ('Petrol', 'Diesel', 'Electric', 'Hybrid') NOT NULL,
     transmission         ENUM ('Manual', 'Automatic')                    NOT NULL,
-    ground_clearance     DECIMAL(5, 2),
-    wheel_base           DECIMAL(5, 2),
+    ground_clearance     double,
+    wheel_base           double,
     FOREIGN KEY (driver_id) REFERENCES users (user_id) ON DELETE CASCADE,
     FOREIGN KEY (brand_model_id) REFERENCES brand_models (brand_model_id) ON DELETE CASCADE
 );

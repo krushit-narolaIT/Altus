@@ -1,5 +1,7 @@
 package com.krushit.entity;
 
+import com.krushit.common.enums.FuelType;
+import com.krushit.common.enums.Transmission;
 import jakarta.persistence.*;
 
 @Entity
@@ -24,11 +26,13 @@ public class Vehicle {
     @Column(name = "year")
     private int year;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "fuel_type")
-    private String fuelType;
+    private FuelType fuelType;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "transmission")
-    private String transmission;
+    private Transmission transmission;
 
     @Column(name = "ground_clearance")
     private double groundClearance;
@@ -78,19 +82,19 @@ public class Vehicle {
         this.year = year;
     }
 
-    public String getFuelType() {
+    public FuelType getFuelType() {
         return fuelType;
     }
 
-    public void setFuelType(String fuelType) {
+    public void setFuelType(FuelType fuelType) {
         this.fuelType = fuelType;
     }
 
-    public String getTransmission() {
+    public Transmission getTransmission() {
         return transmission;
     }
 
-    public void setTransmission(String transmission) {
+    public void setTransmission(Transmission transmission) {
         this.transmission = transmission;
     }
 

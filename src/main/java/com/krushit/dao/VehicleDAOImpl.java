@@ -2,7 +2,6 @@ package com.krushit.dao;
 
 import com.krushit.common.Message;
 import com.krushit.common.config.JPAConfig;
-import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.BrandModelResponseDTO;
 import com.krushit.entity.BrandModel;
@@ -15,17 +14,21 @@ import jakarta.persistence.EntityTransaction;
 import java.util.*;
 
 public class VehicleDAOImpl implements IVehicleDAO {
-    private static final String COUNT_VEHICLE_SERVICE_BY_NAME = "SELECT COUNT(vs) FROM VehicleService vs WHERE LOWER(vs.serviceName) = :name";
-    private static final String COUNT_BRAND_MODEL_BY_NAME_AND_MODEL = "SELECT COUNT(bm) FROM BrandModel bm WHERE bm.brandName = :brandName AND bm.model = :model";
-    private static final String COUNT_VEHICLE_BY_DRIVER_ID = "SELECT COUNT(v) FROM Vehicle v WHERE v.driver.driverId = :driverId";
-    private static final String SELECT_ALL_BRAND_MODELS = "SELECT bm FROM BrandModel bm";
+    private static final String COUNT_VEHICLE_SERVICE_BY_NAME =
+            "SELECT COUNT(vs) FROM VehicleService vs WHERE LOWER(vs.serviceName) = :name";
+    private static final String COUNT_BRAND_MODEL_BY_NAME_AND_MODEL =
+            "SELECT COUNT(bm) FROM BrandModel bm WHERE bm.brandName = :brandName AND bm.model = :model";
+    private static final String COUNT_VEHICLE_BY_DRIVER_ID =
+            "SELECT COUNT(v) FROM Vehicle v WHERE v.driver.driverId = :driverId";
+    private static final String SELECT_ALL_BRAND_MODELS =
+            "SELECT bm FROM BrandModel bm";
     private static final String SELECT_AVAILABLE_VEHICLE_SERVICES =
-            "SELECT DISTINCT vs FROM VehicleService vs " +
-                    "JOIN vs.brandModels bm " +
+            "SELECT DISTINCT bm.vehicleService FROM BrandModel bm " +
                     "JOIN bm.vehicles v " +
                     "JOIN v.driver d " +
-                    "WHERE d.isAvailable = TRUE";
-    private static final String DELETE_VEHICLE_BY_USER_ID = "DELETE FROM Vehicle v WHERE v.driver.user.userId = :userId";
+                    "WHERE d.isAvailable = true";
+    private static final String DELETE_VEHICLE_BY_USER_ID =
+            "DELETE FROM Vehicle v WHERE v.driver.user.userId = :userId";
 
     @Override
     public boolean isVehicleServiceExists(String serviceName) throws DBException {
@@ -154,7 +157,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     }
 
     @Override
-    public void bookRide(RideRequest rideRequest) throws DBException {
+    public void requestForRide(RideRequest rideRequest) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
@@ -163,7 +166,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
                 tx.commit();
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
-                throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL, e);
+                throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_BOOKING_RIDE, e);
             }
         }
     }

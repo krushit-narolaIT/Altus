@@ -5,6 +5,7 @@ import com.krushit.common.enums.RoleType;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.dto.UserSignUpDTO;
+import com.krushit.dto.VehicleServiceDTO;
 import com.krushit.entity.*;
 
 public class Mapper {
@@ -27,6 +28,28 @@ public class Mapper {
                 .setEmailId(user.getEmailId())
                 .setDisplayId(user.getDisplayId())
                 .build();
+    }
+
+    public VehicleServiceDTO convertToDTO(VehicleService vehicleService) {
+        return new VehicleServiceDTO.Builder()
+                .setServiceName(vehicleService.getServiceName())
+                .setBaseFare(vehicleService.getBaseFare())
+                .setPerKmRate(vehicleService.getPerKmRate())
+                .setVehicleType(vehicleService.getVehicleType())
+                .setMaxPassengers(vehicleService.getMaxPassengers())
+                .setCommissionPercentage(vehicleService.getCommissionPercentage())
+                .build();
+    }
+
+    public VehicleService convertToEntity(VehicleServiceDTO dto) {
+        VehicleService vehicleService = new VehicleService();
+        vehicleService.setServiceName(dto.getServiceName());
+        vehicleService.setBaseFare(dto.getBaseFare());
+        vehicleService.setPerKmRate(dto.getPerKmRate());
+        vehicleService.setVehicleType(dto.getVehicleType());
+        vehicleService.setMaxPassengers(dto.getMaxPassengers());
+        vehicleService.setCommissionPercentage(dto.getCommissionPercentage());
+        return vehicleService;
     }
 
     public User fromLoginDTO(UserDTO userDTO) {
@@ -75,7 +98,7 @@ public class Mapper {
         vehicleService.setServiceId(dto.getVehicleServiceId());
 
         return new RideRequest.RideRequestBuilder()
-                .setUser(user)
+                .setCustomer(user)
                 .setPickUpLocation(pickUpLocation)
                 .setDropOffLocation(dropOffLocation)
                 .setVehicleService(vehicleService)

@@ -76,6 +76,8 @@ public final class Message {
         public static final String BOOK_RIDE_IN_ONLY_FIFTEEN_DAYS_IN_ADVANCE = "You can book ride in 15 days is advance";
         public static final String RIDE_ALREADY_SCHEDULED = "You already have a ride scheduled";
         public static final String PLEASE_MANAGE_YOUR_SCHEDULE_ACCORDINGLY = "Please manage your schedule accordingly";
+        public static final String DISTANCE_FETCHED_SUCCESSFULLY = "Distance Fetched Successfully";
+        public static final String ERROR_WHILE_GETTING_RIDE = "Error while getting ride";
 
         private Ride() {
         }
@@ -159,6 +161,7 @@ public final class Message {
         public static final String SUCCESSFULLY_RETRIEVE_DRIVERS = "Pending driver verifications retrieved successfully.";
         public static final String INVALID_FILE_TYPE = "Invalid content type JPG, JPEG, PNG are allowed";
         public static final String DOCUMENT_IS_UNDER_REVIEW = "Your document is under review please wait for approval.";
+        public static final String ERROR_WHILE_CHECKING_IS_DOCUMENT_UNDER_REVIEW = "Error occur while checking is driver document under review";
 
         private Driver() {
         }
@@ -196,7 +199,7 @@ public final class Message {
         public static final String BRAND_MODEL_ADDED_SUCCESSFULLY = "Brand Model Added Successfully";
         public static final String VEHICLE_REGISTERED_SUCCESSFULLY = "Vehicle Registered Successfully";
         public static final String PLEASE_ENTER_VALID_VERIFICATION_REQUEST = "Please enter valid verification request";
-        public static final String PLEASE_ENTER_VALID_VERIFICATION_STATUS = "Please enter valid verification status, Allowed : ACCEPT, REJECT";
+        public static final String PLEASE_ENTER_VALID_VERIFICATION_STATUS = "Please enter valid verification status, Allowed : Verified, Reject";
         public static final String PLEASE_ENTER_REJECTION_MESSAGE = "Please rejection message";
         public static final String VEHICLE_DATA_MISSING = "Invalid request! Vehicle data is missing.";
         public static final String BRAND_MODEL_ID_INVALID = "Please enter valid brand model id";
@@ -224,6 +227,7 @@ public final class Message {
         public static final String RIDE_ACCEPTED = "Ride Accepted..!!";
         public static final String INVALID_TRANSMISSION_TYPE = "Invalid Transmission Type";
         public static final String ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS = "Update ride request status";
+        public static final String ERROR_OCCUR_WHILE_BOOKING_RIDE = "Error while booking ride";
 
         private Vehicle() {
         }

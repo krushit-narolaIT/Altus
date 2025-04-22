@@ -7,6 +7,8 @@ import com.krushit.common.enums.PaymentMode;
 import com.krushit.common.enums.PaymentStatus;
 import com.krushit.common.enums.RideStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -62,9 +64,11 @@ public class Ride {
     private BigDecimal totalCost;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @Enumerated(EnumType.STRING)
@@ -75,25 +79,25 @@ public class Ride {
     @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus;
 
-    @Column(name = "commission_percentage", nullable = false)
+    @Column(name = "commission_percentage", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal commissionPercentage;
 
-    @Column(name = "driver_earning", nullable = false)
+    @Column(name = "driver_earning", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal driverEarning;
 
-    @Column(name = "system_earning", nullable = false)
+    @Column(name = "system_earning", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal systemEarning;
 
-    @Column(name = "cancellation_charge", nullable = false)
+    @Column(name = "cancellation_charge", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal cancellationCharge;
 
-    @Column(name = "cancellation_driver_earning", nullable = false)
+    @Column(name = "cancellation_driver_earning", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal cancellationDriverEarning;
 
-    @Column(name = "cancellation_system_earning", nullable = false)
+    @Column(name = "cancellation_system_earning", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal cancellationSystemEarning;
 
-    @Column(name = "driver_penalty", nullable = false)
+    @Column(name = "driver_penalty", nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal driverPenalty;
 
     private Ride(RideBuilder builder) {

@@ -13,7 +13,7 @@ public interface IDriverDAO {
     List<Driver> getAllDrivers() throws DBException;
     void insertDriverDetails(Driver driver) throws DBException;
     List<PendingDriverDTO> getDriversWithPendingVerification() throws DBException;
-    int getDriverId(int userId) throws DBException;
+    Driver getDriver(int userId) throws DBException;
     boolean isDocumentVerified(int driverId) throws DBException;
     boolean isDocumentExist(int driverId) throws DBException;
     boolean isLicenseNumberExist(String licenseNumber) throws DBException;

@@ -21,7 +21,6 @@ public interface IUserDAO {
     void updateUser(User updatedUser) throws DBException;
     Optional<User> getUserByEmail(String email) throws DBException;
     void updatePassword(String email, String newPassword) throws DBException;
-    void updateUserRating(int toUserId, int rating, Connection connection) throws DBException;
     void updateUserRating(int userId, int newRating, EntityManager em) throws DBException;
     void blockUser(int userId) throws DBException;
     boolean isUserBlocked(int userId) throws DBException;

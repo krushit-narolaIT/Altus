@@ -34,8 +34,9 @@ public class GetAllRideRequestsController extends HttpServlet {
             List<RideResponseDTO> rideRequestDTOList = vehicleRideService.getAllRequest(user.getUserId());
             if(rideRequestDTOList.isEmpty()){
                 createResponse(response, Message.Vehicle.NO_REQUEST_FOUND, null, HttpServletResponse.SC_OK);
+            } else {
+                createResponse(response, Message.Vehicle.FETCHING_ALL_REQUEST_SUCCESSFULLY, rideRequestDTOList, HttpServletResponse.SC_OK);
             }
-            createResponse(response, Message.Vehicle.FETCHING_ALL_REQUEST_SUCCESSFULLY, rideRequestDTOList, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

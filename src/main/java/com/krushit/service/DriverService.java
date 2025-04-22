@@ -83,9 +83,9 @@ public class DriverService {
         if(!driverDAO.isDocumentExist(driverId)){
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
-        if(DocumentVerificationStatus.VERIFIED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
+        if(DocumentVerificationStatus.VERIFIED.name().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
             driverDAO.updateDriveVerificationDetail(driverId, true, null);
-        } else if(DocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
+        } else if(DocumentVerificationStatus.REJECTED.name().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
             driverDAO.updateDriveVerificationDetail(driverId, false, verificationRequestDTO.getMessage());
         } else {
             throw new ApplicationException(Message.Driver.PLEASE_PERFORM_VALID_VERIFICATION_OPERATION);
@@ -97,37 +97,37 @@ public class DriverService {
     }
 
     public void addVehicle(Vehicle vehicle, int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverId(userId);
-        if (!driverDAO.isDocumentExist(driverId)) {
+        Driver driver = driverDAO.getDriver(userId);
+        if (!driverDAO.isDocumentExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
-        if (!driverDAO.isDocumentVerified(driverId)) {
+        if (!driverDAO.isDocumentVerified(driver.getDriverId())) {
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_VERIFIED);
         }
-        if (vehicleDAO.isDriverVehicleExist(driverId)) {
+        if (vehicleDAO.isDriverVehicleExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Vehicle.DRIVER_VEHICLE_ALREADY_EXIST);
         }
-        if (!vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
+        if (vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_NOT_SUPPORTED);
         }
         int minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModel().getBrandModelId());
         if (vehicle.getYear() < minYear) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_YEAR_NOT_SUPPORTED);
         }
-        //vehicle.setDriver(driverId);
-        driverDAO.updateDriverAvailability(driverId);
+        vehicle.setDriver(driver);
+        driverDAO.updateDriverAvailability(driver.getDriverId());
         vehicleDAO.addVehicle(vehicle);
     }
 
     public void deleteVehicle(int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverId(userId);
-        if (!vehicleDAO.isDriverVehicleExist(driverId)) {
+        Driver driver = driverDAO.getDriver(userId);
+        if (!vehicleDAO.isDriverVehicleExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Vehicle.VEHICLE_NOT_EXIST);
         }
         vehicleDAO.deleteVehicleByUserId(userId);
     }
 
     public int getDriverIdFromUserId(int userId) throws ApplicationException{
-        return driverDAO.getDriverId(userId);
+        return driverDAO.getDriver(userId).getDriverId();
     }
 }

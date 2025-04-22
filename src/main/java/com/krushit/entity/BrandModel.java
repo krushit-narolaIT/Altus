@@ -2,6 +2,8 @@ package com.krushit.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "brand_models")
 public class BrandModel {
@@ -19,15 +21,20 @@ public class BrandModel {
     @Column(name = "min_year")
     private int minYear;
 
+    @OneToMany(mappedBy = "brandModel")
+    private List<Vehicle> vehicles;
+
     @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
     private VehicleService vehicleService;
 
-    public BrandModel() {}
+    public BrandModel() {
+    }
 
-    public BrandModel(int brandModelId, VehicleService vehicleService, String brandName, String model, int minYear) {
+    public BrandModel(int brandModelId, VehicleService vehicleService, List<Vehicle> vehicles, String brandName, String model, int minYear) {
         this.brandModelId = brandModelId;
         this.vehicleService = vehicleService;
+        this.vehicles = vehicles;
         this.brandName = brandName;
         this.model = model;
         this.minYear = minYear;
@@ -55,6 +62,14 @@ public class BrandModel {
 
     public void setBrandName(String brandName) {
         this.brandName = brandName;
+    }
+
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(List<Vehicle> vehicles) {
+        this.vehicles = vehicles;
     }
 
     public String getModel() {

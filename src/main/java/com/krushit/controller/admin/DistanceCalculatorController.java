@@ -35,7 +35,7 @@ public class DistanceCalculatorController extends HttpServlet {
             DistanceCalculatorDTO distanceRequest = ObjectMapperUtils.toObject(request.getReader(), DistanceCalculatorDTO.class);
             RideValidator.validateLocation(distanceRequest);
             double distance = locationService.calculateDistance(distanceRequest.getFrom(), distanceRequest.getTo());
-            createResponse(response, Message.GENERIC_ERROR, distance, HttpServletResponse.SC_OK);
+            createResponse(response, Message.Ride.DISTANCE_FETCHED_SUCCESSFULLY, distance, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

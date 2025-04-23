@@ -274,8 +274,8 @@ public class RideDAOImpl implements IRideDAO {
             }
             query.setParameter("startDate", startDate);
             query.setParameter("endDate", endDate);
-            Double result = (Double) query.getSingleResult();
-            return result != null ? result : 0.0;
+            BigDecimal result = (BigDecimal) query.getSingleResult();
+            return result != null ? result.doubleValue() : 0.0;
         } catch (Exception e) {
             throw new DBException(Message.Ride.ERROR_WHILE_CALCULATING_DRIVER_TOTAL_EARNING, e);
         }

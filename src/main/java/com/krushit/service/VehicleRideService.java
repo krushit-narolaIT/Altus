@@ -173,6 +173,10 @@ public class VehicleRideService {
         rideDAO.createRide(rideRequestId, ride);
     }
 
+    public Optional<Ride> getRide(int rideId) throws ApplicationException{
+        return rideDAO.getRide(rideId);
+    }
+
     public void cancelRide(int rideId, int userId, boolean isDriver) throws ApplicationException {
         Optional<Ride> rideOpt = rideDAO.getRide(rideId);
         if (!rideOpt.isPresent()) {
@@ -204,13 +208,13 @@ public class VehicleRideService {
             if (minutesLeft < 40) {
                 cancellationCharge = ride.getTotalCost()
                         .multiply(BigDecimal.valueOf(0.11))
-                        .setScale(2);
+                        .setScale(2, 0);
                 driverEarning = cancellationCharge
                         .multiply(BigDecimal.valueOf(0.45))
-                        .setScale(2);
+                        .setScale(2,0);
                 systemEarning = cancellationCharge
                         .multiply(BigDecimal.valueOf(0.55))
-                        .setScale(2);
+                        .setScale(2,0);
             }
         }
         RideStatus rideStatus = null;
@@ -227,7 +231,6 @@ public class VehicleRideService {
                 .setSystemEarning(systemEarning.floatValue())
                 .setDriverPenalty(driverPenalty.floatValue())
                 .build();
-        System.out.println("Cancellation Details :: " + cancellationDetails);
         rideDAO.updateRideCancellation(cancellationDetails);
     }
 

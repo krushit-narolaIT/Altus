@@ -5,8 +5,11 @@ import com.krushit.common.config.JPAConfig;
 import com.krushit.common.enums.RoleType;
 import com.krushit.common.exception.DBException;
 import com.krushit.entity.Feedback;
+import com.krushit.entity.Role;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+
+import java.util.List;
 
 public class FeedbackDAOImpl implements IFeedbackDAO {
     private static final String IS_FEEDBACK_GIVEN =
@@ -20,7 +23,7 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
             tx = em.getTransaction();
             tx.begin();
             em.persist(feedback);
-            userDAO.updateUserRating(feedback.getToUserId().getUserId(), feedback.getRating(), em);
+            userDAO.updateUserRating(feedback.getToUser().getUserId(), feedback.getRating(), em);
             tx.commit();
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
@@ -31,13 +34,14 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
     }
 
     @Override
-    public int getRecipientUserIdByRideId(int rideId, RoleType roleType) throws DBException {
+    public int getRecipientUserIdByRideId(int rideId, Role roleType) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            String query = (RoleType.ROLE_CUSTOMER == roleType)
+            String query = (RoleType.ROLE_CUSTOMER.equals(roleType))
                     ? "SELECT r.driver.id FROM Ride r WHERE r.rideId = :rideId"
                     : "SELECT r.customer.id FROM Ride r WHERE r.rideId = :rideId";
             return em.createQuery(query, Integer.class)
-                    .setParameter("rideId", rideId).executeUpdate();
+                    .setParameter("rideId", rideId)
+                    .getSingleResult();
         } catch (Exception e) {
             throw new DBException(Message.FeedBack.ERROR_WHILE_FETCHING_TO_FEEDBACK, e);
         }
@@ -46,15 +50,16 @@ public class FeedbackDAOImpl implements IFeedbackDAO {
     @Override
     public boolean isFeedbackGiven(int fromUserId, int toUserId, int rideId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            Integer result = em.createQuery(IS_FEEDBACK_GIVEN, Integer.class)
+            List<Integer> result = em.createQuery(IS_FEEDBACK_GIVEN, Integer.class)
                     .setParameter("fromUserId", fromUserId)
                     .setParameter("toUserId", toUserId)
                     .setParameter("rideId", rideId)
                     .setMaxResults(1)
-                    .getSingleResult();
-            return result != null;
+                    .getResultList();
+            return !result.isEmpty();
         } catch (Exception e) {
             throw new DBException(Message.FeedBack.ERROR_WHILE_CHECKING_IS_FEEDBACK_GIVEN, e);
         }
     }
+
 }

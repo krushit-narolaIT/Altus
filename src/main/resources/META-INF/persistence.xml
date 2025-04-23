@@ -2,7 +2,6 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
     <persistence-unit name="PERSISTENCE">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <mapping-file>META-INF/orm.xml</mapping-file>
         <class>com.krushit.entity.User</class>
         <class>com.krushit.entity.RideRequest</class>
         <class>com.krushit.entity.Ride</class>
@@ -20,7 +19,7 @@
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL8Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
-            <property name="hibernate.show_sql" value="true"/>
+<!--            <property name="hibernate.show_sql" value="true"/>-->
 <!--            <property name="hibernate.format_sql" value="true"/>
             <property name="hibernate.use_sql_comments" value="true"/>-->
         </properties>

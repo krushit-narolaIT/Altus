@@ -3,6 +3,7 @@ package com.krushit.controller.admin;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.UserDTO;
 import com.krushit.entity.User;
 import com.krushit.service.UserService;
 import com.krushit.utils.ApplicationUtils;
@@ -27,10 +28,9 @@ public class GetAllUsersController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
-            List<User> users = userService.getAllCustomers();
+            List<UserDTO> users = userService.getAllCustomers();
             if (users.isEmpty()) {
                 createResponse(response, Message.Customer.NO_CUSTOMER_FOUND, null, HttpServletResponse.SC_OK);
             } else {

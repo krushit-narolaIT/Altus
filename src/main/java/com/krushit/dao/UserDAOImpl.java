@@ -22,7 +22,7 @@ public class UserDAOImpl implements IUserDAO {
     private static final String QUERY_CHECK_USER_EXISTENCE_BY_EMAIL_OR_PHONE =
             "SELECT COUNT(u) FROM User u WHERE u.emailId = :email OR u.phoneNo = :phone";
     private static final String QUERY_GET_ALL_CUSTOMERS =
-            "SELECT u FROM User u WHERE u.role.roleName = :roleType";
+            "SELECT u FROM User u WHERE u.role.role = :roleType";
     private static final String QUERY_GET_DISPLAY_ID_BY_USER_ID =
             "SELECT u.displayId FROM User u WHERE u.userId = :userId";
     private static final String QUERY_GET_USER_NAME_BY_USER_ID =
@@ -53,13 +53,13 @@ public class UserDAOImpl implements IUserDAO {
             tx.begin();
             em.persist(user);
             em.flush();
-            String displayId = (user.getRole().getRoleType() == RoleType.ROLE_DRIVER)
+            String displayId = (user.getRole().equals(RoleType.ROLE_DRIVER))
                     ? generateDriverDisplayId(user.getUserId())
                     : generateCustomerDisplayId(user.getUserId());
 
             user.setDisplayId(displayId);
             em.merge(user);
-            if (user.getRole().getRoleType() == RoleType.ROLE_DRIVER) {
+            if (user.getRole().equals(RoleType.ROLE_DRIVER)) {
                 Driver driver = new Driver.DriverBuilder()
                         .setUser(user)
                         .setVerificationStatus(DocumentVerificationStatus.INCOMPLETE)
@@ -286,6 +286,27 @@ public class UserDAOImpl implements IUserDAO {
                     .getResultList();
         } catch (Exception e) {
             throw new DBException(Message.User.ERROR_WHILE_GETTING_CUSTOMERS_BY_RATING, e);
+        }
+    }
+
+    @Override
+    public void addFavouriteDriver(int customerId, int driverId) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                User customer = em.find(User.class, customerId);
+                User driver = em.find(User.class, driverId);
+                if (customer.getFavoriteUsers().contains(driver)) {
+                    throw new DBException(Message.User.DRIVER_ALREADY_FAVORITED);
+                }
+                customer.getFavoriteUsers().add(driver);
+                em.merge(customer);
+                tx.commit();
+            } catch (Exception e) {
+                if (tx.isActive()) tx.rollback();
+                throw new DBException(Message.User.ERROR_WHILE_ADDING_FAVOURITE_DRIVER, e);
+            }
         }
     }
 }

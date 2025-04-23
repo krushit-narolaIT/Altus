@@ -26,4 +26,5 @@ public interface IUserDAO {
     boolean isUserBlocked(int userId) throws DBException;
     List<User> getUsersByLowRatingAndReviewCount(int ratingThreshold, int reviewCountThreshold) throws DBException;
     List<User> getUsersByPagination(int offset, int limit) throws DBException;
+    void addFavouriteDriver(int customerId, int driverId) throws DBException;
 }

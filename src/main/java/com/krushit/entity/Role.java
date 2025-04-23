@@ -10,22 +10,13 @@ public class Role {
     @Column(name = "role_id")
     private int roleId;
 
-    @Column(name = "role_name", nullable = false)
-    private String roleName;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_name", nullable = false, unique = true)
+    private RoleType role;
 
-    @Transient
-    private RoleType roleType;
-
-    public RoleType getRoleType() {
-        if (roleType == null) {
-            roleType = RoleType.getType(this.roleId);
-        }
-        return roleType;
-    }
-
-    public Role(int roleId, String roleName) {
+    public Role(int roleId, RoleType role) {
         this.roleId = roleId;
-        this.roleName = roleName;
+        this.role = role;
     }
 
     public Role() {
@@ -39,19 +30,19 @@ public class Role {
         this.roleId = roleId;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public RoleType getRole() {
+        return role;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setRole(RoleType roleName) {
+        this.role = roleName;
     }
 
     @Override
     public String toString() {
         return "Role{" +
                 "roleId=" + roleId +
-                ", roleName='" + roleName + '\'' +
+                ", roleName='" + role + '\'' +
                 '}';
     }
 }

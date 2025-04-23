@@ -13,7 +13,7 @@ import java.sql.SQLException;
 @WebServlet(value = "/dbConfig", loadOnStartup = 1)
 public class DBConfigController extends HttpServlet {
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
         ServletContext context = config.getServletContext();
         try {
             String dbUrl = context.getInitParameter("db.url");

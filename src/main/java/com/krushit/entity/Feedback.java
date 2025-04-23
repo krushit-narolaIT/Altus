@@ -55,7 +55,7 @@ public class Feedback {
         return feedbackId;
     }
 
-    public User getToUserId() {
+    public User getToUser() {
         return toUser;
     }
 
@@ -90,18 +90,18 @@ public class Feedback {
         private int rating;
         private String comment;
 
-        public FeedbackBuilder setFromUserId(User fromUserId) {
+        public FeedbackBuilder setFromUser(User fromUserId) {
             this.fromUserId = fromUserId;
             return this;
         }
 
-        public FeedbackBuilder setToUserId(User toUserId) {
+        public FeedbackBuilder setToUser(User toUserId) {
             this.toUserId = toUserId;
             return this;
         }
 
-        public FeedbackBuilder setRideId(Ride rideId) {
-            this.rideId = rideId;
+        public FeedbackBuilder setRide(Ride ride) {
+            this.rideId = ride;
             return this;
         }
 

@@ -85,4 +85,16 @@ public class RideCancellationDetailsDTO {
             return new RideCancellationDetailsDTO(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "RideCancellationDetailsDTO{" +
+                "rideId=" + rideId +
+                ", rideStatus=" + rideStatus +
+                ", cancellationCharge=" + cancellationCharge +
+                ", driverEarning=" + driverEarning +
+                ", systemEarning=" + systemEarning +
+                ", driverPenalty=" + driverPenalty +
+                '}';
+    }
 }

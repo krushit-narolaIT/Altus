@@ -1,12 +1,15 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.RoleType;
+import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.dao.FeedbackDAOImpl;
 import com.krushit.dao.IFeedbackDAO;
 import com.krushit.dto.FeedbackDTO;
 import com.krushit.entity.Feedback;
+import com.krushit.entity.Ride;
+import com.krushit.entity.Role;
+import com.krushit.entity.User;
 
 public class FeedbackService {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
@@ -14,9 +17,11 @@ public class FeedbackService {
     private final IFeedbackDAO feedbackDAO = new FeedbackDAOImpl();
 
     public void submitFeedback(int fromUserId, FeedbackDTO feedbackDTO, int rideId) throws ApplicationException {
-        //int toUserId = getToUserId(rideId, userService.getUserDetails(fromUserId).get().getRole());
-        int toUserId = 0;
-        if (vehicleRideService.getRideStatus(rideId) == null) {
+        int toUserId = getToUserId(rideId, userService.getUserDetails(fromUserId).get().getRole());
+        if (vehicleRideService.getRideStatus(rideId).equals(RideStatus.CANCELLED) || vehicleRideService.getRideStatus(rideId).equals(RideStatus.REJECTED)) {
+            throw new ApplicationException(Message.Ride.YOU_CAN_NOT_GIVE_FEEDBACK_TO_CANCELLED_RIDE);
+        }
+        if (!vehicleRideService.getRideStatus(rideId).equals(RideStatus.COMPLETED)) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_FEEDBACK_AFTER_RIDE_COMPLETED);
         }
         int rating = feedbackDTO.getRating();
@@ -31,20 +36,25 @@ public class FeedbackService {
         if (feedbackDAO.isFeedbackGiven(fromUserId, toUserId, rideId)) {
             throw new ApplicationException(Message.FeedBack.FEEDBACK_ALREADY_SUBMITTED);
         }
+
+        User fromUser = userService.getUserDetails(fromUserId).orElseThrow(() ->
+                new ApplicationException(Message.User.INVALID_USER_ID));
+        User toUser = userService.getUserDetails(toUserId).orElseThrow(() ->
+                new ApplicationException(Message.User.INVALID_USER_ID));
+
+        Ride ride = vehicleRideService.getRide(rideId).get();
         Feedback feedback = new Feedback.FeedbackBuilder()
-                //.setRideId(rideId)
-               // .setFromUserId(fromUserId)
-                //.setToUserId(toUserId)
+                .setRide(ride)
+                .setFromUser(fromUser)
+                .setToUser(toUser)
                 .setComment(comment)
                 .setRating(rating)
                 .build();
-        System.out.println("Feed Back :: " + feedback);
         feedbackDAO.saveFeedback(feedback);
     }
 
-
-    public int getToUserId(int rideId, RoleType userRoleType) throws ApplicationException {
-        int toUserId = feedbackDAO.getRecipientUserIdByRideId(rideId, userRoleType);
+    public int getToUserId(int rideId, Role userRole) throws ApplicationException {
+        int toUserId = feedbackDAO.getRecipientUserIdByRideId(rideId, userRole);
         if (toUserId == 0) {
             throw new ApplicationException(Message.User.INVALID_USER_ID);
         }

@@ -9,7 +9,7 @@ public final class Message {
     public static final String DATABASE_ERROR = "Database Error";
     public static final String APPLICATION_JSON = "application/json";
     public static final String UTF_8 = "UTF-8";
-    public static final String INVALID_ROLE ="Invalid Rode";
+    public static final String INVALID_ROLE = "Invalid Rode";
     public static final String INVALID_PAYMENT_STATUS = "Invalid Payment Status";
     public static final String INVALID_PAYMENT_MODE = "Invalid Payment Mode";
     public static final String INVALID_FUEL_TYPE = "Invalid Fuel Type";
@@ -26,10 +26,11 @@ public final class Message {
         public static final String ERROR_WHILE_CHECKING_IS_FEEDBACK_GIVEN = "Error while checking is feedback is given or not";
         public static final String MISSING_RATING_REVIEW_COUNT_PARAMS = "Missing taring & review params";
 
-        private FeedBack(){
+        private FeedBack() {
 
         }
     }
+
     public static final class Ride {
         public static final String LOCATION_IS_REQUIRE = "Please enter source & destination location";
         public static final String RIDE_SERVICES_FETCHED_SUCCESSFULLY = "Available ride services fetched successfully.";
@@ -55,7 +56,7 @@ public final class Message {
         public static final String ERROR_WHILE_RIDE_CANCELLATION = "Error occur while cancelling ride";
         public static final String RIDE_NOT_FOUND_FOR_CANCELLATION = "Ride not found for cancellation";
         public static final String RIDE_CANNOT_BE_CANCELLED = "Sorry this ride is already ";
-        public static final String RIDE_CANCELLED = "Ride Cancelled";
+        public static final String RIDE_CANCELLED = "Ride Successfully Cancelled";
         public static final String RIDE_NOT_BELONG_TO_THIS_CUSTOMER = "Ride id not belong to this customer";
         public static final String RIDE_NOT_BELONG_TO_THIS_DRIVER = "Ride id not belong to this driver";
         public static final String RIDE_ALREADY_STARTED_CANNOT_CANCEL = "Ongoing ride can not be cancelled";
@@ -72,12 +73,12 @@ public final class Message {
         public static final String ERROR_WHILE_FETCHING_RIDE_DETAILS_BY_RANGE = "Error occur while getting ride details by range";
         public static final String ERROR_WHILE_FETCHING_TOTAL_RIDES = "Error while fetching total rides";
         public static final String ERROR_WHILE_CALCULATING_DRIVER_TOTAL_EARNING = "error while calculation total driver earning";
-        public static final String INVALID_RIDE_STATUS = "Invalid Ride Status";
         public static final String BOOK_RIDE_IN_ONLY_FIFTEEN_DAYS_IN_ADVANCE = "You can book ride in 15 days is advance";
         public static final String RIDE_ALREADY_SCHEDULED = "You already have a ride scheduled";
         public static final String PLEASE_MANAGE_YOUR_SCHEDULE_ACCORDINGLY = "Please manage your schedule accordingly";
         public static final String DISTANCE_FETCHED_SUCCESSFULLY = "Distance Fetched Successfully";
         public static final String ERROR_WHILE_GETTING_RIDE = "Error while getting ride";
+        public static final String YOU_CAN_NOT_GIVE_FEEDBACK_TO_CANCELLED_RIDE = "You can not give feedback to cancelled ride";
 
         private Ride() {
         }
@@ -119,6 +120,10 @@ public final class Message {
         public static final String ERROR_WHILE_UPDATE_DRIVER_RATING = "Error while updating driver rating";
         public static final String DETAILS_UPDATED_SUCCESSFULLY = "User Details Updated Successfully";
         public static final String ERROR_WHILE_GETTING_CUSTOMERS_BY_RATING = "Error while getting user ratings";
+        public static final String DRIVER_ADDED_TO_FAVOURITE_LIST = "Driver added to favourites";
+        public static final String DRIVER_NOT_FOUND = "Driver not found";
+        public static final String ERROR_WHILE_ADDING_FAVOURITE_DRIVER = "Error while adding favourite driver";
+        public static final String DRIVER_ALREADY_FAVORITED = "Driver is already in favourite list";
 
         private User() {
         }
@@ -128,6 +133,7 @@ public final class Message {
         public static final String SESSION_EXPIRED = "Session Expired";
         public static final String PLEASE_LOGIN = "Please login";
         public static final String UNAUTHORIZED = "You don't have valid privilege to perform this operation";
+
         private Auth() {
         }
     }
@@ -171,13 +177,14 @@ public final class Message {
         public static final String CUSTOMER_PATH = "/userSignUp";
         public static final String NO_CUSTOMER_FOUND = "No users found";
         public static final String SUCCESSFULLY_RETRIEVED_CUSTOMER = "Successfully Retrieved Customers";
+
         private Customer() {
         }
     }
 
     public static final class Vehicle {
         public static final String BRAND_MODEL_ALREADY_EXISTS = "This model of this brand already exist";
-        public static final String SUCCESSFULLY_RETRIVED_ALL_BRAND_MODELS = "Successfully retrieve all brand models";
+        public static final String SUCCESSFULLY_RETRIEVED_ALL_BRAND_MODELS = "Successfully retrieve all brand models";
         public static final String ERROR_OCCUR_WHILE_CHECKING_BRAND_MODEL = "Error occur while checking brand model";
         public static final String ERROR_OCCUR_WHILE_CHECKING_MIN_YEAR = "Error occur while checking min year for brand model";
         public static final String BRAND_MODEL_NOT_SUPPORTED = "Sorry, Your vehicle brand model not supported by system";
@@ -225,7 +232,6 @@ public final class Message {
         public static final String VEHICLE_NOT_EXIST = "Driver vehicle not exist";
         public static final String VEHICLE_SERVICE_NOT_EXIST = "Vehicle service not exist";
         public static final String RIDE_ACCEPTED = "Ride Accepted..!!";
-        public static final String INVALID_TRANSMISSION_TYPE = "Invalid Transmission Type";
         public static final String ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS = "Update ride request status";
         public static final String ERROR_OCCUR_WHILE_BOOKING_RIDE = "Error while booking ride";
 
@@ -238,6 +244,7 @@ public final class Message {
         public static final String FLYWAY_FAILED = "Failed to set up flyway";
         public static final String DRIVER_NOT_FOUND = "Driver not found";
         public static final String CONNECTION_SUCCESSFUL = "Database connection successful";
+
         private Database() {
         }
     }
@@ -269,6 +276,9 @@ public final class Message {
         public static final String VALUE_ALLOW_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
         public static final String VALUE_ALLOW_HEADERS = "Content-Type, Authorization";
         public static final String VALUE_ALLOW_CREDENTIALS = "true";
-    }
 
+        private CORSConstants() {
+
+        }
+    }
 }

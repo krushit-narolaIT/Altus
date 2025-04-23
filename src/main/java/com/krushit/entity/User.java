@@ -56,7 +56,7 @@ public class User {
     @Column(name = "rating_count")
     private int ratingCount;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -166,6 +166,28 @@ public class User {
 
     public Set<User> getFavoritedByUsers() {
         return favoritedByUsers;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userId=" + userId +
+                ", role=" + role +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNo='" + phoneNo + '\'' +
+                ", emailId='" + emailId + '\'' +
+                ", password='" + password + '\'' +
+                ", isActive=" + isActive +
+                ", displayId='" + displayId + '\'' +
+                ", isBlocked=" + isBlocked +
+                ", totalRatings=" + totalRatings +
+                ", ratingCount=" + ratingCount +
+                ", favoriteUsers=" + favoriteUsers +
+                ", favoritedByUsers=" + favoritedByUsers +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 
     @JsonPOJOBuilder(withPrefix = "set")

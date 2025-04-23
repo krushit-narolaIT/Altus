@@ -61,8 +61,22 @@ public class Mapper {
 
     public User convertToEntity(UserSignUpDTO userSignUpDTO, RoleType roleType) {
         Role role = new Role();
-        role.setRoleId(roleType.getRoleId());
-        role.setRoleName(roleType.getRoleName());
+        int roleId = 0;
+        switch (roleType) {
+            case ROLE_SUPER_ADMIN:
+                roleId = 1;
+                break;
+            case ROLE_CUSTOMER:
+                roleId = 2;
+                break;
+            case ROLE_DRIVER:
+                roleId = 3;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown role type: " + roleType);
+        }
+        role.setRoleId(roleId);
+        role.setRole(roleType);
         return new User.UserBuilder()
                 .setFirstName(userSignUpDTO.getFirstName())
                 .setLastName(userSignUpDTO.getLastName())
@@ -72,6 +86,7 @@ public class Mapper {
                 .setRole(role)
                 .build();
     }
+
 
     public User convertToEntityUserDTO(UserDTO userDTO) {
         return new User.UserBuilder()

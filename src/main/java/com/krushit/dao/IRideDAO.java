@@ -4,8 +4,8 @@ import com.krushit.common.enums.RideRequestStatus;
 import com.krushit.common.enums.RideStatus;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.RideCancellationDetailsDTO;
-import com.krushit.model.Ride;
-import com.krushit.model.RideRequest;
+import com.krushit.entity.Ride;
+import com.krushit.entity.RideRequest;
 
 import java.sql.Connection;
 import java.time.LocalDate;
@@ -19,7 +19,7 @@ public interface IRideDAO {
     Optional<Ride> getConflictingRide(int driverId, LocalDate rideDate, LocalTime pickUpTime) throws DBException;
     void createRide(int rideRequestId, Ride ride) throws DBException;
     Optional<Ride> getRide(int rideId) throws DBException;
-    void updateRideRequestStatus(int rideRequestId, RideRequestStatus status, Connection connection) throws DBException;
+    void updateRideRequestStatus(int rideRequestId, RideRequestStatus status) throws DBException;
     void updateRideCancellation(RideCancellationDetailsDTO cancellationDetails) throws DBException;
     List<Ride> getAllRidesByUserId(int userId) throws DBException;
     RideStatus getRideStatus(int rideId) throws DBException;

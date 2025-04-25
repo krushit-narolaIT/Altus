@@ -5,11 +5,11 @@ import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
-import com.krushit.dto.ApiResponseDTO;
+import com.krushit.entity.User;
 import com.krushit.service.UserService;
 import com.krushit.controller.validator.LoginValidator;
 import com.krushit.utils.ObjectMapperUtils;
+import com.krushit.utils.UserContextUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +36,7 @@ public class UserLoginController extends HttpServlet {
             UserDTO authenticatedUser = userService.userLogin(user.getEmailId(), user.getPassword());
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
+            UserContextUtils.setUser(user);
             createResponse(response, Message.User.LOGIN_SUCCESSFUL, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();

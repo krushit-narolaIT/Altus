@@ -1,18 +1,13 @@
 package com.krushit.controller;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.Role;
+import com.krushit.common.enums.RoleType;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.service.UserService;
-import com.krushit.utils.ApplicationUtils;
-import com.krushit.utils.AuthUtils;
-import com.krushit.utils.ObjectMapperUtils;
-import com.krushit.utils.SessionUtils;
+import com.krushit.utils.*;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +27,8 @@ public class UserUpdateController extends HttpServlet {
         try {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
-            AuthUtils.validateUser(user, Role.ROLE_CUSTOMER);
+            //User user = UserContextUtils.getUser();
+            AuthUtils.validateUser(user, RoleType.ROLE_CUSTOMER);
             UserDTO updatedUser = ObjectMapperUtils.toObject(request.getReader(), UserDTO.class);
             userService.updateUser(updatedUser, user.getUserId());
             createResponse(response, Message.User.DETAILS_UPDATED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);

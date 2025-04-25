@@ -12,11 +12,9 @@ import com.krushit.dao.IVehicleDAO;
 import com.krushit.dao.RideDAOImpl;
 import com.krushit.dao.VehicleDAOImpl;
 import com.krushit.dto.*;
-import com.krushit.model.BrandModel;
-import com.krushit.model.Ride;
-import com.krushit.model.RideRequest;
-import com.krushit.model.VehicleService;
+import com.krushit.entity.*;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -57,11 +55,14 @@ public class VehicleRideService {
         List<VehicleService> availableServices = vehicleDAO.getAllAvailableVehicleServices();
         List<RideServiceDTO> rideOptions = new ArrayList<>();
         for (VehicleService service : availableServices) {
-            double totalPrice = service.getBaseFare() + (service.getPerKmRate() * distance);
+            BigDecimal baseFare = service.getBaseFare();
+            BigDecimal perKmRate = service.getPerKmRate();
+            BigDecimal km = BigDecimal.valueOf(distance);
+            BigDecimal totalPrice = baseFare.add(perKmRate.multiply(km));
             RideServiceDTO ride = new RideServiceDTO(
                     service.getServiceId(),
                     service.getServiceName(),
-                    totalPrice,
+                    totalPrice.doubleValue(),
                     fromLocation,
                     toLocation,
                     service.getMaxPassengers()
@@ -72,18 +73,18 @@ public class VehicleRideService {
     }
 
     public void bookRide(RideRequest rideRequest) throws Exception {
-        List<RideServiceDTO> rideServiceDTOS = getAvailableRides(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
+        List<RideServiceDTO> rideServiceDTOS = getAvailableRides(rideRequest.getPickUpLocation().getId(), rideRequest.getDropOffLocation().getId());
         boolean isServiceAvailable = rideServiceDTOS.stream()
                 .map(RideServiceDTO::getServiceId)
-                .anyMatch(serviceId -> serviceId == rideRequest.getVehicleServiceId());
+                .anyMatch(serviceId -> serviceId == rideRequest.getVehicleService().getServiceId());
         if (!isServiceAvailable) {
             throw new ApplicationException(Message.Ride.REQUESTED_SERVICE_IS_NOT_AVAILABLE);
         }
-        if (locationService.getLocationNameById(rideRequest.getPickUpLocationId()).isEmpty()
-                || locationService.getLocationNameById(rideRequest.getDropOffLocationId()).isEmpty()) {
+        if (locationService.getLocationNameById(rideRequest.getPickUpLocation().getId()).isEmpty()
+                || locationService.getLocationNameById(rideRequest.getDropOffLocation().getId()).isEmpty()) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }
-        vehicleDAO.bookRide(rideRequest);
+        vehicleDAO.requestForRide(rideRequest);
     }
 
     public List<RideResponseDTO> getAllRequest(int userId) throws ApplicationException {
@@ -92,10 +93,10 @@ public class VehicleRideService {
         List<RideResponseDTO> responseList = new ArrayList<>();
         for (RideRequest rideRequest : rideRequests) {
             try {
-                String pickUpLocation = locationService.getLocationNameById(rideRequest.getPickUpLocationId());
-                String dropOffLocation = locationService.getLocationNameById(rideRequest.getDropOffLocationId());
-                String userDisplayId = userService.getUserDisplayIdById(rideRequest.getUserId());
-                String userFullName = userService.getUserFullNameById(rideRequest.getUserId());
+                String pickUpLocation = locationService.getLocationNameById(rideRequest.getPickUpLocation().getId());
+                String dropOffLocation = locationService.getLocationNameById(rideRequest.getDropOffLocation().getId());
+                String userDisplayId = userService.getUserDisplayIdById(rideRequest.getCustomer().getUserId());
+                String userFullName = userService.getUserFullNameById(rideRequest.getCustomer().getUserId());
                 RideResponseDTO responseDTO = new RideResponseDTO.RideResponseDTOBuilder()
                         .setRideRequestId(rideRequest.getRideRequestId())
                         .setPickUpLocation(pickUpLocation)
@@ -114,6 +115,11 @@ public class VehicleRideService {
     }
 
     public void acceptRide(int driverId, int rideRequestId) throws Exception {
+        Optional<User> driverOpt = userService.getUserDetails(driverId);
+        User driver = null;
+        if(driverOpt.isPresent()){
+            driver = driverOpt.get();
+        }
         Optional<RideRequest> rideRequestOpt = rideDAO.getRideRequest(rideRequestId);
         if (!rideRequestOpt.isPresent()) {
             throw new ApplicationException(Message.Ride.RIDE_REQUEST_NOT_EXIST);
@@ -129,22 +135,26 @@ public class VehicleRideService {
                     ") at " + conflictingRide.getPickUpTime() +
                     ". " + Message.Ride.PLEASE_MANAGE_YOUR_SCHEDULE_ACCORDINGLY);
         }
-        String userIdPart = String.format("%04d", rideRequest.getUserId() % 10000);
+        String userIdPart = String.format("%04d", rideRequest.getCustomer().getUserId() % 10000);
         String driverIdPart = String.format("%04d", driverId % 10000);
         String displayId = "R" + userIdPart + "I" + driverIdPart;
-        Optional<VehicleService> vehicleService = vehicleDAO.getVehicleService(rideRequest.getVehicleServiceId());
+        Optional<VehicleService> vehicleService = vehicleDAO.getVehicleService(rideRequest.getVehicleService().getServiceId());
         VehicleService service = vehicleService.orElseThrow(() -> new ApplicationException(Message.Vehicle.VEHICLE_SERVICE_NOT_EXIST));
-        double distance = locationService.calculateDistance(rideRequest.getPickUpLocationId(), rideRequest.getDropOffLocationId());
-        double commissionPercentage = locationService.getCommissionByDistance(distance);
-        double totalCost = service.getBaseFare() + (service.getPerKmRate() * distance);
-        double systemEarning = (totalCost * commissionPercentage) / 100;
-        double driverEarning = totalCost - systemEarning;
+        double distance = locationService.calculateDistance(rideRequest.getPickUpLocation().getId(), rideRequest.getDropOffLocation().getId());
+        BigDecimal commissionPercentage = locationService.getCommissionByDistance(distance);
+        BigDecimal totalCost = service.getBaseFare().add(
+                service.getPerKmRate().multiply(BigDecimal.valueOf(distance))
+        );
+        BigDecimal systemEarning = totalCost
+                .multiply(commissionPercentage)
+                .divide(BigDecimal.valueOf(100), 2);
+        BigDecimal driverEarning = totalCost.subtract(systemEarning);
         Ride ride = new Ride.RideBuilder()
                 .setRideStatus(RideStatus.SCHEDULED)
-                .setPickLocationId(rideRequest.getPickUpLocationId())
-                .setDropOffLocationId(rideRequest.getDropOffLocationId())
-                .setCustomerId(rideRequest.getUserId())
-                .setDriverId(driverId)
+                .setPickLocation(rideRequest.getPickUpLocation())
+                .setDropOffLocation(rideRequest.getDropOffLocation())
+                .setCustomer(rideRequest.getCustomer())
+                .setDriver(driver)
                 .setRideDate(rideRequest.getRideDate())
                 .setPickUpTime(rideRequest.getPickUpTime())
                 .setDisplayId(displayId)
@@ -155,8 +165,16 @@ public class VehicleRideService {
                 .setCommissionPercentage(commissionPercentage)
                 .setDriverEarning(driverEarning)
                 .setSystemEarning(systemEarning)
+                .setCancellationCharge(BigDecimal.ZERO)
+                .setCancellationDriverEarning(BigDecimal.ZERO)
+                .setCancellationSystemEarning(BigDecimal.ZERO)
+                .setDriverPenalty(BigDecimal.ZERO)
                 .build();
         rideDAO.createRide(rideRequestId, ride);
+    }
+
+    public Optional<Ride> getRide(int rideId) throws ApplicationException{
+        return rideDAO.getRide(rideId);
     }
 
     public void cancelRide(int rideId, int userId, boolean isDriver) throws ApplicationException {
@@ -165,32 +183,38 @@ public class VehicleRideService {
             throw new ApplicationException(Message.Ride.RIDE_NOT_FOUND_FOR_CANCELLATION);
         }
         Ride ride = rideOpt.get();
-        if (!isDriver && ride.getCustomerId() != userId) {
+        if (!isDriver && ride.getCustomer().getUserId() != userId) {
             throw new ApplicationException(Message.Ride.RIDE_NOT_BELONG_TO_THIS_CUSTOMER);
         }
-        if (isDriver && ride.getDriverId() != userId) {
+        if (isDriver && ride.getDriver().getUserId() != userId) {
             throw new ApplicationException(Message.Ride.RIDE_NOT_BELONG_TO_THIS_DRIVER);
         }
         if (ride.getRideStatus() == RideStatus.CANCELLED || ride.getRideStatus() == RideStatus.COMPLETED) {
-            throw new ApplicationException(Message.Ride.RIDE_CANNOT_BE_CANCELLED + ride.getRideStatus().getStatus());
+            throw new ApplicationException(Message.Ride.RIDE_CANNOT_BE_CANCELLED + ride.getRideStatus());
         }
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime pickupDateTime = LocalDateTime.of(ride.getRideDate(), ride.getPickUpTime());
         long minutesLeft = Duration.between(now, pickupDateTime).toMinutes();
-        double cancellationCharge = 0.0;
-        double driverEarning = 0.0;
-        double systemEarning = 0.0;
-        double driverPenalty = 0.0;
+        BigDecimal cancellationCharge = BigDecimal.ZERO;
+        BigDecimal driverEarning = BigDecimal.ZERO;
+        BigDecimal systemEarning = BigDecimal.ZERO;
+        BigDecimal driverPenalty = BigDecimal.ZERO;
         if (isDriver) {
             if (now.isAfter(pickupDateTime)) {
                 throw new ApplicationException(Message.Ride.RIDE_ALREADY_STARTED_CANNOT_CANCEL);
             }
-            driverPenalty = 120.0;
+            driverPenalty = BigDecimal.valueOf(120.0);
         } else {
             if (minutesLeft < 40) {
-                cancellationCharge = ride.getTotalCost() * 0.11;
-                driverEarning = cancellationCharge * 0.45;
-                systemEarning = cancellationCharge * 0.55;
+                cancellationCharge = ride.getTotalCost()
+                        .multiply(BigDecimal.valueOf(0.11))
+                        .setScale(2, 0);
+                driverEarning = cancellationCharge
+                        .multiply(BigDecimal.valueOf(0.45))
+                        .setScale(2,0);
+                systemEarning = cancellationCharge
+                        .multiply(BigDecimal.valueOf(0.55))
+                        .setScale(2,0);
             }
         }
         RideStatus rideStatus = null;
@@ -202,10 +226,10 @@ public class VehicleRideService {
         RideCancellationDetailsDTO cancellationDetails = new RideCancellationDetailsDTO.RideCancellationDetailsBuilder()
                 .setRideId(rideId)
                 .setRideStatus(rideStatus)
-                .setCancellationCharge(cancellationCharge)
-                .setDriverEarning(driverEarning)
-                .setSystemEarning(systemEarning)
-                .setDriverPenalty(driverPenalty)
+                .setCancellationCharge(cancellationCharge.floatValue())
+                .setDriverEarning(driverEarning.floatValue())
+                .setSystemEarning(systemEarning.floatValue())
+                .setDriverPenalty(driverPenalty.floatValue())
                 .build();
         rideDAO.updateRideCancellation(cancellationDetails);
     }
@@ -215,13 +239,13 @@ public class VehicleRideService {
         List<RideDTO> rideDTOList = new ArrayList<>();
         for (Ride ride : rideList) {
             try {
-                String customerName = userService.getUserFullNameById(ride.getCustomerId());
-                String driverName = userService.getUserFullNameById(ride.getDriverId());
+                String customerName = userService.getUserFullNameById(ride.getCustomer().getUserId());
+                String driverName = userService.getUserFullNameById(ride.getDriver().getUserId());
                 RideDTO.RideDTOBuilder builder = new RideDTO.RideDTOBuilder()
                         .setRideId(ride.getRideId())
                         .setRideStatus(ride.getRideStatus())
-                        .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
-                        .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
+//                        .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
+//                        .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
                         .setCustomerName(customerName)
                         .setDriverName(driverName)
                         .setRideDate(ride.getRideDate())
@@ -276,10 +300,10 @@ public class VehicleRideService {
         return new RideDTO.RideDTOBuilder()
                 .setRideId(ride.getRideId())
                 .setRideStatus(ride.getRideStatus())
-                .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
-                .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
-                .setCustomerName(userService.getUserNameById(ride.getCustomerId()))
-                .setDriverName(userService.getUserNameById(ride.getDriverId()))
+//                .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
+//                .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
+//                .setCustomerName(userService.getUserNameById(ride.getCustomerId()))
+//                .setDriverName(userService.getUserNameById(ride.getDriverId()))
                 .setRideDate(ride.getRideDate())
                 .setPickUpTime(ride.getPickUpTime())
                 .setDisplayId(ride.getDisplayId())

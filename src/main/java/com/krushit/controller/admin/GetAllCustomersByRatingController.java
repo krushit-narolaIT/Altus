@@ -3,17 +3,9 @@ package com.krushit.controller.admin;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.Driver;
-import com.krushit.model.User;
-import com.krushit.service.DriverService;
+import com.krushit.entity.User;
 import com.krushit.service.UserService;
-import com.krushit.utils.ApplicationUtils;
-import com.krushit.utils.AuthUtils;
-import com.krushit.utils.ObjectMapperUtils;
-import com.krushit.utils.SessionUtils;
+import com.krushit.utils.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -33,17 +25,16 @@ public class GetAllCustomersByRatingController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            ApplicationUtils.validateJsonRequest(request.getContentType());
-            User user = SessionUtils.validateSession(request);
+            User user = UserContextUtils.getUser();
             AuthUtils.validateAdminRole(user);
-            String ratingParam = request.getParameter("rating");
-            String reviewParam = request.getParameter("reviews");
-            if (ratingParam == null || reviewParam == null) {
+            String rating = request.getParameter("rating");
+            String total_rating = request.getParameter("");
+            if (rating == null || total_rating == null) {
                 createResponse(response, Message.FeedBack.MISSING_RATING_REVIEW_COUNT_PARAMS, null, HttpServletResponse.SC_BAD_REQUEST);
                 return;
             }
-            int ratingThreshold = Integer.parseInt(ratingParam);
-            int reviewThreshold = Integer.parseInt(reviewParam);
+            int ratingThreshold = Integer.parseInt(rating);
+            int reviewThreshold = Integer.parseInt(total_rating);
             List<User> users = userService.getUsersWithLessRatingAndReviews(ratingThreshold, reviewThreshold);
             if (users.isEmpty()) {
                 createResponse(response, Message.Driver.NO_DRIVERS_FOUND, null, HttpServletResponse.SC_NO_CONTENT);

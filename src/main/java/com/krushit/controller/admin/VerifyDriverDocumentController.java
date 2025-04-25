@@ -4,7 +4,7 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.DriverVerificationRequestDTO;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.service.DriverService;
 import com.krushit.controller.validator.DriverServicesValidator;
 import com.krushit.utils.AuthUtils;

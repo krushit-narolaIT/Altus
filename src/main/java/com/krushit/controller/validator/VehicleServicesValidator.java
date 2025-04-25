@@ -5,17 +5,18 @@ import com.krushit.common.enums.FuelType;
 import com.krushit.common.enums.VehicleType;
 import com.krushit.common.enums.Transmission;
 import com.krushit.common.exception.ValidationException;
-import com.krushit.model.*;
+import com.krushit.dto.VehicleServiceDTO;
+import com.krushit.entity.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class VehicleServicesValidator {
-
     private static boolean isNullOrEmpty(Object value) {
         return value == null || String.valueOf(value).trim().isEmpty();
     }
 
-    public static void validateVehicleServiceDetails(VehicleService service) throws ValidationException {
+    public static void validateVehicleServiceDetails(VehicleServiceDTO service) throws ValidationException {
         if (service == null) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_VEHICLE_SERVICE);
         }
@@ -24,11 +25,11 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.VEHICLE_SERVICE_IS_REQUIRED);
         }
 
-        if (isNullOrEmpty(service.getBaseFare()) || service.getBaseFare() < 0) {
+        if (service.getBaseFare() == null || service.getBaseFare().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_BASE_FARE);
         }
 
-        if (isNullOrEmpty(service.getPerKmRate()) || service.getPerKmRate() < 0) {
+        if (service.getPerKmRate() == null || service.getPerKmRate().compareTo(BigDecimal.ZERO) < 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_PER_KM_RATE);
         }
 
@@ -40,7 +41,9 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.INVALID_PASSENGER_CAPACITY);
         }
 
-        if (service.getCommissionPercentage() < 0 || service.getCommissionPercentage() > 100) {
+        if (service.getCommissionPercentage() == null ||
+                service.getCommissionPercentage().compareTo(BigDecimal.ZERO) < 0 ||
+                service.getCommissionPercentage().compareTo(BigDecimal.valueOf(100)) > 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_COMMISSION_PERCENTAGE);
         }
     }
@@ -50,7 +53,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_BRAND_MODEL);
         }
 
-        if (model.getServiceId() <= 0) {
+        if (model.getVehicleService().getServiceId() <= 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_SERVICE_ID);
         }
 
@@ -72,7 +75,7 @@ public class VehicleServicesValidator {
             throw new ValidationException(Message.Vehicle.VEHICLE_DATA_MISSING);
         }
 
-        if (isNullOrEmpty(vehicle.getBrandModelId()) || vehicle.getBrandModelId() <= 0) {
+        if (isNullOrEmpty(vehicle.getBrandModel().getBrandModelId()) || vehicle.getBrandModel().getBrandModelId() <= 0) {
             throw new ValidationException(Message.Vehicle.BRAND_MODEL_ID_INVALID);
         }
 

@@ -3,15 +3,11 @@ package com.krushit.controller.driver;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.RideResponseDTO;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.service.UserService;
 import com.krushit.service.VehicleRideService;
 import com.krushit.utils.AuthUtils;
-import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,8 +34,9 @@ public class GetAllRideRequestsController extends HttpServlet {
             List<RideResponseDTO> rideRequestDTOList = vehicleRideService.getAllRequest(user.getUserId());
             if(rideRequestDTOList.isEmpty()){
                 createResponse(response, Message.Vehicle.NO_REQUEST_FOUND, null, HttpServletResponse.SC_OK);
+            } else {
+                createResponse(response, Message.Vehicle.FETCHING_ALL_REQUEST_SUCCESSFULLY, rideRequestDTOList, HttpServletResponse.SC_OK);
             }
-            createResponse(response, Message.Vehicle.FETCHING_ALL_REQUEST_SUCCESSFULLY, rideRequestDTOList, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

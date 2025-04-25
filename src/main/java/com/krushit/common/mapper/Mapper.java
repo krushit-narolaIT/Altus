@@ -1,11 +1,12 @@
 package com.krushit.common.mapper;
 
-import com.krushit.common.enums.Role;
+import com.krushit.common.enums.RideRequestStatus;
+import com.krushit.common.enums.RoleType;
 import com.krushit.dto.RideRequestDTO;
 import com.krushit.dto.UserDTO;
 import com.krushit.dto.UserSignUpDTO;
-import com.krushit.model.RideRequest;
-import com.krushit.model.User;
+import com.krushit.dto.VehicleServiceDTO;
+import com.krushit.entity.*;
 
 public class Mapper {
     private static final Mapper INSTANCE = new Mapper();
@@ -29,6 +30,28 @@ public class Mapper {
                 .build();
     }
 
+    public VehicleServiceDTO convertToDTO(VehicleService vehicleService) {
+        return new VehicleServiceDTO.Builder()
+                .setServiceName(vehicleService.getServiceName())
+                .setBaseFare(vehicleService.getBaseFare())
+                .setPerKmRate(vehicleService.getPerKmRate())
+                .setVehicleType(vehicleService.getVehicleType())
+                .setMaxPassengers(vehicleService.getMaxPassengers())
+                .setCommissionPercentage(vehicleService.getCommissionPercentage())
+                .build();
+    }
+
+    public VehicleService convertToEntity(VehicleServiceDTO dto) {
+        VehicleService vehicleService = new VehicleService();
+        vehicleService.setServiceName(dto.getServiceName());
+        vehicleService.setBaseFare(dto.getBaseFare());
+        vehicleService.setPerKmRate(dto.getPerKmRate());
+        vehicleService.setVehicleType(dto.getVehicleType());
+        vehicleService.setMaxPassengers(dto.getMaxPassengers());
+        vehicleService.setCommissionPercentage(dto.getCommissionPercentage());
+        return vehicleService;
+    }
+
     public User fromLoginDTO(UserDTO userDTO) {
         return new User.UserBuilder()
                 .setEmailId(userDTO.getEmailId())
@@ -36,7 +59,24 @@ public class Mapper {
                 .build();
     }
 
-    public User convertToEntity(UserSignUpDTO userSignUpDTO, Role role) {
+    public User convertToEntity(UserSignUpDTO userSignUpDTO, RoleType roleType) {
+        Role role = new Role();
+        int roleId = 0;
+        switch (roleType) {
+            case ROLE_SUPER_ADMIN:
+                roleId = 1;
+                break;
+            case ROLE_CUSTOMER:
+                roleId = 2;
+                break;
+            case ROLE_DRIVER:
+                roleId = 3;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown role type: " + roleType);
+        }
+        role.setRoleId(roleId);
+        role.setRole(roleType);
         return new User.UserBuilder()
                 .setFirstName(userSignUpDTO.getFirstName())
                 .setLastName(userSignUpDTO.getLastName())
@@ -46,6 +86,7 @@ public class Mapper {
                 .setRole(role)
                 .build();
     }
+
 
     public User convertToEntityUserDTO(UserDTO userDTO) {
         return new User.UserBuilder()
@@ -59,14 +100,27 @@ public class Mapper {
                 .build();
     }
 
-    public RideRequest toRideRequest(RideRequestDTO rideRequestDTO) {
+    public RideRequest toRideRequest(RideRequestDTO dto) {
+        User user = new User.UserBuilder().setUserId(dto.getUserId()).build();
+
+        Location pickUpLocation = new Location();
+        pickUpLocation.setId(dto.getPickUpLocationId());
+
+        Location dropOffLocation = new Location();
+        dropOffLocation.setId(dto.getDropOffLocationId());
+
+        VehicleService vehicleService = new VehicleService();
+        vehicleService.setServiceId(dto.getVehicleServiceId());
+
         return new RideRequest.RideRequestBuilder()
-                .setUserId(rideRequestDTO.getUserId())
-                .setPickUpLocationId(rideRequestDTO.getPickUpLocationId())
-                .setDropOffLocationId(rideRequestDTO.getDropOffLocationId())
-                .setVehicleServiceId(rideRequestDTO.getVehicleServiceId())
-                .setRideDate(rideRequestDTO.getRideDate())
-                .setPickUpTime(rideRequestDTO.getPickUpTime())
+                .setCustomer(user)
+                .setPickUpLocation(pickUpLocation)
+                .setDropOffLocation(dropOffLocation)
+                .setVehicleService(vehicleService)
+                .setRideDate(dto.getRideDate())
+                .setPickUpTime(dto.getPickUpTime())
+                .setRideRequestStatus(RideRequestStatus.PENDING)
                 .build();
     }
+
 }

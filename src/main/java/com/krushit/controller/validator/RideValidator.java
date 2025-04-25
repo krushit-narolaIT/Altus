@@ -60,6 +60,7 @@ public class RideValidator {
         }
 
         LocalTime pickUpTime = rideRequestDTO.getPickUpTime();
+
         if (pickUpTime.isBefore(LocalTime.now()) && rideDate.equals(LocalDate.now())) {
             throw new ApplicationException(Message.Ride.PICKUP_TIME_IN_PAST);
         }

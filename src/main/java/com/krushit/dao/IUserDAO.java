@@ -1,7 +1,8 @@
 package com.krushit.dao;
 
 import com.krushit.common.exception.DBException;
-import com.krushit.model.User;
+import com.krushit.entity.User;
+import jakarta.persistence.EntityManager;
 
 import java.sql.Connection;
 import java.util.List;
@@ -20,8 +21,10 @@ public interface IUserDAO {
     void updateUser(User updatedUser) throws DBException;
     Optional<User> getUserByEmail(String email) throws DBException;
     void updatePassword(String email, String newPassword) throws DBException;
-    void updateUserRating(int toUserId, int rating, Connection connection) throws DBException;
+    void updateUserRating(int userId, int newRating, EntityManager em) throws DBException;
     void blockUser(int userId) throws DBException;
     boolean isUserBlocked(int userId) throws DBException;
-    List<User> getUsersByLowRatingAndReviewCount(double ratingThreshold, int reviewCountThreshold) throws DBException;
+    List<User> getUsersByLowRatingAndReviewCount(int ratingThreshold, int reviewCountThreshold) throws DBException;
+    List<User> getUsersByPagination(int offset, int limit) throws DBException;
+    void addFavouriteDriver(int customerId, int driverId) throws DBException;
 }

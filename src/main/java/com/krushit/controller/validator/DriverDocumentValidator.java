@@ -2,12 +2,12 @@ package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ValidationException;
-import com.krushit.model.Driver;
+import com.krushit.entity.Driver;
 import jakarta.servlet.http.Part;
 
 public class DriverDocumentValidator {
     public static void validateDriverDocuments(Driver driver, Part licencePhoto) throws ValidationException {
-        if (driver.getUserId() <= 0) {
+        if (driver.getUser().getUserId() <= 0) {
             throw new ValidationException(Message.Driver.INVALID_DRIVER_ID);
         }
         validateLicenceNumber(driver.getLicenceNumber());

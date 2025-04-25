@@ -1,9 +1,13 @@
-package com.krushit.model;
+package com.krushit.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.krushit.common.enums.RideRequestStatus;
+
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,39 +15,72 @@ import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = RideRequest.RideRequestBuilder.class)
+@Entity
+@Table(name = "ride_requests")
 public class RideRequest {
-    private final int rideRequestId;
-    private final RideRequestStatus rideRequestStatus;
-    private final int pickUpLocationId;
-    private final int dropOffLocationId;
-    private final int vehicleServiceId;
-    private final int userId;
-    private final LocalDate rideDate;
-    private final LocalTime pickUpTime;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ride_request_id")
+    private int rideRequestId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ride_request_status", nullable = false)
+    private RideRequestStatus rideRequestStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "pick_up_location_id", nullable = false)
+    private Location pickUpLocation;
+
+    @ManyToOne
+    @JoinColumn(name = "drop_off_location_id", nullable = false)
+    private Location dropOffLocation;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_service_id", nullable = false)
+    private VehicleService vehicleService;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User customer;
+
+    @Column(name = "ride_date", nullable = false)
+    private LocalDate rideDate;
+
+    @Column(name = "pick_up_time", nullable = false)
+    private LocalTime pickUpTime;
+
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
     private RideRequest(RideRequestBuilder builder) {
         this.rideRequestId = builder.rideRequestId;
         this.rideRequestStatus = builder.rideRequestStatus;
-        this.pickUpLocationId = builder.pickUpLocationId;
-        this.dropOffLocationId = builder.dropOffLocationId;
-        this.vehicleServiceId = builder.vehicleServiceId;
-        this.userId = builder.userId;
+        this.pickUpLocation = builder.pickUpLocation;
+        this.dropOffLocation = builder.dropOffLocation;
+        this.vehicleService = builder.vehicleService;
+        this.customer = builder.user;
         this.rideDate = builder.rideDate;
         this.pickUpTime = builder.pickUpTime;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
     }
 
+    public RideRequest() {
+    }
+
     @JsonPOJOBuilder(withPrefix = "set")
     public static class RideRequestBuilder {
         private int rideRequestId;
         private RideRequestStatus rideRequestStatus;
-        private int pickUpLocationId;
-        private int dropOffLocationId;
-        private int vehicleServiceId;
-        private int userId;
+        private Location pickUpLocation;
+        private Location dropOffLocation;
+        private VehicleService vehicleService;
+        private User user;
         private LocalDate rideDate;
         private LocalTime pickUpTime;
         private LocalDateTime createdAt;
@@ -59,23 +96,23 @@ public class RideRequest {
             return this;
         }
 
-        public RideRequestBuilder setPickUpLocationId(int pickUpLocationId) {
-            this.pickUpLocationId = pickUpLocationId;
+        public RideRequestBuilder setPickUpLocation(Location pickUpLocation) {
+            this.pickUpLocation = pickUpLocation;
             return this;
         }
 
-        public RideRequestBuilder setDropOffLocationId(int dropOffLocationId) {
-            this.dropOffLocationId = dropOffLocationId;
+        public RideRequestBuilder setDropOffLocation(Location dropOffLocation) {
+            this.dropOffLocation = dropOffLocation;
             return this;
         }
 
-        public RideRequestBuilder setVehicleServiceId(int vehicleServiceId) {
-            this.vehicleServiceId = vehicleServiceId;
+        public RideRequestBuilder setVehicleService(VehicleService vehicleService) {
+            this.vehicleService = vehicleService;
             return this;
         }
 
-        public RideRequestBuilder setUserId(int userId) {
-            this.userId = userId;
+        public RideRequestBuilder setCustomer(User user) {
+            this.user = user;
             return this;
         }
 
@@ -112,20 +149,20 @@ public class RideRequest {
         return rideRequestStatus;
     }
 
-    public int getPickUpLocationId() {
-        return pickUpLocationId;
+    public Location getPickUpLocation() {
+        return pickUpLocation;
     }
 
-    public int getDropOffLocationId() {
-        return dropOffLocationId;
+    public Location getDropOffLocation() {
+        return dropOffLocation;
     }
 
-    public int getVehicleServiceId() {
-        return vehicleServiceId;
+    public VehicleService getVehicleService() {
+        return vehicleService;
     }
 
-    public int getUserId() {
-        return userId;
+    public User getCustomer() {
+        return customer;
     }
 
     public LocalDate getRideDate() {
@@ -149,10 +186,10 @@ public class RideRequest {
         return "RideRequest{" +
                 "rideRequestId=" + rideRequestId +
                 ", rideRequestStatus=" + rideRequestStatus +
-                ", pickUpLocationId=" + pickUpLocationId +
-                ", dropOffLocationId=" + dropOffLocationId +
-                ", vehicleServiceId=" + vehicleServiceId +
-                ", userId=" + userId +
+                ", pickUpLocation=" + pickUpLocation +
+                ", dropOffLocation=" + dropOffLocation +
+                ", vehicleService=" + vehicleService +
+                ", user=" + customer +
                 ", rideDate=" + rideDate +
                 ", pickUpTime=" + pickUpTime +
                 ", createdAt=" + createdAt +

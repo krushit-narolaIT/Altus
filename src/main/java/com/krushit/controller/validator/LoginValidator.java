@@ -2,7 +2,7 @@ package com.krushit.controller.validator;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ValidationException;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 
 public class LoginValidator {
     public static void validateLoginCredentials(User user) throws ValidationException {

@@ -3,15 +3,12 @@ package com.krushit.controller.admin;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.Driver;
-import com.krushit.dto.ApiResponseDTO;
-import com.krushit.model.User;
+import com.krushit.dto.PendingDriverDTO;
+import com.krushit.entity.Driver;
+import com.krushit.entity.User;
 import com.krushit.service.DriverService;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
-import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -35,7 +32,7 @@ public class GetAllPendingDriverVerificationController extends HttpServlet {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
-            List<Driver> pendingDrivers = driverService.getPendingVerificationDrivers();
+            List<PendingDriverDTO> pendingDrivers = driverService.getPendingVerificationDrivers();
             if (pendingDrivers.isEmpty()) {
                 createResponse(response, Message.Driver.NO_PENDING_VERIFICATION, null, HttpServletResponse.SC_OK);
             } else {

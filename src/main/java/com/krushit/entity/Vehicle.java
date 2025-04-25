@@ -1,17 +1,44 @@
-package com.krushit.model;
+package com.krushit.entity;
 
+import com.krushit.common.enums.FuelType;
+import com.krushit.common.enums.Transmission;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "vehicles")
 public class Vehicle {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "vehicle_id")
     private int vehicleId;
-    private int driverId;
-    private int brandModelId;
+
+    @ManyToOne
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_model_id")
+    private BrandModel brandModel;
+
+    @Column(name = "registration_number")
     private String registrationNumber;
+
+    @Column(name = "year")
     private int year;
-    private String fuelType;
-    private String transmission;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "fuel_type")
+    private FuelType fuelType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transmission")
+    private Transmission transmission;
+
+    @Column(name = "ground_clearance")
     private double groundClearance;
+
+    @Column(name = "wheel_base")
     private double wheelBase;
-    private String verificationStatus;
-    private String verificationMessage;
 
     public Vehicle() {}
 
@@ -23,20 +50,20 @@ public class Vehicle {
         this.vehicleId = vehicleId;
     }
 
-    public int getDriverId() {
-        return driverId;
+    public Driver getDriver() {
+        return driver;
     }
 
-    public void setDriverId(int driverId) {
-        this.driverId = driverId;
+    public void setDriver(Driver driver) {
+        this.driver = driver;
     }
 
-    public int getBrandModelId() {
-        return brandModelId;
+    public BrandModel getBrandModel() {
+        return brandModel;
     }
 
-    public void setBrandModelId(int brandModelId) {
-        this.brandModelId = brandModelId;
+    public void setBrandModel(BrandModel brandModel) {
+        this.brandModel = brandModel;
     }
 
     public String getRegistrationNumber() {
@@ -55,19 +82,19 @@ public class Vehicle {
         this.year = year;
     }
 
-    public String getFuelType() {
+    public FuelType getFuelType() {
         return fuelType;
     }
 
-    public void setFuelType(String fuelType) {
+    public void setFuelType(FuelType fuelType) {
         this.fuelType = fuelType;
     }
 
-    public String getTransmission() {
+    public Transmission getTransmission() {
         return transmission;
     }
 
-    public void setTransmission(String transmission) {
+    public void setTransmission(Transmission transmission) {
         this.transmission = transmission;
     }
 
@@ -87,36 +114,18 @@ public class Vehicle {
         this.wheelBase = wheelBase;
     }
 
-    public String getVerificationStatus() {
-        return verificationStatus;
-    }
-
-    public void setVerificationStatus(String verificationStatus) {
-        this.verificationStatus = verificationStatus;
-    }
-
-    public String getVerificationMessage() {
-        return verificationMessage;
-    }
-
-    public void setVerificationMessage(String verificationMessage) {
-        this.verificationMessage = verificationMessage;
-    }
-
     @Override
     public String toString() {
         return "Vehicle{" +
                 "vehicleId=" + vehicleId +
-                ", driverId=" + driverId +
-                ", brandModelId=" + brandModelId +
+                ", driver=" + driver +
+                ", brandModel=" + brandModel +
                 ", registrationNumber='" + registrationNumber + '\'' +
                 ", year=" + year +
                 ", fuelType='" + fuelType + '\'' +
                 ", transmission='" + transmission + '\'' +
                 ", groundClearance=" + groundClearance +
                 ", wheelBase=" + wheelBase +
-                ", verificationStatus='" + verificationStatus + '\'' +
-                ", verificationMessage='" + verificationMessage + '\'' +
                 '}';
     }
 }

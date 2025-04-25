@@ -1,79 +1,109 @@
 package com.krushit.dao;
 
 import com.krushit.common.Message;
-import com.krushit.common.config.DBConfig;
-import com.krushit.common.enums.DriverDocumentVerificationStatus;
-import com.krushit.common.enums.Role;
+import com.krushit.common.config.JPAConfig;
+import com.krushit.common.enums.DocumentVerificationStatus;
 import com.krushit.common.exception.DBException;
-import com.krushit.model.Driver;
+import com.krushit.dto.PendingDriverDTO;
+import com.krushit.entity.Driver;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
-    private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT verification_status FROM drivers WHERE driver_id = ?";
-    private static final String UPDATE_DRIVER_DETAILS = "UPDATE Drivers SET licence_number = ?, licence_photo = ?, updated_by = ? WHERE user_id = ?";
-    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT d.driver_id, d.user_id, d.licence_number, d.licence_photo, " +
-            "d.is_document_verified, d.verification_status, d.comment, " +
-            "u.email_id, u.first_name, u.last_name, u.role_id, u.display_id " +
-            "FROM Drivers d " +
-            "JOIN Users u ON d.user_id = u.user_id " +
-            "WHERE d.is_document_verified = FALSE";
-    private static final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE drivers SET verification_status = ?, comment = ?, is_document_verified = ?, updated_by = ? WHERE driver_id = ?";
-    private static final String CHECK_DRIVER_EXISTENCE = "SELECT 1 FROM drivers WHERE driver_id = ?";
-    private static final String CHECK_DRIVER_DOCUMENTS = "SELECT licence_number FROM drivers WHERE driver_id = ?";
-    private static final String GET_ALL_DRIVERS = "SELECT d.*, " +
-            "u.first_name, u.last_name, u.email_id, u.display_id " +
-            "FROM Drivers d " +
-            "JOIN Users u ON d.user_id = u.user_id";
-    private static final String GET_DRIVER_ID_FROM_USERID = "SELECT driver_id FROM Drivers WHERE user_id = ?";
-    private static final String IS_DOCUMENT_VERIFIED = "SELECT is_document_verified FROM Drivers WHERE driver_id = ?";
-    private static final String IS_LICENCE_EXIST = "SELECT 1 FROM drivers WHERE licence_number = ?";
-    private static final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Drivers SET is_available = TRUE WHERE driver_id = ?";
-    private static final UserDAOImpl userDAO = new UserDAOImpl();
+    private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT d.verificationStatus FROM Driver d WHERE d.driverId = :driverId";
+    private static final String UPDATE_DRIVER_DETAILS = "UPDATE Driver d SET d.licenceNumber = :licenceNumber, d.licencePhoto = :licencePhoto, d.verificationStatus = :verification_status WHERE d.user.userId = :driverId";
+    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT d.driverId, d.user.userId, d.licenceNumber, d.licencePhoto, " +
+            "d.isDocumentVerified, d.comment, " +
+            "u.emailId, u.firstName, u.lastName, u.displayId " +
+            "FROM Driver d " +
+            "JOIN User u ON d.user.userId = u.userId " +
+            "WHERE d.isDocumentVerified = FALSE";
+    private static final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE Driver SET verificationStatus = :verificationStatus, comment = :comment, isDocumentVerified = :isDocumentVerified, isAvailable = :isAvailable WHERE driverId = :driverId";
+    private static final String CHECK_DRIVER_DOCUMENTS = "SELECT d.verificationStatus FROM Driver d WHERE d.driverId = :driverId";
+    private static final String GET_ALL_DRIVERS = "SELECT d FROM Driver d JOIN FETCH d.user";
+    private static final String GET_DRIVER_FROM_USERID = "SELECT d FROM Driver d WHERE d.user.id = :userId";
+    private static final String IS_DOCUMENT_VERIFIED = "SELECT isDocumentVerified FROM Driver WHERE driverId = :driverId";
+    private static final String IS_LICENCE_EXIST = "SELECT 1 FROM Driver WHERE licenceNumber = :licenceNumber";
+    private static final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Driver d SET d.isAvailable = true WHERE d.driverId = :driverId";
+
+    /*@Override
+    public void insertDriverDetails(Driver driver) throws DBException {
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            em.createQuery(UPDATE_DRIVER_DETAILS)
+                    .setParameter("driverId", driver.getUser().getUserId())
+                    .executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
+        }
+    }*/
 
     @Override
     public void insertDriverDetails(Driver driver) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(UPDATE_DRIVER_DETAILS)) {
-            statement.setString(1, driver.getLicenceNumber());
-            statement.setString(2, driver.getLicencePhoto());
-            statement.setString(3, Role.ROLE_DRIVER.getRoleName());
-            statement.setInt(4, driver.getUserId());
-            statement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
+        EntityManager em = null;
+        EntityTransaction tx = null;
+        try {
+            em = JPAConfig.getEntityManagerFactory().createEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+            em.createQuery(UPDATE_DRIVER_DETAILS)
+                    .setParameter("licenceNumber", driver.getLicenceNumber())
+                    .setParameter("licencePhoto", driver.getLicencePhoto())
+                    .setParameter("driverId", driver.getUser().getUserId())
+                    .setParameter("verification_status", DocumentVerificationStatus.PENDING)
+                    .executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
         }
     }
 
     @Override
-    public List<Driver> getDriversWithPendingVerification() throws DBException {
-        List<Driver> pendingDrivers = new ArrayList<>();
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_PENDING_VERIFICATION_DRIVERS);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                Driver driver = (Driver) new Driver.DriverBuilder()
-                        .setDriverId(resultSet.getInt("driver_id"))
-                        .setLicenceNumber(resultSet.getString("licence_number"))
-                        .setLicencePhoto(resultSet.getString("licence_photo"))
-                        .setDocumentVerified(resultSet.getBoolean("is_document_verified"))
-                        .setVerificationStatus(resultSet.getString("verification_status"))
-                        .setComment(resultSet.getString("comment"))
-                        .setUserId(resultSet.getInt("user_id"))
-                        .setEmailId(resultSet.getString("email_id"))
-                        .setFirstName(resultSet.getString("first_name"))
-                        .setLastName(resultSet.getString("last_name"))
-                        .setRole(Role.getType(resultSet.getInt("role_id")))
-                        .setDisplayId(resultSet.getString("display_id"))
+    public List<PendingDriverDTO> getDriversWithPendingVerification() throws DBException {
+        List<PendingDriverDTO> pendingDrivers = new ArrayList<>();
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            @SuppressWarnings("unchecked")
+            List<Object[]> rows = em.createQuery(GET_PENDING_VERIFICATION_DRIVERS).getResultList();
+            for (Object[] row : rows) {
+                PendingDriverDTO dto = new PendingDriverDTO.PendingDriverDTOBuilder()
+                        .setDriverId((Integer) row[0])
+                        .setUserId((Integer) row[1])
+                        .setLicenceNumber((String) row[2])
+                        .setLicencePhoto((String) row[3])
+                        .setDocumentVerified((Boolean) row[4])
+                        //.setVerificationStatus((String) row[5])
+                        .setComment((String) row[5])
+                        .setEmailId((String) row[6])
+                        .setFirstName((String) row[7])
+                        .setLastName((String) row[8])
+                        .setDisplayId((String) row[9])
                         .build();
-                pendingDrivers.add(driver);
+                pendingDrivers.add(dto);
             }
-        } catch (SQLException | ClassNotFoundException e) {
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
             throw new DBException(Message.Driver.ERROR_WHILE_GETTING_PENDING_VERIFICATION_DRIVER, e);
         }
         return pendingDrivers;
@@ -81,139 +111,127 @@ public class DriverDAOImpl implements IDriverDAO {
 
     @Override
     public boolean isDriverExist(int driverId) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(CHECK_DRIVER_EXISTENCE)) {
-            preparedStatement.setInt(1, driverId);
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                return resultSet.next();
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            if (em.getReference(Driver.class, driverId) != null) {
+                return true;
             }
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_DRIVER_EXISTENCE, e);
+        } catch (Exception e) {
+            throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
         }
+        return false;
     }
 
     @Override
     public void updateDriveVerificationDetail(int driverId, boolean isVerified, String rejectionMessage) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_DRIVER_VERIFICATION_STATUS)) {
-            preparedStatement.setString(1, isVerified ? DriverDocumentVerificationStatus.ACCEPTED.getStatus() : DriverDocumentVerificationStatus.REJECTED.getStatus());
-            preparedStatement.setString(2, rejectionMessage);
-            preparedStatement.setBoolean(3, isVerified);
-            preparedStatement.setInt(4, driverId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Driver.ERROR_WHILE_VERIFYING_DRIVER, e);
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            em.createQuery(UPDATE_DRIVER_VERIFICATION_STATUS)
+                    .setParameter("verificationStatus", isVerified ? DocumentVerificationStatus.VERIFIED : DocumentVerificationStatus.REJECTED)
+                    .setParameter("comment", rejectionMessage)
+                    .setParameter("isDocumentVerified", isVerified)
+                    .setParameter("isAvailable", isVerified)
+                    .setParameter("driverId", driverId)
+                    .executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
         }
     }
 
     @Override
     public List<Driver> getAllDrivers() throws DBException {
-        List<Driver> drivers = new ArrayList<>();
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_ALL_DRIVERS);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
-            while (resultSet.next()) {
-                Driver driver = (Driver) new Driver.DriverBuilder()
-                        .setDriverId(resultSet.getInt("driver_id"))
-                        .setLicenceNumber(resultSet.getString("licence_number"))
-                        .setDocumentVerified(resultSet.getBoolean("is_document_verified"))
-                        .setAvailable(resultSet.getBoolean("is_available"))
-                        .setVerificationStatus(resultSet.getString("verification_status"))
-                        .setComment(resultSet.getString("comment"))
-                        .setUserId(resultSet.getInt("user_id"))
-                        .setFirstName(resultSet.getString("first_name"))
-                        .setLastName(resultSet.getString("last_name"))
-                        .setEmailId(resultSet.getString("email_id"))
-                        .build();
-                drivers.add(driver);
-            }
-        } catch (SQLException | ClassNotFoundException e) {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            return em.createQuery(GET_ALL_DRIVERS, Driver.class).getResultList();
+        } catch (Exception e) {
             throw new DBException(Message.Driver.ERROR_WHILE_FETCHING_ALL_DRIVERS, e);
         }
-        return drivers;
     }
 
     @Override
-    public int getDriverId(int userId) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(GET_DRIVER_ID_FROM_USERID)) {
-            preparedStatement.setInt(1, userId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()) {
-                return resultSet.getInt("driver_id");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
+    public Driver getDriver(int userId) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            return em.createQuery(
+                            GET_DRIVER_FROM_USERID, Driver.class)
+                    .setParameter("userId", userId)
+                    .getSingleResult();
+        } catch (Exception e) {
             throw new DBException(Message.Driver.ERROR_FOR_GETTING_DRIVER_ID_FROM_USER_ID, e);
         }
-        return 0;
     }
 
     @Override
     public boolean isDocumentVerified(int driverId) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(IS_DOCUMENT_VERIFIED)) {
-            stmt.setInt(1, driverId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getBoolean("is_document_verified");
-                }
-            }
-        } catch (SQLException | ClassNotFoundException e) {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            Boolean verified = em.createQuery(
+                            IS_DOCUMENT_VERIFIED, Boolean.class)
+                    .setParameter("driverId", driverId)
+                    .getSingleResult();
+            return Boolean.TRUE.equals(verified);
+        } catch (Exception e) {
             throw new DBException(Message.Driver.ERROR_FOR_CHECKING_DRIVER_DOCUMENT_VERIFIED, e);
         }
-        return false;
     }
 
     @Override
     public boolean isDocumentExist(int driverId) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(CHECK_DRIVER_DOCUMENTS)) {
-            stmt.setInt(1, driverId);
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                if (resultSet.next()) {
-                    String licenceNumber = resultSet.getString("licence_number");
-                    return licenceNumber != null && !licenceNumber.trim().isEmpty();
-                }
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            List<DocumentVerificationStatus> results = em.createQuery(
+                            IS_DOCUMENT_UNDER_REVIEW, DocumentVerificationStatus.class)
+                    .setParameter("driverId", driverId)
+                    .getResultList();
+            if (results.isEmpty()) {
+                return false;
             }
-        } catch (SQLException | ClassNotFoundException e) {
+            DocumentVerificationStatus status = results.get(0);
+            return !status.equals(DocumentVerificationStatus.INCOMPLETE);
+        } catch (Exception e) {
             throw new DBException(Message.Driver.ERROR_FOR_CHECKING_DRIVER_DOCUMENT_UPLOADED, e);
         }
-        return false;
     }
 
     @Override
     public boolean isLicenseNumberExist(String licenseNumber) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(IS_LICENCE_EXIST)) {
-            stmt.setString(1, licenseNumber);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
-            }
-        } catch (SQLException | ClassNotFoundException e) {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            List<Integer> result = em.createQuery(
+                            IS_LICENCE_EXIST, Integer.class)
+                    .setParameter("licenceNumber", licenseNumber)
+                    .getResultList();
+            return !result.isEmpty();
+        } catch (Exception e) {
             throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_LICENCE_NUMBER, e);
         }
     }
 
     @Override
-    public DriverDocumentVerificationStatus isDocumentUnderReview(int driverId) throws DBException {
-        try (Connection connection = DBConfig.INSTANCE.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(IS_DOCUMENT_UNDER_REVIEW)) {
-            stmt.setInt(1, driverId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return DriverDocumentVerificationStatus.getType(rs.getString("verification_status"));
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_LICENCE_NUMBER, e);
+    public DocumentVerificationStatus isDocumentUnderReview(int driverId) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            List<DocumentVerificationStatus> resultList = em.createQuery(
+                            IS_DOCUMENT_UNDER_REVIEW, DocumentVerificationStatus.class)
+                    .setParameter("driverId", driverId)
+                    .getResultList();
+            return resultList.isEmpty() ? null : resultList.get(0);
+        } catch (Exception e) {
+            throw new DBException(Message.Driver.ERROR_WHILE_CHECKING_IS_DOCUMENT_UNDER_REVIEW, e);
         }
     }
 
     @Override
     public void updateDriverAvailability(int driverId) throws DBException {
-        try (Connection conn = DBConfig.INSTANCE.getConnection();
-             PreparedStatement ps = conn.prepareStatement(UPDATE_DRIVER_AVAILABILITY)) {
-            ps.setInt(1, driverId);
-            ps.executeUpdate();
-        } catch (SQLException | ClassNotFoundException e) {
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            em.createQuery(UPDATE_DRIVER_AVAILABILITY)
+                    .setParameter("driverId", driverId)
+                    .executeUpdate();
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) tx.rollback();
             throw new DBException(Message.Driver.ERROR_WHILE_UPDATING_DRIVER_AVAILABILITY, e);
         }
     }

@@ -2,12 +2,11 @@ package com.krushit.controller.admin;
 
 import com.krushit.common.Message;
 import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.ApiResponseDTO;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
-import com.krushit.model.VehicleService;
+import com.krushit.dto.VehicleServiceDTO;
+import com.krushit.entity.User;
+import com.krushit.entity.VehicleService;
 import com.krushit.service.VehicleRideService;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
@@ -36,8 +35,9 @@ public class AddVehicleServiceController extends HttpServlet {
             ApplicationUtils.validateJsonRequest(request.getContentType());
             User user = SessionUtils.validateSession(request);
             AuthUtils.validateAdminRole(user);
-            VehicleService vehicleService = ObjectMapperUtils.toObject(request.getReader(), VehicleService.class);
-            VehicleServicesValidator.validateVehicleServiceDetails(vehicleService);
+            VehicleServiceDTO vehicleServiceDTO = ObjectMapperUtils.toObject(request.getReader(), VehicleServiceDTO.class);
+            VehicleServicesValidator.validateVehicleServiceDetails(vehicleServiceDTO);
+            VehicleService vehicleService = mapper.convertToEntity(vehicleServiceDTO);
             vehicleRideService.addVehicleService(vehicleService);
             createResponse(response, Message.Vehicle.VEHICLE_SERVICE_ADDED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {

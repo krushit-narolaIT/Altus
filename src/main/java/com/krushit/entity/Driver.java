@@ -1,29 +1,62 @@
-package com.krushit.model;
+package com.krushit.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.krushit.common.enums.DocumentVerificationStatus;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "drivers")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = Driver.DriverBuilder.class)
-public class Driver extends User {
-    private final int driverId;
-    private final String licenceNumber;
-    private final boolean isDocumentVerified;
-    private final String licencePhoto;
-    private final boolean isAvailable;
-    private final String verificationStatus;
-    private final String comment;
-    private final LocalDateTime createdAt;
-    private final LocalDateTime updatedAt;
-    private final String createdBy;
-    private final String updatedBy;
+public class Driver {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "driver_id")
+    private int driverId;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
+
+    @Column(name = "licence_number", length = 15, unique = true)
+    private String licenceNumber;
+
+    @Column(name = "is_document_verified", nullable = false)
+    private boolean isDocumentVerified = false;
+
+    @Column(name = "licence_photo", length = 255)
+    private String licencePhoto;
+
+    @Column(name = "is_available")
+    private boolean isAvailable;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "verification_status")
+    private DocumentVerificationStatus verificationStatus;
+
+    @Column(name = "comment", length = 254)
+    private String comment;
+
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", insertable = false)
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    public Driver() {
+    }
 
     private Driver(DriverBuilder builder) {
-        super(builder);
         this.driverId = builder.driverId;
+        this.user = builder.user;
         this.licenceNumber = builder.licenceNumber;
         this.isDocumentVerified = builder.isDocumentVerified;
         this.licencePhoto = builder.licencePhoto;
@@ -32,13 +65,16 @@ public class Driver extends User {
         this.comment = builder.comment;
         this.createdAt = builder.createdAt;
         this.updatedAt = builder.updatedAt;
-        this.createdBy = builder.createdBy;
-        this.updatedBy = builder.updatedBy;
     }
 
     public int getDriverId() {
         return driverId;
     }
+
+    public User getUser() {
+        return user;
+    }
+
 
     public String getLicenceNumber() {
         return licenceNumber;
@@ -56,7 +92,7 @@ public class Driver extends User {
         return isAvailable;
     }
 
-    public String getVerificationStatus() {
+    public DocumentVerificationStatus getVerificationStatus() {
         return verificationStatus;
     }
 
@@ -72,14 +108,6 @@ public class Driver extends User {
         return updatedAt;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
     @Override
     public String toString() {
         return "Driver{" +
@@ -92,27 +120,29 @@ public class Driver extends User {
                 ", comment='" + comment + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", createdBy='" + createdBy + '\'' +
-                ", updatedBy='" + updatedBy + '\'' +
                 '}';
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
-    public static class DriverBuilder extends UserBuilder {
+    public static class DriverBuilder {
         private int driverId;
+        private User user;
         private String licenceNumber;
         private boolean isDocumentVerified;
         private String licencePhoto;
         private boolean isAvailable;
-        private String verificationStatus;
+        private DocumentVerificationStatus verificationStatus;
         private String comment;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
-        private String createdBy;
-        private String updatedBy;
 
         public DriverBuilder setDriverId(int driverId) {
             this.driverId = driverId;
+            return this;
+        }
+
+        public DriverBuilder setUser(User user) {
+            this.user = user;
             return this;
         }
 
@@ -136,7 +166,7 @@ public class Driver extends User {
             return this;
         }
 
-        public DriverBuilder setVerificationStatus(String verificationStatus) {
+        public DriverBuilder setVerificationStatus(DocumentVerificationStatus verificationStatus) {
             this.verificationStatus = verificationStatus;
             return this;
         }
@@ -156,17 +186,6 @@ public class Driver extends User {
             return this;
         }
 
-        public DriverBuilder setCreatedBy(String createdBy) {
-            this.createdBy = createdBy;
-            return this;
-        }
-
-        public DriverBuilder setUpdatedBy(String updatedBy) {
-            this.updatedBy = updatedBy;
-            return this;
-        }
-
-        @Override
         public Driver build() {
             return new Driver(this);
         }

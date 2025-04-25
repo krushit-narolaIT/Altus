@@ -2,16 +2,12 @@ package com.krushit.controller.driver;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.Driver;
+import com.krushit.entity.Driver;
 import com.krushit.common.exception.DBException;
-import com.krushit.dto.ApiResponseDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.service.DriverService;
 import com.krushit.controller.validator.DriverDocumentValidator;
 import com.krushit.utils.AuthUtils;
-import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -41,10 +37,10 @@ public class AddDriverDetailsController extends HttpServlet {
             String licenceNumber = request.getParameter("licenceNumber");
             Part licencePhoto = request.getPart("licencePhoto");
             String storedPhotoPath = driverService.storeLicencePhoto(licencePhoto, licenceNumber, user.getDisplayId());
-            Driver driver = (Driver) new Driver.DriverBuilder()
+            Driver driver = new Driver.DriverBuilder()
                     .setLicenceNumber(licenceNumber)
                     .setLicencePhoto(storedPhotoPath)
-                    .setUserId(user.getUserId())
+                    .setUser(user)
                     .build();
             DriverDocumentValidator.validateDriverDocuments(driver, licencePhoto);
             driverService.storeDriverDetails(driver);

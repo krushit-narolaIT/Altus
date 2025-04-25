@@ -6,10 +6,11 @@ import com.krushit.common.mapper.Mapper;
 import com.krushit.dao.IUserDAO;
 import com.krushit.dao.UserDAOImpl;
 import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class UserService {
     private final IUserDAO userDAO = new UserDAOImpl();
@@ -35,8 +36,26 @@ public class UserService {
         return mapper.convertToDTO(userDAO.getUser(email, password));
     }
 
-    public List<User> getAllCustomers() throws ApplicationException {
-        return userDAO.getAllCustomers();
+    public List<UserDTO> getAllCustomers() throws ApplicationException {
+        List<User> users = userDAO.getAllCustomers();
+        return users.stream()
+                .map(user -> new UserDTO.UserDTOBuilder()
+                        .setUserId(user.getUserId())
+                        .setRole(user.getRole())
+                        .setFirstName(user.getFirstName())
+                        .setLastName(user.getLastName())
+                        .setPhoneNo(user.getPhoneNo())
+                        .setEmailId(user.getEmailId())
+                        .setPassword(user.getPassword())
+                        .setDisplayId(user.getDisplayId())
+                        .setIsActive(user.isActive())
+                        .setIsBlocked(user.isBlocked())
+                        .setTotalRatings(user.getTotalRatings())
+                        .setRatingCount(user.getRatingCount())
+                        .setCreatedAt(user.getCreatedAt())
+                        .setUpdatedAt(user.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     public void updateUser(UserDTO userDTO, int userId) throws ApplicationException {
@@ -81,19 +100,43 @@ public class UserService {
         return userDAO.getUserFullName(userId);
     }
 
-    public String getUserDisplayIdById(int userId) throws ApplicationException{
+    public String getUserDisplayIdById(int userId) throws ApplicationException {
         return userDAO.getUserDisplayId(userId);
     }
 
-    public String getUserFullNameById(int userId) throws ApplicationException{
+    public String getUserFullNameById(int userId) throws ApplicationException {
         return userDAO.getUserFullName(userId);
     }
 
-    public Optional<User> getUserDetails(int fromUserId) throws ApplicationException{
+    public Optional<User> getUserDetails(int fromUserId) throws ApplicationException {
         return userDAO.getUser(fromUserId);
     }
 
-    public List<User> getUsersWithLessRatingAndReviews(double ratingThreshold, int reviewCountThreshold) throws ApplicationException {
+    public List<User> getUsersWithLessRatingAndReviews(int ratingThreshold, int reviewCountThreshold) throws ApplicationException {
         return userDAO.getUsersByLowRatingAndReviewCount(ratingThreshold, reviewCountThreshold);
     }
+
+    public List<User> getCustomersByOffsetAndLimit(int offset, int limit) throws ApplicationException {
+        return userDAO.getUsersByPagination(offset, limit);
+    }
+
+    public List<User> getCustomersByPage(int page, int recordsPerPage) throws ApplicationException {
+        int offset = (page - 1) * recordsPerPage;
+        int limit = recordsPerPage;
+        return userDAO.getUsersByPagination(offset, limit);
+    }
+
+    public void addFavouriteDriver(int customerId, int driverId) throws ApplicationException {
+        if (!userDAO.isUserExist(customerId)) {
+            throw new ApplicationException(Message.User.USER_NOT_FOUND);
+        }
+        if (!userDAO.isUserExist(driverId)) {
+            throw new ApplicationException(Message.User.DRIVER_NOT_FOUND);
+        }
+        userDAO.addFavouriteDriver(customerId, driverId);
+    }
+
+/*    public void removeFavouriteDriver(int customerId, int driverId) throws ApplicationException {
+        userDAO.removeFavouriteDriver(customerId, driverId);
+    }*/
 }

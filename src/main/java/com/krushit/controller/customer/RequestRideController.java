@@ -2,13 +2,10 @@ package com.krushit.controller.customer;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
-import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.RideValidator;
-import com.krushit.dto.ApiResponseDTO;
 import com.krushit.dto.DistanceCalculatorDTO;
 import com.krushit.dto.RideServiceDTO;
-import com.krushit.dto.UserDTO;
-import com.krushit.model.User;
+import com.krushit.entity.User;
 import com.krushit.service.VehicleRideService;
 import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;

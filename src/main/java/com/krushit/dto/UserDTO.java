@@ -2,48 +2,68 @@ package com.krushit.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
-import com.krushit.common.enums.Role;
+import com.krushit.entity.Role;
+
+import java.time.LocalDateTime;
 
 @JsonDeserialize(builder = UserDTO.UserDTOBuilder.class)
 public class UserDTO {
     private final int userId;
-    private final Role role;
+    private final Role roleType;
     private final String firstName;
     private final String lastName;
     private final String phoneNo;
     private final String emailId;
     private final String password;
     private final String displayId;
+    private final boolean isActive;
+    private final boolean isBlocked;
+    private final int totalRatings;
+    private final int ratingCount;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
     private UserDTO(UserDTOBuilder builder) {
         this.userId = builder.userId;
-        this.role = builder.role;
+        this.roleType = builder.roleType;
         this.firstName = builder.firstName;
         this.lastName = builder.lastName;
         this.phoneNo = builder.phoneNo;
         this.emailId = builder.emailId;
         this.password = builder.password;
         this.displayId = builder.displayId;
+        this.isActive = builder.isActive;
+        this.isBlocked = builder.isBlocked;
+        this.totalRatings = builder.totalRatings;
+        this.ratingCount = builder.ratingCount;
+        this.createdAt = builder.createdAt;
+        this.updatedAt = builder.updatedAt;
     }
 
     @JsonPOJOBuilder(withPrefix = "set")
     public static class UserDTOBuilder {
         private int userId;
-        private Role role;
+        private Role roleType;
         private String firstName;
         private String lastName;
         private String phoneNo;
         private String emailId;
         private String password;
         private String displayId;
+        private boolean isActive;
+        private boolean isBlocked;
+        private int totalRatings;
+        private int ratingCount;
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
 
         public UserDTOBuilder setUserId(int userId) {
             this.userId = userId;
             return this;
         }
 
-        public UserDTOBuilder setRole(Role role) {
-            this.role = role;
+        public UserDTOBuilder setRole(Role roleType) {
+            this.roleType = roleType;
             return this;
         }
 
@@ -77,6 +97,36 @@ public class UserDTO {
             return this;
         }
 
+        public UserDTOBuilder setIsActive(boolean isActive) {
+            this.isActive = isActive;
+            return this;
+        }
+
+        public UserDTOBuilder setIsBlocked(boolean isBlocked) {
+            this.isBlocked = isBlocked;
+            return this;
+        }
+
+        public UserDTOBuilder setTotalRatings(int totalRatings) {
+            this.totalRatings = totalRatings;
+            return this;
+        }
+
+        public UserDTOBuilder setRatingCount(int ratingCount) {
+            this.ratingCount = ratingCount;
+            return this;
+        }
+
+        public UserDTOBuilder setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public UserDTOBuilder setUpdatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
         public UserDTO build() {
             return new UserDTO(this);
         }
@@ -87,7 +137,7 @@ public class UserDTO {
     }
 
     public Role getRole() {
-        return role;
+        return roleType;
     }
 
     public String getFirstName() {
@@ -114,16 +164,46 @@ public class UserDTO {
         return displayId;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public boolean isBlocked() {
+        return isBlocked;
+    }
+
+    public int getTotalRatings() {
+        return totalRatings;
+    }
+
+    public int getRatingCount() {
+        return ratingCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
                 "userId=" + userId +
-                ", role=" + role +
+                ", role=" + roleType +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phoneNo='" + phoneNo + '\'' +
                 ", emailId='" + emailId + '\'' +
                 ", displayId='" + displayId + '\'' +
+                ", isActive=" + isActive +
+                ", isBlocked=" + isBlocked +
+                ", totalRatings=" + totalRatings +
+                ", ratingCount=" + ratingCount +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }

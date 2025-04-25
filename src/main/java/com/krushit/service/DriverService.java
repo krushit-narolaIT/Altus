@@ -1,14 +1,15 @@
 package com.krushit.service;
 
 import com.krushit.common.Message;
-import com.krushit.common.enums.DriverDocumentVerificationStatus;
+import com.krushit.common.enums.DocumentVerificationStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
 import com.krushit.dto.DriverVerificationRequestDTO;
-import com.krushit.model.Driver;
-import com.krushit.model.User;
-import com.krushit.model.Vehicle;
+import com.krushit.dto.PendingDriverDTO;
+import com.krushit.entity.Driver;
+import com.krushit.entity.User;
+import com.krushit.entity.Vehicle;
 import jakarta.servlet.http.Part;
 
 import java.io.File;
@@ -29,21 +30,21 @@ public class DriverService {
     private final UserService userService = new UserService();
 
     public void storeDriverDetails(Driver driver) throws ApplicationException {
-        Optional<User> userOpt = userService.getUserDetails(driver.getUserId());
+        Optional<User> userOpt = userService.getUserDetails(driver.getUser().getUserId());
         if (!userOpt.isPresent()) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
         if (driverDAO.isLicenseNumberExist(driver.getLicenceNumber())) {
             throw new ApplicationException(Message.Driver.LICENCE_NUMBER_IS_ALREADY_EXIST);
         }
-        if (driverDAO.isDocumentUnderReview(driver.getDriverId()) == DriverDocumentVerificationStatus.PENDING) {
+        if (driverDAO.isDocumentUnderReview(driver.getDriverId()) == DocumentVerificationStatus.PENDING) {
             throw new ApplicationException(Message.Driver.DOCUMENT_IS_UNDER_REVIEW);
         }
-        Driver updatedDriver = (Driver) new Driver.DriverBuilder()
+        Driver updatedDriver = new Driver.DriverBuilder()
                 .setLicenceNumber(driver.getLicenceNumber())
                 .setLicencePhoto(driver.getLicencePhoto())
-                .setVerificationStatus(DriverDocumentVerificationStatus.PENDING.getStatus())
-                .setUserId(driver.getUserId())
+                .setVerificationStatus(DocumentVerificationStatus.PENDING)
+                .setUser(new User.UserBuilder().setUserId(driver.getUser().getUserId()).build())
                 .build();
         driverDAO.insertDriverDetails(updatedDriver);
     }
@@ -67,7 +68,7 @@ public class DriverService {
         }
     }
 
-    public List<Driver> getPendingVerificationDrivers() throws DBException {
+    public List<PendingDriverDTO> getPendingVerificationDrivers() throws DBException {
         return driverDAO.getDriversWithPendingVerification();
     }
 
@@ -82,9 +83,9 @@ public class DriverService {
         if(!driverDAO.isDocumentExist(driverId)){
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
-        if(DriverDocumentVerificationStatus.ACCEPTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
+        if(DocumentVerificationStatus.VERIFIED.name().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){
             driverDAO.updateDriveVerificationDetail(driverId, true, null);
-        } else if(DriverDocumentVerificationStatus.REJECTED.getStatus().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
+        } else if(DocumentVerificationStatus.REJECTED.name().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())) {
             driverDAO.updateDriveVerificationDetail(driverId, false, verificationRequestDTO.getMessage());
         } else {
             throw new ApplicationException(Message.Driver.PLEASE_PERFORM_VALID_VERIFICATION_OPERATION);
@@ -96,37 +97,37 @@ public class DriverService {
     }
 
     public void addVehicle(Vehicle vehicle, int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverId(userId);
-        if (!driverDAO.isDocumentExist(driverId)) {
+        Driver driver = driverDAO.getDriver(userId);
+        if (!driverDAO.isDocumentExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
-        if (!driverDAO.isDocumentVerified(driverId)) {
+        if (!driverDAO.isDocumentVerified(driver.getDriverId())) {
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_VERIFIED);
         }
-        if (vehicleDAO.isDriverVehicleExist(driverId)) {
+        if (vehicleDAO.isDriverVehicleExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Vehicle.DRIVER_VEHICLE_ALREADY_EXIST);
         }
-        if (!vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
+        if (vehicleDAO.isBrandModelExistsByID(vehicle.getVehicleId())) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_NOT_SUPPORTED);
         }
-        int minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModelId());
+        int minYear = vehicleDAO.getMinYearForBrandModel(vehicle.getBrandModel().getBrandModelId());
         if (vehicle.getYear() < minYear) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_YEAR_NOT_SUPPORTED);
         }
-        vehicle.setDriverId(driverId);
-        driverDAO.updateDriverAvailability(driverId);
+        vehicle.setDriver(driver);
+        driverDAO.updateDriverAvailability(driver.getDriverId());
         vehicleDAO.addVehicle(vehicle);
     }
 
     public void deleteVehicle(int userId) throws ApplicationException {
-        int driverId = driverDAO.getDriverId(userId);
-        if (!vehicleDAO.isDriverVehicleExist(driverId)) {
+        Driver driver = driverDAO.getDriver(userId);
+        if (!vehicleDAO.isDriverVehicleExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Vehicle.VEHICLE_NOT_EXIST);
         }
         vehicleDAO.deleteVehicleByUserId(userId);
     }
 
     public int getDriverIdFromUserId(int userId) throws ApplicationException{
-        return driverDAO.getDriverId(userId);
+        return driverDAO.getDriver(userId).getDriverId();
     }
 }

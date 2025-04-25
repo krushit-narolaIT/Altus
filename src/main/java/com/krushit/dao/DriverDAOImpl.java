@@ -13,23 +13,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DriverDAOImpl implements IDriverDAO {
-    private static final String IS_DOCUMENT_UNDER_REVIEW = "SELECT d.verificationStatus FROM Driver d WHERE d.driverId = :driverId";
-    private static final String UPDATE_DRIVER_DETAILS = "UPDATE Driver d SET d.licenceNumber = :licenceNumber, d.licencePhoto = :licencePhoto, d.verificationStatus = :verification_status WHERE d.user.userId = :driverId";
-    private static final String GET_PENDING_VERIFICATION_DRIVERS = "SELECT d.driverId, d.user.userId, d.licenceNumber, d.licencePhoto, " +
+    private static final String IS_DOCUMENT_UNDER_REVIEW =
+            "SELECT d.verificationStatus FROM Driver d WHERE d.driverId = :driverId";
+    private static final String UPDATE_DRIVER_DETAILS =
+            "UPDATE Driver d SET d.licenceNumber = :licenceNumber, d.licencePhoto = :licencePhoto," +
+                    " d.verificationStatus = :verification_status WHERE d.user.userId = :driverId";
+    private static final String GET_PENDING_VERIFICATION_DRIVERS =
+            "SELECT d.driverId, d.user.userId, d.licenceNumber, d.licencePhoto, " +
             "d.isDocumentVerified, d.comment, " +
             "u.emailId, u.firstName, u.lastName, u.displayId " +
             "FROM Driver d " +
             "JOIN User u ON d.user.userId = u.userId " +
             "WHERE d.isDocumentVerified = FALSE";
-    private static final String UPDATE_DRIVER_VERIFICATION_STATUS = "UPDATE Driver SET verificationStatus = :verificationStatus, comment = :comment, isDocumentVerified = :isDocumentVerified, isAvailable = :isAvailable WHERE driverId = :driverId";
-    private static final String CHECK_DRIVER_DOCUMENTS = "SELECT d.verificationStatus FROM Driver d WHERE d.driverId = :driverId";
-    private static final String GET_ALL_DRIVERS = "SELECT d FROM Driver d JOIN FETCH d.user";
-    private static final String GET_DRIVER_FROM_USERID = "SELECT d FROM Driver d WHERE d.user.id = :userId";
-    private static final String IS_DOCUMENT_VERIFIED = "SELECT isDocumentVerified FROM Driver WHERE driverId = :driverId";
-    private static final String IS_LICENCE_EXIST = "SELECT 1 FROM Driver WHERE licenceNumber = :licenceNumber";
-    private static final String UPDATE_DRIVER_AVAILABILITY = "UPDATE Driver d SET d.isAvailable = true WHERE d.driverId = :driverId";
+    private static final String UPDATE_DRIVER_VERIFICATION_STATUS =
+            "UPDATE Driver SET verificationStatus = :verificationStatus, comment = :comment, " +
+                    "isDocumentVerified = :isDocumentVerified, isAvailable = :isAvailable" +
+                    " WHERE driverId = :driverId";
+    private static final String CHECK_DRIVER_DOCUMENTS =
+            "SELECT d.verificationStatus FROM Driver d WHERE d.driverId = :driverId";
+    private static final String GET_ALL_DRIVERS =
+            "SELECT d FROM Driver d JOIN FETCH d.user";
+    private static final String GET_DRIVER_FROM_USERID =
+            "SELECT d FROM Driver d WHERE d.user.id = :userId";
+    private static final String IS_DOCUMENT_VERIFIED =
+            "SELECT isDocumentVerified FROM Driver WHERE driverId = :driverId";
+    private static final String IS_LICENCE_EXIST =
+            "SELECT 1 FROM Driver WHERE licenceNumber = :licenceNumber";
+    private static final String UPDATE_DRIVER_AVAILABILITY =
+            "UPDATE Driver d SET d.isAvailable = true WHERE d.driverId = :driverId";
 
-    /*@Override
+    @Override
     public void insertDriverDetails(Driver driver) throws DBException {
         EntityTransaction tx = null;
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
@@ -45,9 +58,9 @@ public class DriverDAOImpl implements IDriverDAO {
             }
             throw new DBException(Message.Driver.ERROR_WHILE_INSERT_DRIVER_DETAILS, e);
         }
-    }*/
+    }
 
-    @Override
+    /*@Override
     public void insertDriverDetails(Driver driver) throws DBException {
         EntityManager em = null;
         EntityTransaction tx = null;
@@ -72,7 +85,7 @@ public class DriverDAOImpl implements IDriverDAO {
                 em.close();
             }
         }
-    }
+    }*/
 
     @Override
     public List<PendingDriverDTO> getDriversWithPendingVerification() throws DBException {
@@ -181,7 +194,7 @@ public class DriverDAOImpl implements IDriverDAO {
     public boolean isDocumentExist(int driverId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             List<DocumentVerificationStatus> results = em.createQuery(
-                            IS_DOCUMENT_UNDER_REVIEW, DocumentVerificationStatus.class)
+                            CHECK_DRIVER_DOCUMENTS, DocumentVerificationStatus.class)
                     .setParameter("driverId", driverId)
                     .getResultList();
             if (results.isEmpty()) {

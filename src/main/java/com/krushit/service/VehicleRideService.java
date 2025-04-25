@@ -89,6 +89,9 @@ public class VehicleRideService {
 
     public List<RideResponseDTO> getAllRequest(int userId) throws ApplicationException {
         int driverId = driverService.getDriverIdFromUserId(userId);
+        if(!driverService.isDocumentExist(driverId)){
+            throw new ApplicationException(Message.Driver.PLEASE_DOCUMENT_NOT_UPLOADED);
+        }
         List<RideRequest> rideRequests = rideDAO.getAllMatchingRideRequests(driverId);
         List<RideResponseDTO> responseList = new ArrayList<>();
         for (RideRequest rideRequest : rideRequests) {
@@ -244,8 +247,8 @@ public class VehicleRideService {
                 RideDTO.RideDTOBuilder builder = new RideDTO.RideDTOBuilder()
                         .setRideId(ride.getRideId())
                         .setRideStatus(ride.getRideStatus())
-//                        .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
-//                        .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
+                        .setPickLocationId(locationService.getLocationNameById(ride.getPickLocation().getId()))
+                        .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocation().getId()))
                         .setCustomerName(customerName)
                         .setDriverName(driverName)
                         .setRideDate(ride.getRideDate())
@@ -300,10 +303,10 @@ public class VehicleRideService {
         return new RideDTO.RideDTOBuilder()
                 .setRideId(ride.getRideId())
                 .setRideStatus(ride.getRideStatus())
-//                .setPickLocationId(locationService.getLocationNameById(ride.getPickLocationId()))
-//                .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocationId()))
-//                .setCustomerName(userService.getUserNameById(ride.getCustomerId()))
-//                .setDriverName(userService.getUserNameById(ride.getDriverId()))
+                .setPickLocationId(locationService.getLocationNameById(ride.getPickLocation().getId()))
+                .setDropOffLocationId(locationService.getLocationNameById(ride.getDropOffLocation().getId()))
+                .setCustomerName(userService.getUserNameById(ride.getCustomer().getUserId()))
+                .setDriverName(userService.getUserNameById(ride.getDriver().getUserId()))
                 .setRideDate(ride.getRideDate())
                 .setPickUpTime(ride.getPickUpTime())
                 .setDisplayId(ride.getDisplayId())

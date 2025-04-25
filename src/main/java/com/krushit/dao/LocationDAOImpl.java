@@ -18,11 +18,9 @@ public class LocationDAOImpl implements ILocationDAO {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             tx = em.getTransaction();
             tx.begin();
-
             Location newLocation = new Location();
             newLocation.setName(location);
             em.persist(newLocation);
-
             tx.commit();
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {
@@ -58,12 +56,10 @@ public class LocationDAOImpl implements ILocationDAO {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             tx = em.getTransaction();
             tx.begin();
-
             Location location = em.find(Location.class, locationId);
             if (location != null) {
                 em.remove(location);
             }
-
             tx.commit();
         } catch (Exception e) {
             if (tx != null && tx.isActive()) {

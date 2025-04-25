@@ -22,6 +22,8 @@ public class VehicleDAOImpl implements IVehicleDAO {
             "SELECT COUNT(v) FROM Vehicle v WHERE v.driver.driverId = :driverId";
     private static final String SELECT_ALL_BRAND_MODELS =
             "SELECT bm FROM BrandModel bm";
+    private static final String GET_ALL_BRANDS =
+            "SELECT DISTINCT b.brandName FROM BrandModel b";
     private static final String SELECT_AVAILABLE_VEHICLE_SERVICES =
             "SELECT DISTINCT bm.vehicleService FROM BrandModel bm " +
                     "JOIN bm.vehicles v " +
@@ -29,6 +31,8 @@ public class VehicleDAOImpl implements IVehicleDAO {
                     "WHERE d.isAvailable = true";
     private static final String DELETE_VEHICLE_BY_USER_ID =
             "DELETE FROM Vehicle v WHERE v.driver.user.userId = :userId";
+    private static final String GET_BRAND_MODELS_BY_BRAND =
+            "SELECT DISTINCT b.model FROM BrandModel b WHERE b.brandName = :brandName";
 
     @Override
     public boolean isVehicleServiceExists(String serviceName) throws DBException {
@@ -112,7 +116,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     @Override
     public boolean isDriverVehicleExist(int driverID) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            Long count = em.createQuery(COUNT_VEHICLE_BY_DRIVER_ID, Long.class)
+            int count = em.createQuery(COUNT_VEHICLE_BY_DRIVER_ID, int.class)
                     .setParameter("driverId", driverID)
                     .getSingleResult();
             return count > 0;
@@ -125,15 +129,45 @@ public class VehicleDAOImpl implements IVehicleDAO {
     public List<BrandModelResponseDTO> getAllBrandModels() throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             List<BrandModel> brandModels = em.createQuery(SELECT_ALL_BRAND_MODELS, BrandModel.class).getResultList();
-            Map<String, List<String>> map = new HashMap<>();
+            Map<String, List<String>> brandToModels = new HashMap<>();
+            Map<String, List<String>> brandToServices = new HashMap<>();
             for (BrandModel bm : brandModels) {
-                map.computeIfAbsent(bm.getBrandName(), k -> new ArrayList<>()).add(bm.getModel());
+                String brand = bm.getBrandName();
+                String model = bm.getModel();
+                String serviceName = bm.getVehicleService().getServiceName();
+                brandToModels.computeIfAbsent(brand, k -> new ArrayList<>()).add(model);
+                brandToServices.computeIfAbsent(brand, k -> new ArrayList<>()).add(serviceName);
             }
             List<BrandModelResponseDTO> response = new ArrayList<>();
-            map.forEach((brand, models) -> response.add(new BrandModelResponseDTO(brand, models)));
+            for (String brand : brandToModels.keySet()) {
+                List<String> models = brandToModels.get(brand);
+                List<String> services = new ArrayList<>(brandToServices.getOrDefault(brand, new ArrayList<>()));
+                response.add(new BrandModelResponseDTO(brand, models, services));
+            }
             return response;
         } catch (Exception e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_GETTING_ALL_BRAND_MODELS, e);
+        }
+    }
+
+    @Override
+    public List<String> getAllBrands() throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            return em.createQuery(GET_ALL_BRANDS, String.class).getResultList();
+        } catch (Exception e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_GETTING_ALL_BRANDS, e);
+        }
+    }
+
+    @Override
+    public List<String> getModelsByBrand(String brandName) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            return em.createQuery(
+                            GET_BRAND_MODELS_BY_BRAND, String.class)
+                    .setParameter("brandName", brandName)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_GETTING_BRAND_MODEL_FROM_BRAND + brandName, e);
         }
     }
 

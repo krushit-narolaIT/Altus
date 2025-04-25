@@ -76,11 +76,15 @@ public class DriverService {
         return driverDAO.isDriverExist(driverId);
     }
 
+    public boolean isDocumentExist(Integer driverId) throws ApplicationException {
+        return driverDAO.isDocumentExist(driverId);
+    }
+
     public void verifyDriver(DriverVerificationRequestDTO verificationRequestDTO, int driverId) throws ApplicationException {
         if (!isDriverExist(driverId)) {
             throw new ApplicationException(Message.DRIVER_NOT_EXIST);
         }
-        if(!driverDAO.isDocumentExist(driverId)){
+        if(!isDocumentExist(driverId)){
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
         if(DocumentVerificationStatus.VERIFIED.name().equalsIgnoreCase(verificationRequestDTO.getVerificationStatus())){

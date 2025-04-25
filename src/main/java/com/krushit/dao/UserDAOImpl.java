@@ -15,32 +15,32 @@ import java.util.List;
 import java.util.Optional;
 
 public class UserDAOImpl implements IUserDAO {
-    private static final String QUERY_GET_USER_BY_EMAIL_AND_PASSWORD =
+    private static final String GET_USER_BY_EMAIL_AND_PASSWORD =
             "SELECT u FROM User u WHERE u.emailId = :email AND u.password = :password";
-    private static final String QUERY_VALIDATE_USER =
+    private static final String VALIDATE_USER =
             "SELECT COUNT(u) FROM User u WHERE u.emailId = :email AND u.password = :password";
-    private static final String QUERY_CHECK_USER_EXISTENCE_BY_EMAIL_OR_PHONE =
+    private static final String CHECK_USER_EXISTENCE_BY_EMAIL_OR_PHONE =
             "SELECT COUNT(u) FROM User u WHERE u.emailId = :email OR u.phoneNo = :phone";
-    private static final String QUERY_GET_ALL_CUSTOMERS =
+    private static final String GET_ALL_CUSTOMERS =
             "SELECT u FROM User u WHERE u.role.role = :roleType";
-    private static final String QUERY_GET_DISPLAY_ID_BY_USER_ID =
+    private static final String GET_DISPLAY_ID_BY_USER_ID =
             "SELECT u.displayId FROM User u WHERE u.userId = :userId";
-    private static final String QUERY_GET_USER_NAME_BY_USER_ID =
+    private static final String GET_USER_NAME_BY_USER_ID =
             "SELECT u.firstName, u.lastName FROM User u WHERE u.userId = :userId";
-    private static final String QUERY_GET_USER_BY_EMAIL =
+    private static final String GET_USER_BY_EMAIL =
             "SELECT u FROM User u WHERE u.emailId = :email";
-    private static final String QUERY_UPDATE_PASSWORD_BY_EMAIL =
+    private static final String UPDATE_PASSWORD_BY_EMAIL =
             "UPDATE User u SET u.password = :pwd WHERE u.emailId = :email";
-    private static final String QUERY_UPDATE_USER_RATING =
+    private static final String UPDATE_USER_RATING =
             "UPDATE User u SET u.totalRatings = ((u.totalRatings * u.ratingCount) + :rating) / (u.ratingCount + 1), " +
                     "u.ratingCount = u.ratingCount + 1 WHERE u.userId = :userId";
-    private static final String QUERY_BLOCK_USER_BY_ID =
+    private static final String BLOCK_USER_BY_ID =
             "UPDATE User u SET u.isBlocked = true WHERE u.userId = :id";
-    private static final String QUERY_IS_USER_BLOCKED =
+    private static final String IS_USER_BLOCKED =
             "SELECT u.isBlocked FROM User u WHERE u.userId = :id";
-    private static final String QUERY_GET_USERS_BY_LOW_RATING =
+    private static final String GET_USERS_BY_LOW_RATING =
             "SELECT u FROM User u WHERE u.totalRatings < :rating AND u.ratingCount < :reviews";
-    private static final String QUERY_GET_USERS_PAGINATED =
+    private static final String GET_USERS_PAGINATED =
             "SELECT u FROM User u";
 
     @Override
@@ -78,7 +78,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public User getUser(String emailId, String password) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            TypedQuery<User> query = em.createQuery(QUERY_GET_USER_BY_EMAIL_AND_PASSWORD, User.class);
+            TypedQuery<User> query = em.createQuery(GET_USER_BY_EMAIL_AND_PASSWORD, User.class);
             query.setParameter("email", emailId);
             query.setParameter("password", password);
             return query.getResultStream().findFirst().orElse(null);
@@ -90,7 +90,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public boolean isValidUser(String emailID, String password) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            Long count = em.createQuery(QUERY_VALIDATE_USER, Long.class)
+            Long count = em.createQuery(VALIDATE_USER, Long.class)
                     .setParameter("email", emailID)
                     .setParameter("password", password)
                     .getSingleResult();
@@ -103,7 +103,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public boolean isUserExist(String emailID, String phoneNo) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            Long count = em.createQuery(QUERY_CHECK_USER_EXISTENCE_BY_EMAIL_OR_PHONE, Long.class)
+            Long count = em.createQuery(CHECK_USER_EXISTENCE_BY_EMAIL_OR_PHONE, Long.class)
                     .setParameter("email", emailID)
                     .setParameter("phone", phoneNo)
                     .getSingleResult();
@@ -146,7 +146,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public List<User> getAllCustomers() throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(QUERY_GET_ALL_CUSTOMERS, User.class)
+            return em.createQuery(GET_ALL_CUSTOMERS, User.class)
                     .setParameter("roleType", RoleType.ROLE_CUSTOMER)
                     .getResultList();
         } catch (Exception e) {
@@ -157,7 +157,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public String getUserDisplayId(int userId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(QUERY_GET_DISPLAY_ID_BY_USER_ID, String.class)
+            return em.createQuery(GET_DISPLAY_ID_BY_USER_ID, String.class)
                     .setParameter("userId", userId)
                     .getSingleResult();
         } catch (Exception e) {
@@ -168,7 +168,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public String getUserFullName(int userId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            Object[] result = em.createQuery(QUERY_GET_USER_NAME_BY_USER_ID, Object[].class)
+            Object[] result = em.createQuery(GET_USER_NAME_BY_USER_ID, Object[].class)
                     .setParameter("userId", userId)
                     .getSingleResult();
             return result[0] + " " + result[1];
@@ -196,7 +196,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public Optional<User> getUserByEmail(String email) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(QUERY_GET_USER_BY_EMAIL, User.class)
+            return em.createQuery(GET_USER_BY_EMAIL, User.class)
                     .setParameter("email", email)
                     .getResultStream()
                     .findFirst();
@@ -211,7 +211,7 @@ public class UserDAOImpl implements IUserDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.createQuery(QUERY_UPDATE_PASSWORD_BY_EMAIL)
+            em.createQuery(UPDATE_PASSWORD_BY_EMAIL)
                     .setParameter("pwd", newPassword)
                     .setParameter("email", email)
                     .executeUpdate();
@@ -227,7 +227,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public void updateUserRating(int userId, int rating, EntityManager em) throws DBException {
         try {
-            em.createQuery(QUERY_UPDATE_USER_RATING)
+            em.createQuery(UPDATE_USER_RATING)
                     .setParameter("rating", rating)
                     .setParameter("userId", userId)
                     .executeUpdate();
@@ -242,7 +242,7 @@ public class UserDAOImpl implements IUserDAO {
         EntityTransaction tx = em.getTransaction();
         try {
             tx.begin();
-            em.createQuery(QUERY_BLOCK_USER_BY_ID)
+            em.createQuery(BLOCK_USER_BY_ID)
                     .setParameter("id", userId)
                     .executeUpdate();
             tx.commit();
@@ -257,7 +257,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public boolean isUserBlocked(int userId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(QUERY_IS_USER_BLOCKED, Boolean.class)
+            return em.createQuery(IS_USER_BLOCKED, Boolean.class)
                     .setParameter("id", userId)
                     .getSingleResult();
         } catch (Exception e) {
@@ -268,7 +268,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public List<User> getUsersByLowRatingAndReviewCount(int ratingThreshold, int reviewCountThreshold) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(QUERY_GET_USERS_BY_LOW_RATING, User.class)
+            return em.createQuery(GET_USERS_BY_LOW_RATING, User.class)
                     .setParameter("rating", ratingThreshold)
                     .setParameter("reviews", reviewCountThreshold)
                     .getResultList();
@@ -280,7 +280,7 @@ public class UserDAOImpl implements IUserDAO {
     @Override
     public List<User> getUsersByPagination(int offset, int limit) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(QUERY_GET_USERS_PAGINATED, User.class)
+            return em.createQuery(GET_USERS_PAGINATED, User.class)
                     .setFirstResult(offset)
                     .setMaxResults(limit)
                     .getResultList();

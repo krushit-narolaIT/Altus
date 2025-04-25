@@ -168,6 +168,7 @@ public final class Message {
         public static final String INVALID_FILE_TYPE = "Invalid content type JPG, JPEG, PNG are allowed";
         public static final String DOCUMENT_IS_UNDER_REVIEW = "Your document is under review please wait for approval.";
         public static final String ERROR_WHILE_CHECKING_IS_DOCUMENT_UNDER_REVIEW = "Error occur while checking is driver document under review";
+        public static final String PLEASE_DOCUMENT_NOT_UPLOADED = "Your document not uploaded, please upload it first..!!";
 
         private Driver() {
         }
@@ -234,6 +235,8 @@ public final class Message {
         public static final String RIDE_ACCEPTED = "Ride Accepted..!!";
         public static final String ERROR_OCCUR_WHILE_UPDATING_RIDE_REQUEST_STATUS = "Update ride request status";
         public static final String ERROR_OCCUR_WHILE_BOOKING_RIDE = "Error while booking ride";
+        public static final String ERROR_OCCUR_WHILE_GETTING_ALL_BRANDS = "Error while getting all brands";
+        public static final String ERROR_OCCUR_WHILE_GETTING_BRAND_MODEL_FROM_BRAND = "Error while getting brand model from brand";
 
         private Vehicle() {
         }

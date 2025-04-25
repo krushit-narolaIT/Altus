@@ -19,6 +19,8 @@ public interface IVehicleDAO {
     void addBrandModel(BrandModel brandModel) throws DBException;
     boolean isDriverVehicleExist(int driverID) throws DBException;
     List<BrandModelResponseDTO> getAllBrandModels() throws DBException;
+    List<String> getAllBrands() throws DBException;
+    List<String> getModelsByBrand(String brandName) throws DBException;
     int getMinYearForBrandModel(int brandModelId) throws DBException;
     List<VehicleService> getAllAvailableVehicleServices() throws DBException;
     void requestForRide(RideRequest rideRequest) throws DBException;

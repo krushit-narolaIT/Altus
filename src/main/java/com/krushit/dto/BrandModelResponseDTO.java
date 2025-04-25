@@ -1,14 +1,17 @@
 package com.krushit.dto;
 
+
 import java.util.List;
 
 public class BrandModelResponseDTO {
     private String brandName;
     private List<String> models;
+    private List<String> vehicleService;
 
-    public BrandModelResponseDTO(String brandName, List<String> models) {
+    public BrandModelResponseDTO(String brandName, List<String> models, List<String> vehicleService) {
         this.brandName = brandName;
         this.models = models;
+        this.vehicleService = vehicleService;
     }
 
     public String getBrandName() {
@@ -25,5 +28,13 @@ public class BrandModelResponseDTO {
 
     public void setModels(List<String> models) {
         this.models = models;
+    }
+
+    public List<String> getVehicleService() {
+        return vehicleService;
+    }
+
+    public void setVehicleService(List<String> vehicleService) {
+        this.vehicleService = vehicleService;
     }
 }

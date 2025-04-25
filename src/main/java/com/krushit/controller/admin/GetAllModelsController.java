@@ -22,14 +22,12 @@ import static com.krushit.utils.ResponseUtils.createResponse;
 @WebServlet(value = "/getAllModels")
 public class GetAllModelsController extends HttpServlet {
     private final VehicleRideService vehicleRideService = new VehicleRideService();
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            ApplicationUtils.validateJsonRequest(request.getContentType());
-            User user = SessionUtils.validateSession(request);
-            AuthUtils.validateAdminRole(user);
+/*            User user = SessionUtils.validateSession(request);
+            AuthUtils.validateAdminRole(user);*/
             List<BrandModelResponseDTO> brandModels= vehicleRideService.getAllBrandModels();
             createResponse(response, Message.Vehicle.SUCCESSFULLY_RETRIEVED_ALL_BRAND_MODELS, brandModels, HttpServletResponse.SC_OK);
         } catch (DBException e) {

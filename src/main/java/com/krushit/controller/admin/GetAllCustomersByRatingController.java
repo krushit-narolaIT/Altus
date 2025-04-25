@@ -20,7 +20,7 @@ import static com.krushit.utils.ResponseUtils.createResponse;
 @WebServlet(value = "/getAllCustomersByRating")
 public class GetAllCustomersByRatingController extends HttpServlet {
     private final UserService userService = new UserService();
-
+    //private final UserService userService = new UserService();
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(Message.APPLICATION_JSON);

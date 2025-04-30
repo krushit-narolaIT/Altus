@@ -18,7 +18,7 @@ function login() {
         <label>Email</label>
         <input type="text" id="email" placeholder="Enter Email">
         <label>Password</label>
-        <input type="password" id="password" placeholder="Enter password">
+        <input type="password" id="login-password" placeholder="Enter password">
         <button id="submit-login" onclick="submitLogin()">Login</button>
         <p id="errorBlock"></p>
     `;
@@ -35,7 +35,7 @@ function login() {
 
 function submitLogin() {
     const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const password = document.getElementById("login-password").value;
 
     const formData = JSON.stringify({emailId: email, password: password});
 
@@ -52,7 +52,7 @@ function submitLogin() {
                     errorBlock.innerHTML = data.message;
                     console.log(`cookie is ... ${response.headers.get('Set-Cookie')}`)
                     closeLogin();
-                    loadCustomers();
+                    // loadCustomers();
                 } else {
                     console.log("API ERROR:", data);
                     errorBlock.className = "error";
@@ -141,5 +141,6 @@ function loadCustomers() {
 
 
 function init() {
+    dashboard();
     login();
 }

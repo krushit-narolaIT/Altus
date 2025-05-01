@@ -290,22 +290,50 @@ public class UserDAOImpl implements IUserDAO {
     }
 
     @Override
-    public void addFavouriteDriver(int customerId, int driverId) throws DBException {
+    public void addFavouriteUser(int customerId, int driverId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             EntityTransaction tx = em.getTransaction();
             try {
                 tx.begin();
                 User customer = em.find(User.class, customerId);
                 User driver = em.find(User.class, driverId);
-                if (customer.getFavoriteUsers().contains(driver)) {
-                    throw new DBException(Message.User.DRIVER_ALREADY_FAVORITED);
-                }
                 customer.getFavoriteUsers().add(driver);
                 em.merge(customer);
                 tx.commit();
             } catch (Exception e) {
                 if (tx.isActive()) tx.rollback();
                 throw new DBException(Message.User.ERROR_WHILE_ADDING_FAVOURITE_DRIVER, e);
+            }
+        }
+    }
+
+    @Override
+    public boolean isAlreadyFavourite(int customerId, int driverId) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            try {
+                User customer = em.find(User.class, customerId);
+                User driver = em.find(User.class, driverId);
+                return customer.getFavoriteUsers().contains(driver);
+            } catch (Exception e) {
+                throw new DBException(Message.User.ERROR_WHILE_VALIDATIONG_FAVOURITE_DRIVER, e);
+            }
+        }
+    }
+
+    @Override
+    public void removeFavouriteUser(int customerId, int driverId) throws DBException{
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            EntityTransaction tx = em.getTransaction();
+            try {
+                tx.begin();
+                User customer = em.find(User.class, customerId);
+                User driver = em.find(User.class, driverId);
+                customer.getFavoriteUsers().remove(driver);
+                em.merge(customer);
+                tx.commit();
+            } catch (Exception e) {
+                if (tx.isActive()) tx.rollback();
+                throw new DBException(Message.User.ERROR_WHILE_DELETING_FAVOURITE_DRIVER, e);
             }
         }
     }

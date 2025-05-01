@@ -1,14 +1,10 @@
-package com.krushit.controller.customer;
+package com.krushit.controller;
 
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
-import com.krushit.common.mapper.Mapper;
-import com.krushit.dto.RideRequestDTO;
 import com.krushit.entity.User;
 import com.krushit.service.UserService;
-import com.krushit.service.VehicleRideService;
-import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -20,8 +16,8 @@ import java.io.IOException;
 
 import static com.krushit.utils.ResponseUtils.createResponse;
 
-@WebServlet(value = "/addFavouriteDriver")
-public class AddFavouriteController extends HttpServlet {
+@WebServlet(value = "/addFavouriteUser")
+public class AddFavouriteUserController extends HttpServlet {
     private final UserService userService = new UserService();
 
     @Override
@@ -31,8 +27,8 @@ public class AddFavouriteController extends HttpServlet {
             User user = SessionUtils.validateSession(request);
             AuthUtils.validateCustomerRole(user);
             userService.userBlocked(user.getUserId());
-            int driverId = Integer.parseInt(request.getParameter("driverId"));
-            userService.addFavouriteDriver(user.getUserId(), driverId);
+            int favouriteUserId = Integer.parseInt(request.getParameter("userId"));
+            userService.addFavouriteUser(user.getUserId(), favouriteUserId);
             createResponse(response, Message.User.DRIVER_ADDED_TO_FAVOURITE_LIST, null, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();

@@ -21,7 +21,6 @@ public class CORSFilter implements Filter {
         response.setHeader(Message.CORSConstants.HEADER_ALLOW_METHODS, Message.CORSConstants.VALUE_ALLOW_METHODS);
         response.setHeader(Message.CORSConstants.HEADER_ALLOW_HEADERS, Message.CORSConstants.VALUE_ALLOW_HEADERS);
         response.setHeader(Message.CORSConstants.HEADER_ALLOW_CREDENTIALS, Message.CORSConstants.VALUE_ALLOW_CREDENTIALS);
-        //response.setContentType(Message.APPLICATION_JSON);
 
         filterChain.doFilter(servletRequest, servletResponse);
     }

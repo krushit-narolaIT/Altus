@@ -13,12 +13,12 @@ function login() {
     let dialog = document.createElement('div');
     dialog.id = 'login-dialog';
     dialog.innerHTML = `
-        <button id="close-btn">&times;</button>
+<!--        <button id="close-btn">&times;</button>-->
         <h3>Login</h3>
         <label>Email</label>
         <input type="text" id="email" placeholder="Enter Email">
         <label>Password</label>
-        <input type="password" id="password" placeholder="Enter password">
+        <input type="password" id="login-password" placeholder="Enter password">
         <button id="submit-login" onclick="submitLogin()">Login</button>
         <p id="errorBlock"></p>
     `;
@@ -26,25 +26,23 @@ function login() {
     document.body.appendChild(dialog);
 
     // Close button handler
-    document.getElementById("close-btn").onclick = () => {
-        dialog.remove();
-        overlay.remove();
-    };
+    // document.getElementById("close-btn").onclick = () => {
+    //     dialog.remove();
+    //     overlay.remove();
+    // };
 }
 
 
 function submitLogin() {
     const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+    const password = document.getElementById("login-password").value;
 
-    const formData = JSON.stringify({ emailId: email, password: password });
+    const formData = JSON.stringify({emailId: email, password: password});
 
     const errorBlock = document.getElementById("errorBlock");
 
     fetch("http://192.168.100.99:8081/Altus_war_exploded/userLogin", {
-        method: "POST",
-        body: formData,
-        credentials: 'include',
+        method: "POST", body: formData, credentials: 'include',
     })
         .then((response) => {
             let data = response.json().then(data => {
@@ -54,6 +52,7 @@ function submitLogin() {
                     errorBlock.innerHTML = data.message;
                     console.log(`cookie is ... ${response.headers.get('Set-Cookie')}`)
                     closeLogin();
+                    // loadCustomers();
                 } else {
                     console.log("API ERROR:", data);
                     errorBlock.className = "error";
@@ -85,15 +84,6 @@ function openSettings() {
     // Replace with loadView('settings-view.html') if needed
 }
 
-function logout() {
-    fetch('/Altus_war_exploded/logout', {
-        method: 'POST',
-        credentials: 'include'
-    })
-        .then(() => {
-            showLoginView();
-        });
-}
 
 document.addEventListener('click', function (e) {
     const profile = document.querySelector('.profile-wrapper');
@@ -104,3 +94,53 @@ document.addEventListener('click', function (e) {
     }
 });
 
+function loadCustomers() {
+    let table = document.getElementById('user-table');
+    fetch("http://192.168.100.99:8081/Altus_war_exploded/getAllUsers", {
+        method: 'GET', credentials: 'include', headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((response) => {
+        let data = response.json().then(data => {
+            if (response.status === 200) {
+                console.log("API response:", data);
+                let table = document.getElementById('user-table');
+                for (let user of data.data) {
+                    let row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td> ${user.displayId}</td>
+                    <td> ${user.firstName}</td>
+                    <td> ${user.lastName}</td>
+                    <td> ${user.phoneNo}</td>
+                    <td> ${user.emailId}</td>
+                    <td> ${user.totalRatings}</td>
+                    <td> ${user.active}</td>
+                    <td> ${user.blocked}</td>
+                    `;
+                    table.append(row);
+                }
+
+
+            } else {
+                console.log("API ERROR:", data);
+                let table = document.getElementById('user-table');
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td> ${data.message}</td>
+                    `;
+                table.append(row);
+
+            }
+        });
+
+    })
+        .catch((error) => {
+            console.error("API error:", error);
+        });
+}
+
+
+function init() {
+    dashboard();
+    login();
+}

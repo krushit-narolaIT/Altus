@@ -126,17 +126,20 @@ public class UserService {
         return userDAO.getUsersByPagination(offset, limit);
     }
 
-    public void addFavouriteDriver(int customerId, int driverId) throws ApplicationException {
+    public void addFavouriteUser(int customerId, int driverId) throws ApplicationException {
         if (!userDAO.isUserExist(customerId)) {
             throw new ApplicationException(Message.User.USER_NOT_FOUND);
         }
         if (!userDAO.isUserExist(driverId)) {
             throw new ApplicationException(Message.User.DRIVER_NOT_FOUND);
         }
-        userDAO.addFavouriteDriver(customerId, driverId);
+        if(userDAO.isAlreadyFavourite(customerId, driverId)){
+            throw new ApplicationException(Message.User.DRIVER_ALREADY_FAVORITED);
+        }
+        userDAO.addFavouriteUser(customerId, driverId);
     }
 
-/*    public void removeFavouriteDriver(int customerId, int driverId) throws ApplicationException {
-        userDAO.removeFavouriteDriver(customerId, driverId);
-    }*/
+    public void removeFavouriteDriver(int customerId, int driverId) throws ApplicationException {
+        userDAO.removeFavouriteUser(customerId, driverId);
+    }
 }

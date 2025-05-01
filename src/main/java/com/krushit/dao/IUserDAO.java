@@ -4,7 +4,6 @@ import com.krushit.common.exception.DBException;
 import com.krushit.entity.User;
 import jakarta.persistence.EntityManager;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,5 +25,7 @@ public interface IUserDAO {
     boolean isUserBlocked(int userId) throws DBException;
     List<User> getUsersByLowRatingAndReviewCount(int ratingThreshold, int reviewCountThreshold) throws DBException;
     List<User> getUsersByPagination(int offset, int limit) throws DBException;
-    void addFavouriteDriver(int customerId, int driverId) throws DBException;
+    void addFavouriteUser(int customerId, int driverId) throws DBException;
+    boolean isAlreadyFavourite(int customerId, int driverId) throws DBException;
+    void removeFavouriteUser(int customerId, int driverId) throws DBException;
 }

@@ -76,7 +76,7 @@ public class Mapper {
                 throw new IllegalArgumentException("Unknown role type: " + roleType);
         }
         role.setRoleId(roleId);
-        role.setRole(roleType);
+        role.setRoleType(roleType);
         return new User.UserBuilder()
                 .setFirstName(userSignUpDTO.getFirstName())
                 .setLastName(userSignUpDTO.getLastName())

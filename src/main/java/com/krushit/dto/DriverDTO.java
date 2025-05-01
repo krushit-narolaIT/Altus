@@ -1,8 +1,13 @@
 package com.krushit.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.krushit.common.enums.RoleType;
+
+@JsonDeserialize(builder = UserDTO.UserDTOBuilder.class)
 public class DriverDTO {
     private final int userId;
-    private final String role;
+    private final RoleType role;
     private final String firstName;
     private final String lastName;
     private final String phoneNo;
@@ -25,9 +30,10 @@ public class DriverDTO {
         this.documentVerified = builder.documentVerified;
     }
 
+    @JsonPOJOBuilder(withPrefix = "set")
     public static class DriverDTOBuilder {
         private int userId;
-        private String role;
+        private RoleType role;
         private String firstName;
         private String lastName;
         private String phoneNo;
@@ -42,7 +48,7 @@ public class DriverDTO {
             return this;
         }
 
-        public DriverDTOBuilder setRole(String role) {
+        public DriverDTOBuilder setRole(RoleType role) {
             this.role = role;
             return this;
         }
@@ -90,6 +96,46 @@ public class DriverDTO {
         public DriverDTO build() {
             return new DriverDTO(this);
         }
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public RoleType getRole() {
+        return role;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public String getEmailId() {
+        return emailId;
+    }
+
+    public String getDisplayId() {
+        return displayId;
+    }
+
+    public String getLicenceNumber() {
+        return licenceNumber;
+    }
+
+    public String getLicencePhoto() {
+        return licencePhoto;
+    }
+
+    public boolean isDocumentVerified() {
+        return documentVerified;
     }
 
     @Override

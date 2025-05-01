@@ -1,11 +1,13 @@
 package com.krushit.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.krushit.entity.Role;
 
 import java.time.LocalDateTime;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = UserDTO.UserDTOBuilder.class)
 public class UserDTO {
     private final int userId;

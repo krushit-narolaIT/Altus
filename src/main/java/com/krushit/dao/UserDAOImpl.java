@@ -53,13 +53,13 @@ public class UserDAOImpl implements IUserDAO {
             tx.begin();
             em.persist(user);
             em.flush();
-            String displayId = (user.getRole().equals(RoleType.ROLE_DRIVER))
+            String displayId = (user.getRole().getRoleType().equals(RoleType.ROLE_DRIVER))
                     ? generateDriverDisplayId(user.getUserId())
                     : generateCustomerDisplayId(user.getUserId());
 
             user.setDisplayId(displayId);
             em.merge(user);
-            if (user.getRole().equals(RoleType.ROLE_DRIVER)) {
+            if (user.getRole().getRoleType().equals(RoleType.ROLE_DRIVER)) {
                 Driver driver = new Driver.DriverBuilder()
                         .setUser(user)
                         .setVerificationStatus(DocumentVerificationStatus.INCOMPLETE)
@@ -315,7 +315,7 @@ public class UserDAOImpl implements IUserDAO {
                 User driver = em.find(User.class, driverId);
                 return customer.getFavoriteUsers().contains(driver);
             } catch (Exception e) {
-                throw new DBException(Message.User.ERROR_WHILE_VALIDATIONG_FAVOURITE_DRIVER, e);
+                throw new DBException(Message.User.ERROR_WHILE_VALIDATING_FAVOURITE_DRIVER, e);
             }
         }
     }

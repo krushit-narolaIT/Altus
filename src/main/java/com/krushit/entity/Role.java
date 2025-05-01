@@ -30,11 +30,11 @@ public class Role {
         this.roleId = roleId;
     }
 
-    public RoleType getRole() {
+    public RoleType getRoleType() {
         return role;
     }
 
-    public void setRole(RoleType roleName) {
+    public void setRoleType(RoleType roleName) {
         this.role = roleName;
     }
 

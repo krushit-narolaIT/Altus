@@ -14,6 +14,12 @@ import java.time.LocalDateTime;
 @Table(name = "drivers")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonDeserialize(builder = Driver.DriverBuilder.class)
+@NamedQueries(
+        @NamedQuery(
+                name = "Driver.findByLicenceNumber",
+                query = "SELECT d.driverId FROM Driver d WHERE d.licenceNumber = :licenceNumber"
+        )
+)
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

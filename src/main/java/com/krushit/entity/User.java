@@ -56,7 +56,7 @@ public class User {
     @Column(name = "rating_count")
     private int ratingCount;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_favorites",
             joinColumns = @JoinColumn(name = "user_id"),

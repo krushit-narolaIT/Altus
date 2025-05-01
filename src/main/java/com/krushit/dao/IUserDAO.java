@@ -1,6 +1,7 @@
 package com.krushit.dao;
 
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.UserDTO;
 import com.krushit.entity.User;
 import jakarta.persistence.EntityManager;
 

@@ -123,9 +123,11 @@ public final class Message {
         public static final String DRIVER_ADDED_TO_FAVOURITE_LIST = "Driver added to favourites";
         public static final String DRIVER_NOT_FOUND = "Driver not found";
         public static final String ERROR_WHILE_ADDING_FAVOURITE_DRIVER = "Error while adding favourite driver";
-        public static final String DRIVER_ALREADY_FAVORITED = "Driver is already in favourite list";
-        public static final String ERROR_WHILE_VALIDATIONG_FAVOURITE_DRIVER = "Error while validating driver";
+        public static final String DRIVER_ALREADY_FAVOURITE = "Driver is already in favourite list";
+        public static final String ERROR_WHILE_VALIDATING_FAVOURITE_DRIVER = "Error while validating driver";
         public static final String ERROR_WHILE_DELETING_FAVOURITE_DRIVER = "Error while deleting favourite driver";
+        public static final String NO_USERS_FOUND = "No Users found";
+        public static final String SUCCESSFULLY_RETRIEVED_USERS = "Successfully retrieved users";
 
         private User() {
         }

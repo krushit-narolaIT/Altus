@@ -103,7 +103,6 @@ public class DriverDAOImpl implements IDriverDAO {
                         .setLicenceNumber((String) row[2])
                         .setLicencePhoto((String) row[3])
                         .setDocumentVerified((Boolean) row[4])
-                        //.setVerificationStatus((String) row[5])
                         .setComment((String) row[5])
                         .setEmailId((String) row[6])
                         .setFirstName((String) row[7])
@@ -210,8 +209,7 @@ public class DriverDAOImpl implements IDriverDAO {
     @Override
     public boolean isLicenseNumberExist(String licenseNumber) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            List<Integer> result = em.createQuery(
-                            IS_LICENCE_EXIST, Integer.class)
+            List<Integer> result = em.createNamedQuery("Driver.findByLicenceNumber", Integer.class)
                     .setParameter("licenceNumber", licenseNumber)
                     .getResultList();
             return !result.isEmpty();

@@ -112,9 +112,19 @@ public class UserService {
         return userDAO.getUser(fromUserId);
     }
 
-    public List<User> getUsersWithLessRatingAndReviews(int ratingThreshold, int reviewCountThreshold) throws ApplicationException {
-        return userDAO.getUsersByLowRatingAndReviewCount(ratingThreshold, reviewCountThreshold);
+    public List<UserDTO> getUsersWithLessRatingAndReviews(int ratingThreshold, int reviewCountThreshold) throws ApplicationException {
+        List<User> users = userDAO.getUsersByLowRatingAndReviewCount(ratingThreshold, reviewCountThreshold);
+        return users.stream().map(user -> new UserDTO.UserDTOBuilder()
+                .setUserId(user.getUserId())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setDisplayId(user.getDisplayId())
+                .setTotalRatings(user.getTotalRatings())
+                .setRatingCount(user.getRatingCount())
+                .build()
+        ).collect(Collectors.toList());
     }
+
 
     public List<User> getCustomersByOffsetAndLimit(int offset, int limit) throws ApplicationException {
         return userDAO.getUsersByPagination(offset, limit);
@@ -134,7 +144,7 @@ public class UserService {
             throw new ApplicationException(Message.User.DRIVER_NOT_FOUND);
         }
         if(userDAO.isAlreadyFavourite(customerId, driverId)){
-            throw new ApplicationException(Message.User.DRIVER_ALREADY_FAVORITED);
+            throw new ApplicationException(Message.User.DRIVER_ALREADY_FAVOURITE);
         }
         userDAO.addFavouriteUser(customerId, driverId);
     }

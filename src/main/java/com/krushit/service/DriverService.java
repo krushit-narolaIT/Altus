@@ -5,6 +5,7 @@ import com.krushit.common.enums.DocumentVerificationStatus;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dao.*;
+import com.krushit.dto.DriverDTO;
 import com.krushit.dto.DriverVerificationRequestDTO;
 import com.krushit.dto.PendingDriverDTO;
 import com.krushit.entity.Driver;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class DriverService {
     private static final String STORAGE_PATH = "D:\\Project\\AltusDriverLicences";
@@ -96,8 +98,25 @@ public class DriverService {
         }
     }
 
-    public List<Driver> getAllDrivers() throws ApplicationException {
-        return driverDAO.getAllDrivers();
+    public List<DriverDTO> getAllDrivers() throws ApplicationException {
+        List<Driver> drivers = driverDAO.getAllDrivers();
+        return drivers.stream()
+                .map(driver -> {
+                    User user = driver.getUser();
+                    return new DriverDTO.DriverDTOBuilder()
+                            .setUserId(user.getUserId())
+                            .setRole(user.getRole().getRoleType())
+                            .setFirstName(user.getFirstName())
+                            .setLastName(user.getLastName())
+                            .setPhoneNo(user.getPhoneNo())
+                            .setEmailId(user.getEmailId())
+                            .setDisplayId(user.getDisplayId())
+                            .setLicenceNumber(driver.getLicenceNumber())
+                            .setLicencePhoto(driver.getLicencePhoto())
+                            .setDocumentVerified(driver.isDocumentVerified())
+                            .build();
+                })
+                .collect(Collectors.toList());
     }
 
     public void addVehicle(Vehicle vehicle, int userId) throws ApplicationException {

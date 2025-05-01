@@ -26,7 +26,7 @@ public class AuthUtils {
         if (user == null || user.getRole() == null) {
             throw new AuthException(Message.Auth.PLEASE_LOGIN);
         }
-        if (!user.getRole().getRole().equals(roleType)) {
+        if (!user.getRole().getRoleType().equals(roleType)) {
             throw new AuthException(Message.Auth.UNAUTHORIZED);
         }
     }

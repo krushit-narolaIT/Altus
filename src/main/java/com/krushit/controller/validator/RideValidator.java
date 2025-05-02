@@ -8,6 +8,8 @@ import com.krushit.dto.RideRequestDTO;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class RideValidator {
     public static void validateLocation(DistanceCalculatorDTO distanceCalculatorDTO) throws ValidationException {
@@ -46,12 +48,20 @@ public class RideValidator {
             throw new ApplicationException(Message.Ride.RIDE_DATE_REQUIRED);
         }
 
-        LocalDate rideDate = rideRequestDTO.getRideDate();
+        LocalDate rideDate;
+        String rideDateStr = rideRequestDTO.getRideDate().toString();
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            rideDate = LocalDate.parse(rideDateStr, formatter);
+        } catch (DateTimeParseException e) {
+            throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_RIDE_FORMAT);
+        }
+
         if (rideDate.isBefore(LocalDate.now())) {
             throw new ApplicationException(Message.Ride.RIDE_DATE_IN_PAST);
         }
 
-        if (rideDate.isAfter(LocalDate.now().plusDays(10))) {
+        if (rideDate.isAfter(LocalDate.now().plusDays(15))) {
             throw new ApplicationException(Message.Ride.BOOK_RIDE_IN_ONLY_FIFTEEN_DAYS_IN_ADVANCE);
         }
 

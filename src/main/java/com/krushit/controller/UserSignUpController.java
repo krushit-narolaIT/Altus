@@ -8,6 +8,7 @@ import com.krushit.common.enums.RoleType;
 import com.krushit.entity.User;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.service.UserService;
+import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.ObjectMapperUtils;
 import com.krushit.controller.validator.SignupValidator;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,9 +28,7 @@ public class UserSignUpController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            if (!Message.APPLICATION_JSON.equals(request.getContentType())) {
-                throw new ApplicationException(Message.INVALID_CONTENT_TYPE);
-            }
+            ApplicationUtils.validateJsonRequest(request.getContentType());
             UserSignUpDTO userSignUpDTO = ObjectMapperUtils.toObject(request.getReader(), UserSignUpDTO.class);
             RoleType userRoleType = request.getServletPath().equalsIgnoreCase(Message.Customer.CUSTOMER_PATH)
                     ? RoleType.ROLE_CUSTOMER

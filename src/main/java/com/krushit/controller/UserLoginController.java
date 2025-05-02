@@ -37,7 +37,7 @@ public class UserLoginController extends HttpServlet {
             HttpSession session = request.getSession(true);
             session.setAttribute("user", authenticatedUser);
             UserContextUtils.setUser(user);
-            createResponse(response, Message.User.LOGIN_SUCCESSFUL, null, HttpServletResponse.SC_OK);
+            createResponse(response, Message.User.LOGIN_SUCCESSFUL, authenticatedUser, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();
             createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

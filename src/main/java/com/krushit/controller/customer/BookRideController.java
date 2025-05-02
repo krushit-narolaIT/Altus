@@ -1,7 +1,9 @@
 package com.krushit.controller.customer;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
+import com.krushit.common.exception.DBException;
 import com.krushit.common.mapper.Mapper;
 import com.krushit.controller.validator.RideValidator;
 import com.krushit.dto.*;
@@ -19,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.time.format.DateTimeParseException;
 
 import static com.krushit.utils.ResponseUtils.createResponse;
 
@@ -42,6 +45,12 @@ public class BookRideController extends HttpServlet {
             RideRequest rideRequest = mapper.toRideRequest(rideRequestDTO);
             vehicleRideService.bookRide(rideRequest);
             createResponse(response, Message.Ride.RIDE_REQUEST_SUBMITTED_SUCCESSFULLY, null, HttpServletResponse.SC_OK);
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+            createResponse(response, Message.Ride.PLEASE_ENTER_VALID_RIDE_FORMAT, null, HttpServletResponse.SC_BAD_REQUEST);
+        } catch (DBException e) {
+            e.printStackTrace();
+            createResponse(response, Message.GENERIC_ERROR, null, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } catch (ApplicationException e) {
             createResponse(response, e.getMessage(), null, HttpServletResponse.SC_BAD_REQUEST);
         } catch (Exception e) {

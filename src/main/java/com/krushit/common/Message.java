@@ -79,6 +79,7 @@ public final class Message {
         public static final String DISTANCE_FETCHED_SUCCESSFULLY = "Distance Fetched Successfully";
         public static final String ERROR_WHILE_GETTING_RIDE = "Error while getting ride";
         public static final String YOU_CAN_NOT_GIVE_FEEDBACK_TO_CANCELLED_RIDE = "You can not give feedback to cancelled ride";
+        public static final String PLEASE_ENTER_VALID_RIDE_FORMAT = "Invalid ride date format. Expected format: yyyy-MM-dd";
 
         private Ride() {
         }
@@ -128,6 +129,7 @@ public final class Message {
         public static final String ERROR_WHILE_DELETING_FAVOURITE_DRIVER = "Error while deleting favourite driver";
         public static final String NO_USERS_FOUND = "No Users found";
         public static final String SUCCESSFULLY_RETRIEVED_USERS = "Successfully retrieved users";
+        public static final String PLEASE_ENTER_VALID_PASSWORD_LENGTH = "Password length between 8 and 20";
 
         private User() {
         }

@@ -37,7 +37,11 @@ public class SignupValidator {
     }
 
     public static void validatePassword(String password) throws ValidationException {
-        if (password == null || password.length() < 8 || password.length() > 20 || !password.matches(PASSWORD_REGEX)) {
+        if (password == null || password.length() < 8 || password.length() > 20) {
+            throw new ValidationException(Message.User.PLEASE_ENTER_VALID_PASSWORD_LENGTH);
+        }
+
+        if (!password.matches(PASSWORD_REGEX)) {
             throw new ValidationException(Message.User.PLEASE_ENTER_VALID_PASSWORD);
         }
     }

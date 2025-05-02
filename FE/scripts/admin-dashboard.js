@@ -63,6 +63,9 @@ function submitLogin() {
         })
         .catch((error) => {
             console.error("API error:", error);
+            errorBlock.className = "error";
+            errorBlock.innerHTML = "Network Error !!!";
+            errorBlock.hidden = false;
         });
 }
 

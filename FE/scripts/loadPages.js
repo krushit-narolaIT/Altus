@@ -50,16 +50,47 @@ function customers() {
 }
 
 function locations() {
-    const tableID = "location";
+    const dataID = "location";
     const formFields = ["name"];
-    const tableFields = ["name"];
+    const tableFields = ["name", "actions"];
     const dataFields = ["id", ...tableFields];
 
     createFormAndTable({
-        title: "Locations List", formFields, tableFields, tableID
+        title: "Locations List", formFields, tableFields, dataID
     });
 
-    loadData(tableID, "http://192.168.100.99:8081/Altus_war_exploded/getAllLocations", dataFields);
+    let url = "http://192.168.100.99:8081/Altus_war_exploded/getAllLocations";
+    attachFormHandler({
+        dataID,
+        submitUrl: "http://192.168.100.99:8081/Altus_war_exploded/addLocation",
+        formFields,
+        tableFields: dataFields,
+        dataURL: url
+    });
+
+    loadData(dataID, url, dataFields);
+}
+
+function drivers() {
+    const dataID = "driver";
+    const formFields = ["firstName", "lastName", "phoneNo", "emailId", "password"];
+    const tableFields = ["firstName", "lastName", "phoneNo", "emailId", "documentVerified", "licenceNumber", "licencePhoto"];
+    const dataFields = ["displayId", ...tableFields];
+
+    createFormAndTable({
+        title: "Drivers List", formFields, tableFields, dataID
+    });
+
+    let url = "http://192.168.100.99:8081/Altus_war_exploded/getAllDrivers";
+    attachFormHandler({
+        dataID,
+        submitUrl: "http://192.168.100.99:8081/Altus_war_exploded/driverSignUp",
+        formFields,
+        tableFields: dataFields,
+        dataURL: url
+    });
+
+    loadData(dataID, url, dataFields);
 }
 
 
@@ -78,28 +109,36 @@ function createFormAndTable({title, formFields, tableFields, dataID}) {
     wrapper.appendChild(heading);
 
     // Form
+    // Form
     const form = document.createElement("form");
     form.id = `${dataID}-form`;
-    form.style.marginBottom = "10px";
+    form.classList.add("styled-form");
 
     formFields.forEach((field) => {
+        const fieldWrapper = document.createElement("div");
+        fieldWrapper.classList.add("form-field");
+
         const label = document.createElement("label");
         label.textContent = field;
-        label.style.marginRight = "6px";
+        label.setAttribute("for", field);
 
         const input = document.createElement("input");
         input.id = field;
-        input.type = "text";
-        input.style.marginRight = "20px";
+        input.name = field;
+        input.type = /password/i.test(field) ? "password" : "text";
 
-        form.appendChild(label);
-        form.appendChild(input);
+        fieldWrapper.appendChild(label);
+        fieldWrapper.appendChild(input);
+        form.appendChild(fieldWrapper);
     });
 
     const button = document.createElement("button");
     button.type = "submit";
     button.textContent = "Submit";
+    button.classList.add("form-submit");
+
     form.appendChild(button);
+
 
     wrapper.appendChild(form);
 
@@ -150,29 +189,28 @@ function attachFormHandler({dataID, submitUrl, formFields, tableFields, dataURL}
         const formData = JSON.stringify(dataObj);
 
         fetch(submitUrl, {
-            method: "POST", headers: {"Content-Type": "application/json"}, credentials: "same-origin", body: formData,
-        })
-            .then(response => response.json().then(data => {
-                if (response.ok) {
-                    Toastify({
-                        text: data.message || "Success!", duration: 3000, position: "center", // `left`, `center` or `right`
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
-                        style: {
-                            background: "linear-gradient(to right, #00b09b, #96c93d)",
-                        },
-                    }).showToast();
-                    loadData(dataID, dataURL, tableFields);
-                } else {
-                    Toastify({
-                        text: data.message, duration: 3000, position: "center", // `left`, `center` or `right`
-                        stopOnFocus: true, // Prevents dismissing of toast on hover
-                        style: {
-                            background: "linear-gradient(to right, #b71c1c, #f44336)",
-                        },
-                    }).showToast();
-                }
-                form.reset();
-            }))
+            method: "POST", headers: {"Content-Type": "application/json"}, credentials: "include", body: formData,
+        }).then(response => response.json().then(data => {
+            if (response.ok) {
+                Toastify({
+                    text: data.message || "Success!", duration: 3000, position: "center", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                        background: "linear-gradient(to right, #00b09b, #96c93d)",
+                    },
+                }).showToast();
+                loadData(dataID, dataURL, tableFields);
+            } else {
+                Toastify({
+                    text: data.message, duration: 3000, position: "center", // `left`, `center` or `right`
+                    stopOnFocus: true, // Prevents dismissing of toast on hover
+                    style: {
+                        background: "linear-gradient(to right, #b71c1c, #f44336)",
+                    },
+                }).showToast();
+            }
+            form.reset();
+        }))
             .catch((error) => {
                 console.error("API error:", error);
                 Toastify({
@@ -191,45 +229,106 @@ function loadData(dataID, url, tableFields) {
         method: "GET", credentials: "include", headers: {
             "Content-Type": "application/json",
         },
-    })
-        .then((response) => {
-            let data = response.json().then((data) => {
-                if (response.status === 200) {
-                    console.log("API response:", data);
+    }).then((response) => {
+        let data = response.json().then((data) => {
+            if (response.status === 200) {
+                console.log("API response:", data);
 
-                    let table = document.getElementById(`${dataID}-table`);
-                    if (!table) return;
+                let table = document.getElementById(`${dataID}-table`);
+                if (!table) return;
 
-                    let tbody = table.querySelector("tbody");
-                    if (!tbody) {
-                        // If tbody doesn't exist, create one
-                        tbody = document.createElement("tbody");
-                        table.appendChild(tbody);
-                    }
+                let tbody = table.querySelector("tbody");
+                if (!tbody) {
+                    // If tbody doesn't exist, create one
+                    tbody = document.createElement("tbody");
+                    table.appendChild(tbody);
+                }
 
-                    tbody.innerHTML = ""; // Clear existing rows
+                tbody.innerHTML = ""; // Clear existing rows
 
-                    for (let user of data.data) {
-                        let row = document.createElement("tr");
-                        tableFields.forEach((field) => {
-                            const cell = document.createElement("td");
-                            cell.textContent = user[field];
-                            row.appendChild(cell);
-                        });
-                        tbody.appendChild(row);
-                    }
-                } else {
-                    console.log("API ERROR:", data);
-                    let table = document.getElementById(dataID);
+                for (let user of data.data) {
                     let row = document.createElement("tr");
-                    row.innerHTML = `
+                    tableFields.forEach((field) => {
+                        const cell = document.createElement("td");
+                        const value = user[field];
+
+                        if (field === "documentVerified") {
+                            const button = document.createElement("button");
+                            button.className = "verify-btn";
+                            button.textContent = value ? "Verified" : "Verify";
+                            button.disabled = value; // Disable if already verified
+                            button.addEventListener("click", () => {
+                                console.log(`Verifying ${field} for:`, user);
+                                alert("upload document feature pending");
+                                // verifyDriverDocuments(driverId = user.id);
+
+                            });
+                            cell.appendChild(button);
+                        } else if (field === "actions" && dataID === "location") {
+                            const deleteBtn = document.createElement("button");
+                            deleteBtn.className = "delete-btn";
+                            deleteBtn.innerHTML = "&times;"; // Unicode ×
+
+                            deleteBtn.addEventListener("click", () => {
+                                console.log("Deleting:", user);
+                                alert("feature pending");
+                                deleteLocation(locationId);
+                            });
+
+                            cell.appendChild(deleteBtn);
+                        } else {
+                            cell.textContent = value !== undefined ? value : "-";
+                        }
+
+                        row.appendChild(cell);
+                    });
+                    tbody.appendChild(row);
+                }
+            } else {
+                let table = document.getElementById(`${dataID}-table`);
+                console.log("API ERROR:", data);
+                let row = document.createElement("tr");
+                row.innerHTML = `
                     <td> ${data.message}</td>
                     `;
-                    table.append(row);
-                }
-            });
-        })
-        .catch((error) => {
-            console.error("API error:", error);
+                table.append(row);
+            }
         });
+    }).catch((error) => {
+        console.error("API error:", error);
+    });
 }
+
+// TODO: function deleteLocation(locationId) {
+//     let url = `http://192.168.100.99:8081/Altus_war_exploded/deleteLocation?locationId=${locationId}`
+//     fetch(url, {
+//         method: "DELETE", headers: {"Content-Type": "application/json"}, credentials: "include",
+//     }).then(response => response.json().then(data => {
+//         if (response.ok) {
+//             Toastify({
+//                 text: data.message || "Success!", duration: 3000, position: "center", // `left`, `center` or `right`
+//                 stopOnFocus: true, // Prevents dismissing of toast on hover
+//                 style: {
+//                     background: "linear-gradient(to right, #00b09b, #96c93d)",
+//                 },
+//             }).showToast();
+//             loadData(dataID, dataURL, tableFields);
+//         } else {
+//             Toastify({
+//                 text: data.message, duration: 3000, position: "center", // `left`, `center` or `right`
+//                 stopOnFocus: true, // Prevents dismissing of toast on hover
+//                 style: {
+//                     background: "linear-gradient(to right, #b71c1c, #f44336)",
+//                 },
+//             }).showToast();
+//         }
+//     })).catch((error) => {
+//         console.error("API error:", error);
+//         Toastify({
+//             text: "Network Error", duration: 3000, position: "center", stopOnFocus: true, style: {
+//                 background: "linear-gradient(to right, #b71c1c, #f44336)",
+//             },
+//
+//         }).showToast();
+//     });
+// }

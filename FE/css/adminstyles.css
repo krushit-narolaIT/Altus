@@ -267,40 +267,141 @@ body {
 }
 
 #table-wrapper {
-    padding: 30px;
+    padding: 50px;
     font-family: "Segoe UI", sans-serif;
+    max-width: 1250px;
+    overflow-x: auto;
 }
 
 #table-wrapper h2 {
     color: #155724;
     margin-bottom: 16px;
 }
+
+/* Styled Form */
+.styled-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px 20px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+}
+
+.form-field label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-field input {
+    padding: 8px 10px;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-submit {
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.form-submit:hover {
+    background-color: #218838;
+}
+
+/* Your existing styled table */
 .styled-table {
-    width: 100%;
+    width: max-content;
+    max-width: 100%;
     border-collapse: collapse;
     background-color: #f0fff5;
     border: 1px solid #c3e6cb;
     box-shadow: 0 2px 10px rgba(0, 128, 0, 0.1);
     border-radius: 8px;
-    overflow: hidden;
+    padding-top: 20px;
 }
 
+/* Adjust th and td */
 .styled-table th,
 .styled-table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #d4edda;
+    white-space: nowrap;
 }
 
+/* Header styling */
 .styled-table th {
     background-color: #c3e6cb;
     color: #155724;
     font-weight: bold;
 }
 
+/* Row hover */
 .styled-table tr:hover {
     background-color: #e6f9ee;
     cursor: pointer;
 }
+
+
+.verify-btn {
+    padding: 6px 14px;
+    background: linear-gradient(to right, #ff4e50, #f9d423); /* orange-red gradient */
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.verify-btn:hover {
+    transform: scale(1.05);
+    opacity: 0.95;
+}
+
+.verify-btn:disabled {
+    background: linear-gradient(to right, #28a745, #85d087); /* green gradient */
+    color: #e6ffe6;
+    cursor: default;
+    opacity: 0.9;
+    box-shadow: none;
+}
+.delete-btn {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    font-size: 25px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    padding: 0 0 5px 0;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b;
+    transform: scale(1.1);
+}
+
+
+
 
 

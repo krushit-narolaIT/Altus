@@ -25,11 +25,6 @@ function login() {
 
     document.body.appendChild(dialog);
 
-    // Close button handler
-    // document.getElementById("close-btn").onclick = () => {
-    //     dialog.remove();
-    //     overlay.remove();
-    // };
 }
 
 
@@ -48,11 +43,10 @@ function submitLogin() {
             let data = response.json().then(data => {
                 if (response.status === 200) {
                     console.log("API response:", data);
-                    errorBlock.className = "success";
-                    errorBlock.innerHTML = data.message;
-                    console.log(`cookie is ... ${response.headers.get('Set-Cookie')}`)
+
+                    localStorage.setItem("user", JSON.stringify(data.data))
+                    handleLoginResponse(data);
                     closeLogin();
-                    // loadCustomers();
                 } else {
                     console.log("API ERROR:", data);
                     errorBlock.className = "error";
@@ -97,53 +91,57 @@ document.addEventListener('click', function (e) {
     }
 });
 
-function loadCustomers() {
-    let table = document.getElementById('user-table');
-    fetch("http://192.168.100.99:8081/Altus_war_exploded/getAllUsers", {
-        method: 'GET', credentials: 'include', headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then((response) => {
-        let data = response.json().then(data => {
-            if (response.status === 200) {
-                console.log("API response:", data);
-                let table = document.getElementById('user-table');
-                for (let user of data.data) {
-                    let row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td> ${user.displayId}</td>
-                    <td> ${user.firstName}</td>
-                    <td> ${user.lastName}</td>
-                    <td> ${user.phoneNo}</td>
-                    <td> ${user.emailId}</td>
-                    <td> ${user.totalRatings}</td>
-                    <td> ${user.active}</td>
-                    <td> ${user.blocked}</td>
-                    `;
-                    table.append(row);
-                }
-
-
-            } else {
-                console.log("API ERROR:", data);
-                let table = document.getElementById('user-table');
-                let row = document.createElement('tr');
-                row.innerHTML = `
-                    <td> ${data.message}</td>
-                    `;
-                table.append(row);
-
-            }
-        });
-
-    })
-        .catch((error) => {
-            console.error("API error:", error);
-        });
-}
-
-
 function init() {
-    dashboard();
+    // loadAdminDashboard();
     login();
 }
+
+function createAdminSidebar() {
+    const sidebar = document.createElement("aside");
+    sidebar.className = "sidebar";
+
+    const title = document.createElement("h2");
+    title.textContent = "Admin";
+    sidebar.appendChild(title);
+
+    const menuItems = [
+        { label: "Dashboard", action: "dashboard" },
+        { label: "Customers", action: "customers" },
+        { label: "Drivers", action: "drivers" },
+        { label: "Services", action: "services" },
+        { label: "Vehicles", action: "vehicles" },
+        { label: "Locations", action: "locations" },
+        { label: "Rides", action: "rides" }
+    ];
+
+    menuItems.forEach(item => {
+        const p = document.createElement("p");
+        p.textContent = item.label;
+        p.setAttribute("onclick", `${item.action}()`);
+        sidebar.appendChild(p);
+    });
+
+    document.body.prepend(sidebar); // or use a wrapper container if preferred
+}
+
+function handleLoginResponse(responseData) {
+    const roleType = responseData.data.role.roleType;
+
+    // Clear previous role classes if needed
+    document.body.classList.remove("role-admin", "role-driver");
+
+    // Apply theme based on role
+    if (roleType === "ROLE_DRIVER") {
+        document.body.classList.add("role-driver");
+    } else if (roleType === "ROLE_ADMIN") {
+        document.body.classList.add("role-admin"); // Optional if admin is default
+    }
+
+    // Load respective dashboard
+    if (roleType === "ROLE_DRIVER") {
+        loadDriverDashboard();
+    } else {
+        loadAdminDashboard();
+    }
+}
+

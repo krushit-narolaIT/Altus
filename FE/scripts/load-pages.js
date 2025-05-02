@@ -1,4 +1,4 @@
-function dashboard() {
+function loadAdminDashboard() {
     const container = document.getElementById("page-container");
     container.innerHTML = '';
     container.innerHTML = `<div class="dashboard-wrapper">
@@ -24,6 +24,8 @@ function dashboard() {
             </div>
         </div>
     </div>`;
+
+    createAdminSidebar();
 
 }
 
@@ -93,23 +95,38 @@ function drivers() {
     loadData(dataID, url, dataFields);
 }
 
+function services() {
+    const dataID = "service";
+    const formFields = [
+        {label: "serviceName", type: "text"},
+        {label: "baseFare", type: "number"},
+        {label: "perKmRate", type: "number"},
+        {label: "vehicleType", type: "select", options: ["TWO_WHEELER", "FOUR_WHEELER", "THREE_WHEELER"]},
+        {label: "maxPassengers", type: "number"},
+        {label: "commissionPercentage", type: "number"}
+    ];
 
-function createFormAndTable({title, formFields, tableFields, dataID}) {
-    const container = document.getElementById("page-container");
+    const tableFields = ["serviceName", "baseFare", "perKmRate", "vehicleType", "maxPassengers", "commissionPercentage"];
+    const dataFields = ["serviceId", ...tableFields];
 
-    container.innerHTML = '';
-    // Outer wrapper div
-    const wrapper = document.createElement("div");
-    wrapper.id = `table-wrapper`;
-    wrapper.style.marginBottom = "40px";
+    createFormAndTable({
+        title: "Services List", formFields, tableFields, dataID
+    });
+    let dataURL = "http://192.168.100.99:8081/Altus_war_exploded/getAllVehicleServices";
 
-    // Title
-    const heading = document.createElement("h2");
-    heading.textContent = title;
-    wrapper.appendChild(heading);
+    attachFormHandler({
+        dataID,
+        submitUrl: "http://192.168.100.99:8081/Altus_war_exploded/addVehicleService",
+        formFields: formFields.map(field => field.label),
+        tableFields: dataFields,
+        dataURL
+    });
 
-    // Form
-    // Form
+    loadData(dataID, url = dataURL, dataFields);
+}
+
+
+function makeForm(dataID, formFields) {
     const form = document.createElement("form");
     form.id = `${dataID}-form`;
     form.classList.add("styled-form");
@@ -138,7 +155,73 @@ function createFormAndTable({title, formFields, tableFields, dataID}) {
     button.classList.add("form-submit");
 
     form.appendChild(button);
+    return form;
+}
 
+function makeTypedForm(dataID, formFields) {
+    const form = document.createElement("form");
+    form.id = `${dataID}-form`;
+    form.classList.add("styled-form");
+
+    formFields.forEach((field) => {
+        const fieldWrapper = document.createElement("div");
+        fieldWrapper.classList.add("form-field");
+
+        const label = document.createElement("label");
+        label.textContent = field.label;
+        label.setAttribute("for", field.label);
+        let input;
+        if (field.type === "select") {
+            input = document.createElement("select");
+            input.id = field.label;
+            input.name = field.label;
+            input.type = field.type;
+            field.options.forEach(optionText => {
+                const option = document.createElement("option");
+                option.value = optionText;
+                option.textContent = optionText;
+                input.appendChild(option);
+            });
+        } else {
+            input = document.createElement("input");
+            input.id = field.label;
+            input.name = field.label;
+            input.type = field.type;
+            input.step = "0.01";
+        }
+        fieldWrapper.appendChild(label);
+        fieldWrapper.appendChild(input);
+        form.appendChild(fieldWrapper);
+    });
+
+    const button = document.createElement("button");
+    button.type = "submit";
+    button.textContent = "Submit";
+    button.classList.add("form-submit");
+
+    form.appendChild(button);
+    return form;
+}
+
+function createFormAndTable({title, formFields, tableFields, dataID}) {
+    const container = document.getElementById("page-container");
+
+    container.innerHTML = '';
+    // Outer wrapper div
+    const wrapper = document.createElement("div");
+    wrapper.id = `table-wrapper`;
+    wrapper.style.marginBottom = "40px";
+
+    // Title
+    const heading = document.createElement("h2");
+    heading.textContent = title;
+    wrapper.appendChild(heading);
+
+    // Form
+    let form;
+    if (dataID === "service")
+        form = makeTypedForm(dataID, formFields);
+    else form = makeForm(dataID, formFields);
 
     wrapper.appendChild(form);
 

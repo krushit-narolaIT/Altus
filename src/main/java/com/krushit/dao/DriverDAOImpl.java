@@ -11,6 +11,7 @@ import jakarta.persistence.EntityTransaction;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DriverDAOImpl implements IDriverDAO {
     private static final String IS_DOCUMENT_UNDER_REVIEW =
@@ -20,11 +21,11 @@ public class DriverDAOImpl implements IDriverDAO {
                     " d.verificationStatus = :verification_status WHERE d.user.userId = :driverId";
     private static final String GET_PENDING_VERIFICATION_DRIVERS =
             "SELECT d.driverId, d.user.userId, d.licenceNumber, d.licencePhoto, " +
-            "d.isDocumentVerified, d.comment, " +
-            "u.emailId, u.firstName, u.lastName, u.displayId " +
-            "FROM Driver d " +
-            "JOIN User u ON d.user.userId = u.userId " +
-            "WHERE d.isDocumentVerified = FALSE";
+                    "d.isDocumentVerified, d.comment, " +
+                    "u.emailId, u.firstName, u.lastName, u.displayId " +
+                    "FROM Driver d " +
+                    "JOIN User u ON d.user.userId = u.userId " +
+                    "WHERE d.isDocumentVerified = FALSE";
     private static final String UPDATE_DRIVER_VERIFICATION_STATUS =
             "UPDATE Driver SET verificationStatus = :verificationStatus, comment = :comment, " +
                     "isDocumentVerified = :isDocumentVerified, isAvailable = :isAvailable" +
@@ -165,12 +166,13 @@ public class DriverDAOImpl implements IDriverDAO {
     }
 
     @Override
-    public Driver getDriver(int userId) throws DBException {
+    public  Optional<Driver> getDriver(int userId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
-            return em.createQuery(
-                            GET_DRIVER_FROM_USERID, Driver.class)
+            List<Driver> drivers = em.createQuery(
+                            "SELECT d FROM Driver d WHERE d.user.id = :userId", Driver.class)
                     .setParameter("userId", userId)
-                    .getSingleResult();
+                    .getResultList();
+            return drivers.isEmpty() ? Optional.empty() : Optional.of(drivers.get(0));
         } catch (Exception e) {
             throw new DBException(Message.Driver.ERROR_FOR_GETTING_DRIVER_ID_FROM_USER_ID, e);
         }

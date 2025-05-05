@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 public class LocationDAOImpl implements ILocationDAO {
 
@@ -34,7 +35,10 @@ public class LocationDAOImpl implements ILocationDAO {
     public String getLocationName(int locationId) throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             Location location = em.find(Location.class, locationId);
-            return location != null ? location.getName() : null;
+            if(location != null && location.getIsActive()){
+                return location.getName();
+            }
+            return null;
         } catch (Exception e) {
             throw new DBException(Message.Location.ERROR_WHILE_GETTING_LOCATION_BY_NAME, e);
         }
@@ -51,14 +55,38 @@ public class LocationDAOImpl implements ILocationDAO {
     }
 
     @Override
-    public void deleteLocation(int locationId) throws DBException {
+    public boolean isLocationActive(int locationId) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            Location location = em.find(Location.class, locationId);
+            if (location == null) {
+                throw new DBException(Message.Location.LOCATION_NOT_FOUND);
+            }
+            return location.getIsActive();
+        } catch (Exception e) {
+            throw new DBException(Message.Location.ERROR_WHILE_CHECKING_LOCATION_IS_ACTIVE_OR_NOT, e);
+        }
+    }
+
+    @Override
+    public Optional<Location> getLocation(int locationId) throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            Location location = em.find(Location.class, locationId);
+            return Optional.of(location);
+        } catch (Exception e) {
+            throw new DBException(Message.Location.ERROR_WHILE_CHECKING_LOCATION_IS_ACTIVE_OR_NOT, e);
+        }
+    }
+
+    @Override
+    public void inactivateLocation(int locationId) throws DBException {
         EntityTransaction tx = null;
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             tx = em.getTransaction();
             tx.begin();
             Location location = em.find(Location.class, locationId);
             if (location != null) {
-                em.remove(location);
+                location.setIsActive(false);
+                em.merge(location);
             }
             tx.commit();
         } catch (Exception e) {
@@ -68,6 +96,27 @@ public class LocationDAOImpl implements ILocationDAO {
             throw new DBException(Message.Location.ERROR_WHILE_DELETING_LOCATION, e);
         }
     }
+
+    @Override
+    public void activateLocation(int locationId) throws DBException {
+        EntityTransaction tx = null;
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            tx = em.getTransaction();
+            tx.begin();
+            Location location = em.find(Location.class, locationId);
+            if (location != null) {
+                location.setIsActive(true);
+                em.merge(location);
+            }
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            throw new DBException(Message.Location.ERROR_WHILE_DELETING_LOCATION, e);
+        }
+    }
+
 
     @Override
     public BigDecimal getCommissionByDistance(double distance) throws DBException {

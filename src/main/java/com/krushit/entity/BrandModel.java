@@ -1,11 +1,13 @@
 package com.krushit.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
 @Table(name = "brand_models")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BrandModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

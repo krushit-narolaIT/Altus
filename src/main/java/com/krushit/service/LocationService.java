@@ -27,10 +27,18 @@ public class LocationService {
         return locationDAO.getAllLocations();
     }
 
-    public void deleteLocation(int locationId) throws ApplicationException {
-        if(locationDAO.getLocationName(locationId).isEmpty()){
+    public void inactivateLocation(int locationId) throws ApplicationException {
+        if(locationDAO.getLocationName(locationId) == null){
             throw new ApplicationException(Message.Location.LOCATION_NOT_FOUND);
         }
+        locationDAO.inactivateLocation(locationId);
+    }
+
+    public void activateLocation(int locationId) throws ApplicationException {
+        if(locationDAO.getLocationName(locationId) == null){
+            throw new ApplicationException(Message.Location.LOCATION_NOT_FOUND);
+        }
+        locationDAO.activateLocation(locationId);
     }
 
     public static String getCoordinates(String place) throws Exception {
@@ -58,8 +66,18 @@ public class LocationService {
     }
 
     public double calculateDistance(int fromId, int toId) throws Exception {
-        String fromLocation = locationDAO.getLocationName(fromId);
-        String toLocation = locationDAO.getLocationName(toId);
+        Location fromLocationOpt = locationDAO.getLocation(fromId)
+                .orElseThrow(() -> new ApplicationException(Message.Location.LOCATION_NOT_FOUND));
+        Location toLocationOpt = locationDAO.getLocation(toId)
+                .orElseThrow(() -> new ApplicationException(Message.Location.LOCATION_NOT_FOUND));
+        if (!fromLocationOpt.getIsActive()) {
+            throw new ApplicationException(Message.Ride.SERVICE_NOT_AVAILABLE_FOR_THIS_LOCATION);
+        }
+        if (!toLocationOpt.getIsActive()) {
+            throw new ApplicationException(Message.Ride.SERVICE_NOT_AVAILABLE_FOR_THIS_LOCATION);
+        }
+        String fromLocation = fromLocationOpt.getName();
+        String toLocation = fromLocationOpt.getName();
         if (fromLocation == null || toLocation == null) {
             throw new ApplicationException(Message.Ride.PLEASE_ENTER_VALID_LOCATION);
         }

@@ -18,7 +18,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -38,15 +37,36 @@ public class VehicleRideService {
         vehicleDAO.addVehicleService(vehicleService);
     }
 
-    public void addBrandModel(BrandModel brandModel) throws ApplicationException {
+    public List<String> getAllBrands() throws ApplicationException {
+        return vehicleDAO.getAllBrands();
+    }
+
+    public List<String> getModelsByBrand(String brandName) throws ApplicationException {
+        return vehicleDAO.getModelsByBrand(brandName);
+    }
+
+    public void addBrandModel(BrandModelRequestDTO brandModelRequestDTO) throws ApplicationException {
+        BrandModel brandModel = new BrandModel();
+        brandModel.setBrandName(brandModelRequestDTO.getBrandName());
+        brandModel.setModel(brandModelRequestDTO.getModel());
+        brandModel.setMinYear(brandModelRequestDTO.getMinYear());
+
+        VehicleService vehicleService = new VehicleService();
+        vehicleService.setServiceId(brandModelRequestDTO.getServiceId());
+        brandModel.setVehicleService(vehicleService);
+
         if (vehicleDAO.isBrandModelExists(brandModel.getBrandName(), brandModel.getModel())) {
             throw new ApplicationException(Message.Vehicle.BRAND_MODEL_ALREADY_EXISTS);
         }
         vehicleDAO.addBrandModel(brandModel);
     }
 
-    public List<BrandModelResponseDTO> getAllBrandModels() throws ApplicationException {
+    public List<BrandModelsResponseDTO> getAllBrandModels() throws ApplicationException {
         return vehicleDAO.getAllBrandModels();
+    }
+
+    public List<BrandModelResponseDTO> getAllBrandModel() throws ApplicationException {
+        return vehicleDAO.getAllBrandModel();
     }
 
     public List<RideServiceDTO> getAvailableRides(int fromId, int toId) throws Exception {
@@ -321,5 +341,9 @@ public class VehicleRideService {
                 .setCancellationDriverEarning(ride.getCancellationDriverEarning())
                 .setDriverPenalty(ride.getDriverPenalty())
                 .build();
+    }
+
+    public List<VehicleService> getAllVehicleServices() throws ApplicationException {
+        return vehicleDAO.getAllVehicleServices();
     }
 }

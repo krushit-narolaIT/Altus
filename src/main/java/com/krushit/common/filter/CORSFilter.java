@@ -28,6 +28,10 @@ public class CORSFilter implements Filter {
         response.setHeader(Message.CORSConstants.HEADER_ALLOW_HEADERS, Message.CORSConstants.VALUE_ALLOW_HEADERS);
         response.setHeader(Message.CORSConstants.HEADER_ALLOW_CREDENTIALS, Message.CORSConstants.VALUE_ALLOW_CREDENTIALS);
 
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }

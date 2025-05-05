@@ -5,6 +5,7 @@ import com.krushit.common.enums.FuelType;
 import com.krushit.common.enums.VehicleType;
 import com.krushit.common.enums.Transmission;
 import com.krushit.common.exception.ValidationException;
+import com.krushit.dto.BrandModelRequestDTO;
 import com.krushit.dto.VehicleServiceDTO;
 import com.krushit.entity.*;
 
@@ -48,12 +49,12 @@ public class VehicleServicesValidator {
         }
     }
 
-    public static void validateVehicleModelDetails(BrandModel model) throws ValidationException {
+    public static void validateVehicleModelDetails(BrandModelRequestDTO model) throws ValidationException {
         if (model == null) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_BRAND_MODEL);
         }
 
-        if (model.getVehicleService().getServiceId() <= 0) {
+        if (model.getServiceId() <= 0) {
             throw new ValidationException(Message.Vehicle.PLEASE_ENTER_VALID_SERVICE_ID);
         }
 

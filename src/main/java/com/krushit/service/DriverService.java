@@ -120,7 +120,8 @@ public class DriverService {
     }
 
     public void addVehicle(Vehicle vehicle, int userId) throws ApplicationException {
-        Driver driver = driverDAO.getDriver(userId);
+        Driver driver = driverDAO.getDriver(userId)
+                .orElseThrow(() -> new ApplicationException(Message.Driver.NO_DRIVERS_FOUND));
         if (!driverDAO.isDocumentExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Driver.DOCUMENT_NOT_UPLOADED);
         }
@@ -143,7 +144,8 @@ public class DriverService {
     }
 
     public void deleteVehicle(int userId) throws ApplicationException {
-        Driver driver = driverDAO.getDriver(userId);
+        Driver driver = driverDAO.getDriver(userId)
+                .orElseThrow(() -> new DBException(Message.Driver.NO_DRIVERS_FOUND));
         if (!vehicleDAO.isDriverVehicleExist(driver.getDriverId())) {
             throw new ApplicationException(Message.Vehicle.VEHICLE_NOT_EXIST);
         }
@@ -151,6 +153,9 @@ public class DriverService {
     }
 
     public int getDriverIdFromUserId(int userId) throws ApplicationException{
-        return driverDAO.getDriver(userId).getDriverId();
+        Driver driver = driverDAO.getDriver(userId)
+                .orElseThrow(() -> new DBException(Message.Driver.NO_DRIVERS_FOUND));
+        return driver.getDriverId();
+
     }
 }

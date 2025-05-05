@@ -9,6 +9,7 @@ import com.krushit.service.DriverService;
 import com.krushit.controller.validator.DriverDocumentValidator;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.SessionUtils;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -29,7 +30,15 @@ import static com.krushit.utils.ResponseUtils.createResponse;
 public class AddDriverDetailsController extends HttpServlet {
     private final DriverService driverService = new DriverService();
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if ("PATCH".equalsIgnoreCase(request.getMethod())) {
+            doPatch(request, response);
+        } else {
+            super.service(request, response);
+        }
+    }
+
+    protected void doPatch(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
             User user = SessionUtils.validateSession(request);

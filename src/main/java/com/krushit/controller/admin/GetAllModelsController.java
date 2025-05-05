@@ -4,9 +4,9 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.dto.BrandModelResponseDTO;
+import com.krushit.dto.BrandModelsResponseDTO;
 import com.krushit.entity.User;
 import com.krushit.service.VehicleRideService;
-import com.krushit.utils.ApplicationUtils;
 import com.krushit.utils.AuthUtils;
 import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
@@ -26,9 +26,9 @@ public class GetAllModelsController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-/*            User user = SessionUtils.validateSession(request);
-            AuthUtils.validateAdminRole(user);*/
-            List<BrandModelResponseDTO> brandModels= vehicleRideService.getAllBrandModels();
+            User user = SessionUtils.validateSession(request);
+            AuthUtils.validateAdminRole(user);
+            List<BrandModelsResponseDTO> brandModels= vehicleRideService.getAllBrandModels();
             createResponse(response, Message.Vehicle.SUCCESSFULLY_RETRIEVED_ALL_BRAND_MODELS, brandModels, HttpServletResponse.SC_OK);
         } catch (DBException e) {
             e.printStackTrace();

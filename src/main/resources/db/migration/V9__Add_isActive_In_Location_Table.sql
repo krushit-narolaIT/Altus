@@ -1,0 +1,2 @@
+ALTER TABLE locations
+    ADD COLUMN is_active BOOLEAN DEFAULT TRUE;

@@ -13,6 +13,9 @@ public class Location {
     @Column(name = "name", nullable = false, unique = true, length = 20)
     private String name;
 
+    @Column(name = "is_active", nullable = false, columnDefinition = "DEFAULT TRUE")
+    private boolean isActive;
+
     public Location() {}
 
     public Location(int id, String name) {
@@ -38,6 +41,14 @@ public class Location {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean active) {
+        isActive = active;
     }
 
     @Override

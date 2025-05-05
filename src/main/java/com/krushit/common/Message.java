@@ -80,6 +80,7 @@ public final class Message {
         public static final String ERROR_WHILE_GETTING_RIDE = "Error while getting ride";
         public static final String YOU_CAN_NOT_GIVE_FEEDBACK_TO_CANCELLED_RIDE = "You can not give feedback to cancelled ride";
         public static final String PLEASE_ENTER_VALID_RIDE_FORMAT = "Invalid ride date format. Expected format: yyyy-MM-dd";
+        public static final String SERVICE_NOT_AVAILABLE_FOR_THIS_LOCATION = "Sorry..!! Our service is not available for this location";
 
         private Ride() {
         }
@@ -243,6 +244,9 @@ public final class Message {
         public static final String ERROR_OCCUR_WHILE_BOOKING_RIDE = "Error while booking ride";
         public static final String ERROR_OCCUR_WHILE_GETTING_ALL_BRANDS = "Error while getting all brands";
         public static final String ERROR_OCCUR_WHILE_GETTING_BRAND_MODEL_FROM_BRAND = "Error while getting brand model from brand";
+        public static final String ERROR_OCCUR_WHILE_FETCHING_VEHICLE_SERVICES = "Error while fetching vehicle services";
+        public static final String SUCCESSFULLY_RETRIEVED_BRANDS = "Successfully retrieved all brands";
+        public static final String NO_BRANDS_FOUND = "No Brands found";
 
         private Vehicle() {
         }
@@ -270,6 +274,7 @@ public final class Message {
         public static final String ERROR_WHILE_GETTING_ALL_LOCATION = "Error while getting all location";
         public static final String ERROR_WHILE_DELETING_LOCATION = "Error while deleting location";
         public static final String ERROR_WHILE_GET_COMMISSION_BY_DISTANCE = "Error while get commission by distance";
+        public static final String ERROR_WHILE_CHECKING_LOCATION_IS_ACTIVE_OR_NOT = "Error while checking location is active or not";
 
         private Location() {
         }
@@ -282,7 +287,7 @@ public final class Message {
         public static final String HEADER_ALLOW_CREDENTIALS = "Access-Control-Allow-Credentials";
 
         public static final String VALUE_ALLOW_ALL = "*";
-        public static final String VALUE_ALLOW_METHODS = "GET, POST, PUT, DELETE, OPTIONS";
+        public static final String VALUE_ALLOW_METHODS = "GET, POST, PUT, DELETE, OPTIONS, PATCH";
         public static final String VALUE_ALLOW_HEADERS = "Content-Type, Authorization";
         public static final String VALUE_ALLOW_CREDENTIALS = "true";
 

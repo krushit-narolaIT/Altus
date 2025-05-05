@@ -4,7 +4,10 @@ import com.krushit.common.Message;
 import com.krushit.common.exception.ApplicationException;
 import com.krushit.common.exception.DBException;
 import com.krushit.entity.Location;
+import com.krushit.entity.User;
 import com.krushit.service.LocationService;
+import com.krushit.utils.AuthUtils;
+import com.krushit.utils.SessionUtils;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,7 +26,8 @@ public class GetAllLocationsController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType(Message.APPLICATION_JSON);
         try {
-            //User user = SessionUtils.validateSession(request);
+            User user = SessionUtils.validateSession(request);
+            AuthUtils.validateAdminRole(user);
             List<Location> locations = locationService.getAllLocations();
             createResponse(response, Message.Location.SUCCESSFULLY_RETRIEVED_ALL_LOCATIONS, locations, HttpServletResponse.SC_OK);
         } catch (DBException e) {

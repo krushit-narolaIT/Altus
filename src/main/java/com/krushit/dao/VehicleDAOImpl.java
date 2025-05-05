@@ -3,6 +3,7 @@ package com.krushit.dao;
 import com.krushit.common.Message;
 import com.krushit.common.config.JPAConfig;
 import com.krushit.common.exception.DBException;
+import com.krushit.dto.BrandModelsResponseDTO;
 import com.krushit.dto.BrandModelResponseDTO;
 import com.krushit.entity.BrandModel;
 import com.krushit.entity.RideRequest;
@@ -10,6 +11,7 @@ import com.krushit.entity.Vehicle;
 import com.krushit.entity.VehicleService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
 
 import java.util.*;
 
@@ -33,6 +35,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
             "DELETE FROM Vehicle v WHERE v.driver.user.userId = :userId";
     private static final String GET_BRAND_MODELS_BY_BRAND =
             "SELECT DISTINCT b.model FROM BrandModel b WHERE b.brandName = :brandName";
+    private static final String GET_ALL_VEHICLE_SERVICES = "SELECT v FROM VehicleService v";
 
     @Override
     public boolean isVehicleServiceExists(String serviceName) throws DBException {
@@ -126,7 +129,7 @@ public class VehicleDAOImpl implements IVehicleDAO {
     }
 
     @Override
-    public List<BrandModelResponseDTO> getAllBrandModels() throws DBException {
+    public List<BrandModelsResponseDTO> getAllBrandModels() throws DBException {
         try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
             List<BrandModel> brandModels = em.createQuery(SELECT_ALL_BRAND_MODELS, BrandModel.class).getResultList();
             Map<String, List<String>> brandToModels = new HashMap<>();
@@ -138,17 +141,41 @@ public class VehicleDAOImpl implements IVehicleDAO {
                 brandToModels.computeIfAbsent(brand, k -> new ArrayList<>()).add(model);
                 brandToServices.computeIfAbsent(brand, k -> new ArrayList<>()).add(serviceName);
             }
-            List<BrandModelResponseDTO> response = new ArrayList<>();
+            List<BrandModelsResponseDTO> response = new ArrayList<>();
             for (String brand : brandToModels.keySet()) {
                 List<String> models = brandToModels.get(brand);
                 List<String> services = new ArrayList<>(brandToServices.getOrDefault(brand, new ArrayList<>()));
-                response.add(new BrandModelResponseDTO(brand, models, services));
+                response.add(new BrandModelsResponseDTO(brand, models, services));
             }
             return response;
         } catch (Exception e) {
             throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_GETTING_ALL_BRAND_MODELS, e);
         }
     }
+
+    @Override
+    public List<BrandModelResponseDTO> getAllBrandModel() throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            List<BrandModel> brandModels = em.createQuery(SELECT_ALL_BRAND_MODELS, BrandModel.class).getResultList();
+            Set<String> uniqueBrandModelKeys = new HashSet<>();
+            List<BrandModelResponseDTO> response = new ArrayList<>();
+            for (BrandModel bm : brandModels) {
+                String brand = bm.getBrandName();
+                String model = bm.getModel();
+                String serviceName = bm.getVehicleService().getServiceName();
+                int brandModelId = bm.getBrandModelId();
+                String key = brand + "|" + model;
+                if (!uniqueBrandModelKeys.contains(key)) {
+                    uniqueBrandModelKeys.add(key);
+                    response.add(new BrandModelResponseDTO(brandModelId, brand, model, serviceName));
+                }
+            }
+            return response;
+        } catch (Exception e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_GETTING_ALL_BRAND_MODELS, e);
+        }
+    }
+
 
     @Override
     public List<String> getAllBrands() throws DBException {
@@ -229,6 +256,16 @@ public class VehicleDAOImpl implements IVehicleDAO {
                 if (tx.isActive()) tx.rollback();
                 throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_DELETING_VEHICLE, e);
             }
+        }
+    }
+
+    @Override
+    public List<VehicleService> getAllVehicleServices() throws DBException {
+        try (EntityManager em = JPAConfig.getEntityManagerFactory().createEntityManager()) {
+            TypedQuery<VehicleService> query = em.createQuery(GET_ALL_VEHICLE_SERVICES, VehicleService.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new DBException(Message.Vehicle.ERROR_OCCUR_WHILE_FETCHING_VEHICLE_SERVICES, e);
         }
     }
 }

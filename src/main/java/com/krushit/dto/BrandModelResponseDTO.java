@@ -1,17 +1,24 @@
 package com.krushit.dto;
 
-
-import java.util.List;
-
 public class BrandModelResponseDTO {
+    private int brandModelId;
     private String brandName;
-    private List<String> models;
-    private List<String> vehicleService;
+    private String model;
+    private String vehicleService;
 
-    public BrandModelResponseDTO(String brandName, List<String> models, List<String> vehicleService) {
+    public BrandModelResponseDTO(int brandModelId, String brandName, String models, String vehicleService) {
+        this.brandModelId = brandModelId;
         this.brandName = brandName;
-        this.models = models;
+        this.model = models;
         this.vehicleService = vehicleService;
+    }
+
+    public int getBrandModelId() {
+        return brandModelId;
+    }
+
+    public void setBrandModelId(int brandModelId) {
+        this.brandModelId = brandModelId;
     }
 
     public String getBrandName() {
@@ -22,19 +29,19 @@ public class BrandModelResponseDTO {
         this.brandName = brandName;
     }
 
-    public List<String> getModels() {
-        return models;
+    public String getModel() {
+        return model;
     }
 
-    public void setModels(List<String> models) {
-        this.models = models;
+    public void setModel(String model) {
+        this.model = model;
     }
 
-    public List<String> getVehicleService() {
+    public String getVehicleService() {
         return vehicleService;
     }
 
-    public void setVehicleService(List<String> vehicleService) {
+    public void setVehicleService(String vehicleService) {
         this.vehicleService = vehicleService;
     }
 }

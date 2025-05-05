@@ -6,6 +6,7 @@ import com.krushit.dto.PendingDriverDTO;
 import com.krushit.entity.Driver;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IDriverDAO {
     boolean isDriverExist(int driverId) throws DBException;
@@ -13,7 +14,7 @@ public interface IDriverDAO {
     List<Driver> getAllDrivers() throws DBException;
     void insertDriverDetails(Driver driver) throws DBException;
     List<PendingDriverDTO> getDriversWithPendingVerification() throws DBException;
-    Driver getDriver(int userId) throws DBException;
+    Optional<Driver> getDriver(int userId) throws DBException;
     boolean isDocumentVerified(int driverId) throws DBException;
     boolean isDocumentExist(int driverId) throws DBException;
     boolean isLicenseNumberExist(String licenseNumber) throws DBException;

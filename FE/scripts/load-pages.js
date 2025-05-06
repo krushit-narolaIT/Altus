@@ -76,8 +76,8 @@ function locations() {
 function drivers() {
     const dataID = "driver";
     const formFields = ["firstName", "lastName", "phoneNo", "emailId", "password"];
-    const tableFields = ["firstName", "lastName", "phoneNo", "emailId", "documentVerified", "licenceNumber", "licencePhoto"];
-    const dataFields = ["displayId", ...tableFields];
+    let tableFields = ["firstName", "lastName", "phoneNo", "emailId", "licenceNumber", "licencePhoto"];
+    let dataFields = ["displayId", ...tableFields];
 
     createFormAndTable({
         title: "Drivers List", formFields, tableFields, dataID
@@ -93,6 +93,28 @@ function drivers() {
     });
 
     loadData(dataID, url, dataFields);
+
+    tableFields = ["firstName", "lastName", "emailId", "documentVerified", "licenceNumber", "licencePhoto"];
+    dataFields = ["displayId", ...tableFields];
+
+    let wrapper = document.getElementById("table-wrapper");
+
+    const table = makeGenericTable(`${dataID}-unverified`, tableFields);
+
+    wrapper.appendChild(table);
+
+    // TODO: Fix to update unverified drivers' table
+    document.getElementById("driver-form")
+        .onsubmit = () => loadData(
+            `${dataID}-unverified`,
+            "http://192.168.100.99:8081/Altus_war_exploded/getAllPendingVerification",
+            dataFields
+        );
+
+    loadData(`${dataID}-unverified`, "http://192.168.100.99:8081/Altus_war_exploded/getAllPendingVerification", dataFields);
+
+    createDriverTabs();
+
 }
 
 function services() {
@@ -203,6 +225,30 @@ function makeTypedForm(dataID, formFields) {
     return form;
 }
 
+function makeGenericTable(dataID, tableFields) {
+    const table = document.createElement("table");
+    table.id = `${dataID}-table`;
+    table.classList.add("styled-table");
+
+    const thead = table.createTHead();
+    const headRow = thead.insertRow();
+
+    // Insert numbered column as first header
+    const thNumber = document.createElement("th");
+    thNumber.textContent = "#";
+    headRow.appendChild(thNumber);
+
+    tableFields.forEach((field) => {
+        const th = document.createElement("th");
+        th.textContent = field;
+        headRow.appendChild(th);
+    });
+
+    const tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    return table;
+}
+
 function createFormAndTable({title, formFields, tableFields, dataID}) {
     const container = document.getElementById("page-container");
 
@@ -226,26 +272,7 @@ function createFormAndTable({title, formFields, tableFields, dataID}) {
     wrapper.appendChild(form);
 
     // Table
-    const table = document.createElement("table");
-    table.id = `${dataID}-table`;
-    table.classList.add("styled-table");
-
-    const thead = table.createTHead();
-    const headRow = thead.insertRow();
-
-    // Insert numbered column as first header
-    const thNumber = document.createElement("th");
-    thNumber.textContent = "#";
-    headRow.appendChild(thNumber);
-
-    tableFields.forEach((field) => {
-        const th = document.createElement("th");
-        th.textContent = field;
-        headRow.appendChild(th);
-    });
-
-    const tbody = document.createElement("tbody");
-    table.appendChild(tbody);
+    const table = makeGenericTable(dataID, tableFields);
 
     wrapper.appendChild(table);
     container.appendChild(wrapper);
@@ -341,7 +368,7 @@ function loadData(dataID, url, tableFields) {
                             button.textContent = value ? "Verified" : "Verify";
                             button.disabled = value; // Disable if already verified
                             button.addEventListener("click", () => {
-                                console.log(`Verifying ${field} for:`, user);
+                                console.log(`Verifying ${field} for:`, user.driverId);
                                 alert("upload document feature pending");
                                 // verifyDriverDocuments(driverId = user.id);
 
@@ -381,6 +408,46 @@ function loadData(dataID, url, tableFields) {
         console.error("API error:", error);
     });
 }
+
+function createDriverTabs() {
+    const wrapper = document.getElementById("table-wrapper");
+
+    // Create tab buttons
+    const tabButtons = document.createElement("div");
+    tabButtons.className = "tab-button-wrapper";
+
+    const allBtn = document.createElement("button");
+    allBtn.textContent = "All Drivers";
+    allBtn.className = "tab-btn active";
+    allBtn.addEventListener("click", () => toggleTable('driver-table', allBtn));
+
+    const unverifiedBtn = document.createElement("button");
+    unverifiedBtn.textContent = "Unverified Drivers";
+    unverifiedBtn.className = "tab-btn";
+    unverifiedBtn.addEventListener("click", () => toggleTable('driver-unverified-table', unverifiedBtn));
+
+    tabButtons.appendChild(allBtn);
+    tabButtons.appendChild(unverifiedBtn);
+
+    wrapper.insertBefore(tabButtons, document.getElementById("driver-form")); // Insert tabs above the tables
+
+    // Initial state
+    document.getElementById("driver-table").style.display = "block";
+    document.getElementById("driver-unverified-table").style.display = "none";
+}
+
+function toggleTable(showId, activeButton) {
+    const allTables = ["driver-table", "driver-unverified-table"];
+    const allButtons = document.querySelectorAll(".tab-btn");
+
+    allTables.forEach(id => {
+        document.getElementById(id).style.display = (id === showId) ? "block" : "none";
+    });
+
+    allButtons.forEach(btn => btn.classList.remove("active"));
+    activeButton.classList.add("active");
+}
+
 
 // TODO: function deleteLocation(locationId) {
 //     let url = `http://192.168.100.99:8081/Altus_war_exploded/deleteLocation?locationId=${locationId}`

@@ -421,6 +421,23 @@ body {
     box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
 }
 
+.tab-button-wrapper {
+    margin-bottom: 1rem;
+}
+
+.tab-btn {
+    padding: 6px 12px;
+    margin-right: 8px;
+    border: none;
+    background-color: #eee;
+    cursor: pointer;
+}
+
+.tab-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+
 
 /* === DRIVER (Yellow Theme) Overrides === */
 .role-driver {
@@ -451,3 +468,32 @@ body {
     background-color: #e6b800;
 }
 
+.user-card {
+    background-color: #fffbea;
+    padding: 20px 25px;
+    border-left: 6px solid #c59f00;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(197, 159, 0, 0.2);
+    margin: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    max-width: 500px;
+    color: #333;
+}
+
+.user-card h2 {
+    color: #8a6d00;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #c59f00;
+    padding-bottom: 5px;
+    font-size: 1.4em;
+}
+
+.user-card p {
+    margin: 8px 0;
+    font-size: 1em;
+}
+
+.user-card strong {
+    color: #8a6d00;
+    font-weight: 600;
+}
